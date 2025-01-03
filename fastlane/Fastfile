@@ -1,0 +1,244 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+
+require 'dotenv'
+
+lane :load_env do |env|
+
+  env_file = case env
+             when "dev" then ".env.dev"
+             when "staging" then ".env.staging"
+             when "prod" then ".env.prod"
+             else ".env.staging" # default if unspecified
+             end
+  Dotenv.load(env_file)
+  
+  puts "Loaded environment file: #{env_file}"  # Log the loaded env file
+  puts "CHATID: #{ENV['CHAT_ID']} >>> TLETOKEN: #{ENV['TELE_TOKEN']}"
+
+end
+
+lane :firebase_option_dev do 
+  # Get the flavor argument or default to 'dev'
+  flavor = "dev"
+
+   Dir.chdir('../') do
+    # Run flutterfire configure in the root directory
+    sh("flutterfire configure --project=demoleng-a6300 --out=./lib/utils/firebase_options_#{flavor}.dart")
+  end
+end
+lane :firebase_option_prod do 
+  # Get the flavor argument or default to 'dev'
+
+  
+   Dir.chdir('../') do
+    # Run flutterfire configure in the root directory
+    sh("flutterfire configure --project=demoleng-a6300 --out=./lib/utils/firebase_options.dart")
+  end
+end
+lane :firebase_option_staging do 
+  # Get the flavor argument or default to 'dev'
+  flavor = "staging"
+  
+   Dir.chdir('../') do
+    # Run flutterfire configure in the root directory
+    sh("flutterfire configure --project=demoleng-a6300 --out=./lib/utils/firebase_options.dart")
+  end
+end
+lane :build_runner_watch do
+  sh("flutter pub run build_runner watch --delete-conflicting-outputs")
+end
+lane :build_runner do
+  sh("flutter pub run build_runner build --delete-conflicting-outputs")
+end
+  lane :testlane do
+    current_dir = Dir.pwd
+    puts("Current directory is: #{current_dir}")
+  end
+
+lane :flutter_clean_get do
+  Dir.chdir('../') do 
+   sh(' flutter clean &&  
+        flutter pub get')
+  end
+end
+
+platform :android do
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  lane :clean_build do
+    Dir.chdir('../') do
+    # Run flutterfire configure in the root directory
+    sh("cd android && ./gradlew clean && cd ..")
+       end
+  end
+
+  desc "Submit a new Beta Build to Crashlytics Beta"
+  lane :beta do
+    gradle(task: "clean assembleRelease")
+    crashlytics
+  
+    # sh "your_script.sh"
+    # You can also use other beta testing services here
+  end
+
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do
+    gradle(task: "clean assembleRelease")
+    upload_to_play_store
+  end
+
+  desc "testing"
+  lane :testlane do
+    sh('Running testing')
+  end
+
+  # desc "generate-key-store"
+  # lane :generatekey do
+  #   keystore_path = "./upload-keystore.jks"
+  #   sh('keytool -genkey -v -keystore ~/upload-keystore.jks -keyalg RSA \
+  #       -keysize 2048 -validity 10000 -alias store-key')
+  # end
+
+  lane :generatekey do
+  # Prompt for input values
+  keystore_password = prompt(text: "Enter keystore password:")
+    key_password = prompt(text: "Enter key password:")
+    keystore_path = File.expand_path("./upload-keystore.jks")
+    alias_name = prompt(text: "Enter alias name:")
+    distinguished_name = prompt(text: "Enter Distinguished Name (e.g., CN=Your Name, OU=Your Unit, O=Your Organization, L=Your City, ST=Your State, C=US):")
+    sh("keytool -genkey -v -keystore #{keystore_path} -keyalg RSA -keysize 2048 -validity 10000 -alias #{alias_name} -storepass #{keystore_password} -keypass #{key_password} -dname '#{distinguished_name}'")
+  end
+
+  lane :devbuildRelease do
+    gradle(
+      task: "assembleDevRelease"
+    )
+  end
+  lane :stagingbuildRelease do
+    gradle(
+      task: "assembleStagingRelease"
+    )
+  end
+  lane :prodbuildRelease do
+    gradle(
+      task: "assembleProd Release"
+    )
+  end
+
+
+
+
+  platform :android do
+   lane :flutter_build_apk_release do
+    # flavor = ENV['FLAVOR'] || 'prod' 
+    flavor = 'staging'
+    sh('flutter build apk --flavor staging --release')
+   end
+
+  end
+
+platform :android do
+  desc "Increment version code and version name, then build the app"
+  lane :increment_version do
+    # Get current version code from build.gradle
+    version_code = get_version_code(
+      gradle_file_path: "./android/app/build.gradle"
+    )
+    
+    # Increment version code
+    increment_version_code(
+      gradle_file_path: "./android/app/build.gradle"
+        #ext_constant_name: "test"
+        #app_folder_name:"app"
+  )
+
+    # Get current version name from build.gradle
+    version_name = get_version_name(
+         gradle_file_path: "./android/app/build.gradle",
+         ext_constant_name:"versionName"
+
+    )
+
+
+    # Build the app after incrementing version code and name
+  
+  end
+end
+
+  platform :android do
+  desc "Build and distribute APK for Staging"
+  lane :staging_beta do
+    load_env(env:"staging")  # Pass "staging" as a hash parameter
+    gradle(
+      task: "clean"
+    )
+    version_name = get_version_name(
+      gradle_file_path: "./android/app/build.gradle",
+      ext_constant_name:"versionName"
+
+    )
+    
+    increment_version_code(
+      gradle_file_path: "app/build.gradle"
+    )
+    version_code = get_version_code(
+      gradle_file_path: "./android/app/build.gradle"
+    )
+
+ 
+   gradle(
+    task: "assembleStaging", 
+    build_type: "Release"
+   )
+   
+ 
+    
+   firebase_app_distribution(
+    app: "1:905655582501:android:8e8eb962bbf0871e6ae4cc",  # Your Firebase App ID
+    testers: "Sivsovanpanhavorn@gmail.com,Ochhengkheang@gmail.com,hvireakboth64@gmail.com",  # Testers' email addresses
+    release_notes: "Release notes for staging test",
+    apk_path: "../build/app/outputs/flutter-apk/app-staging-release.apk"  # Adjust the path for flavor1
+  )
+
+   deploy_message = "New build Android is available on Firebase App Distribution!!
+  • Environment : Staging
+  • Build : #{version_code}
+  • Version : #{version_name}
+   And check your email for testing invitation. Thank you."
+   puts "CHATID: #{ENV['CHAT_ID']} >>> TLETOKEN: #{ENV['TELE_TOKEN']}"
+    telegram(
+        text: deploy_message,
+        chat_id: ENV['CHAT_ID'], # Your Telegram group chat ID
+        token:  ENV['TELE_TOKEN'] # Your bot's token
+      )
+end
+
+end
+ 
+end
+
+
+
+# New build is available on TestFlight!
+# • Environment : Staging
+# • Build : 34
+# • Version : v2.0.1
+# Please wait 5 minutes before the download becomes available.
+# And check your email for testing invitation. Thank you.

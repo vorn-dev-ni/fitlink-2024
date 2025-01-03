@@ -1,0 +1,32 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "DemoDev",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_dev.dart",
+      "args": ["--flavor", "dev"],
+      "toolArgs": ["--target", "lib/main_dev.dart"],
+      "preLaunchTask": "flutter pub get"
+    },
+    {
+      "name": "DemoStaging",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_staging.dart",
+      "args": ["--flavor", "staging"],
+      "toolArgs": ["--target", "lib/main_staging.dart"],
+      "preLaunchTask": "flutter pub get"
+    },
+    {
+      "name": "Demo",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--flavor", "production"],
+      "toolArgs": ["--target", "lib/main.dart"],
+      "preLaunchTask": "flutter pub get"
+    }
+  ]
+}

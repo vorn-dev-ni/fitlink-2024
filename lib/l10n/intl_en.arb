@@ -1,0 +1,10 @@
+{
+  "@@locale": "en" ,
+  "welcome": "Welcome",
+  "deviceName": "Device Name",
+  "toggle_theme": "Toggle Theme",
+  "khmer": "Khmer",
+  "english": "English",
+  "settings": "Settings",
+  "product_flavor": "Product Flavor"
+}

@@ -1,0 +1,102 @@
+plugins {
+    id "com.android.application"
+    // START: FlutterFire Configuration
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+    // END: FlutterFire Configuration
+    id "kotlin-android"
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+android {
+    namespace = "com.example.demo"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId = "com.example.demo"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        minSdk = 23
+        targetSdk = flutter.targetSdkVersion
+        // versionCode project.hasProperty("versionCode") ? project.versionCode : 3
+        // versionName project.hasProperty("versionName") ? project.versionName : "1.0.0"
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName   
+    }
+  flavorDimensions "default"
+  productFlavors {
+      dev {
+          dimension "default"
+          applicationIdSuffix ".dev"
+          resValue "string", "app_name", "DemoDev"
+
+      }
+      staging {
+          dimension "default"
+          applicationIdSuffix ".staging"
+          resValue "string", "app_name", "DemoStaging"
+
+      }
+      prod {
+          dimension "default"
+          resValue "string", "app_name", "DemoProd"
+ 
+
+      }
+  }
+    signingConfigs {
+        devRelease {
+            storeFile file('./upload-keystore.jks') // Path to your keystore file
+            storePassword project.property("MY_KEYSTORE_PASSWORD")
+            keyAlias project.property("MY_KEY_ALIAS")
+            keyPassword project.property("MY_KEY_PASSWORD")
+        }
+        stagingRelease {
+            storeFile file('./upload-keystore.jks') // Path to your keystore file
+            storePassword project.property("MY_KEYSTORE_PASSWORD")
+            keyAlias project.property("MY_KEY_ALIAS")
+            keyPassword project.property("MY_KEY_PASSWORD")
+        }
+        prodRelease {
+            storeFile file('./upload-keystore.jks') // Path to your keystore file
+            storePassword project.property("MY_KEYSTORE_PASSWORD")
+            keyAlias project.property("MY_KEY_ALIAS")
+            keyPassword project.property("MY_KEY_PASSWORD")
+        }
+        //   release {
+        //     keyAlias = project.property('MY_KEY_ALIAS')
+        //     keyPassword = project.property('MY_KEY_PASSWORD')
+        //     storeFile = file('./upload-keystore.jks')
+        //     storePassword =  project.property("MY_KEYSTORE_PASSWORD")    
+        // }
+    }
+    buildTypes {
+        release {
+        //   buildConfigField "String", "BASE_URL", "\"https://api.example.com\""
+            // Minify or signing configurations
+          minifyEnabled true
+          proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+          shrinkResources true
+        }
+      debug {
+        signingConfig signingConfigs.debug
+     }
+    }
+
+}
+
+flutter {
+    source = "../.."
+}

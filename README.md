@@ -1,4 +1,4 @@
-# Flutter Boilerplate 2024
+# Fitlink 2024
 
 ## Features
 
@@ -125,10 +125,6 @@ This custom script will handle the correct flavor setup based on the arguments p
 ## Running the App
 
 1. Clone the repository:
-
-      git clone https://github.com/yourusername/flutter-gym-scan.git
-   cd flutter-gym-scan
-   
 
 2. Install dependencies:
 

@@ -3,21 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>905655582501-v14sff4vs9d573trruih2poafemhs6n9.apps.googleusercontent.com</string>
+	<string>77080916809-ghqlqnre1bo9iutsc4mavhptk1h4crk1.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.905655582501-v14sff4vs9d573trruih2poafemhs6n9</string>
+	<string>com.googleusercontent.apps.77080916809-ghqlqnre1bo9iutsc4mavhptk1h4crk1</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>77080916809-j0gjnfkj651qdogk0irge1mb0jh21lr1.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyD7-fIC4sWX0bYu_fsvwA1X3Gr4EuITxRs</string>
+	<string>AIzaSyDulurCIwalUxwEFJtmEbDE7aAYQH5KnvY</string>
 	<key>GCM_SENDER_ID</key>
-	<string>905655582501</string>
+	<string>77080916809</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.demo</string>
+	<string>com.fitlink.app</string>
 	<key>PROJECT_ID</key>
-	<string>demoleng-a6300</string>
+	<string>fitlink-b3d6b</string>
 	<key>STORAGE_BUCKET</key>
-	<string>demoleng-a6300.firebasestorage.app</string>
+	<string>fitlink-b3d6b.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:905655582501:ios:585069f834ca51166ae4cc</string>
+	<string>1:77080916809:ios:b2b8404ab78ddb905b2098</string>
 </dict>
 </plist>

@@ -1,4 +1,4 @@
-package com.example.demo
+package com.fitlink.app
 
 import io.flutter.embedding.android.FlutterActivity
 

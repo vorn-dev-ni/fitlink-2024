@@ -12,29 +12,29 @@ fi
 case $1 in
   dev)
     flutterfire config \
-      --project=demoleng-a6300 \
+      --project=fitlink-b3d6b \
       --out="lib/utils/firebase/firebase_options_dev.dart" \
-      --ios-bundle-id=com.example.demo.dev \
+      --ios-bundle-id=com.fitlink.app.dev \
       --ios-out="ios/flavors/dev/GoogleService-Info.plist" \
-      --android-package-name=com.example.demo.dev \
+      --android-package-name=com.fitlink.app.dev \
       # --android-out="$ROOT_DIR/android/app/src/dev/google-services.json"
     ;;
   staging)
     flutterfire config \
-      --project=demoleng-a6300 \
+      --project=fitlink-b3d6b \
       --out="lib/utils/firebase/firebase_options_staging.dart" \
-      --ios-bundle-id=com.example.demo.staging \
+      --ios-bundle-id=com.fitlink.app.staging \
       --ios-out="ios/flavors/staging/GoogleService-Info.plist" \
-      --android-package-name=com.example.demo.staging \
+      --android-package-name=com.fitlink.app.staging \
       # --android-out="$ROOT_DIR/android/app/src/stg/google-services.json"
     ;;
   prod)
     flutterfire config \
-      --project=demoleng-a6300 \
+      --project=fitlink-b3d6b \
       --out="lib/utils/firebase/firebase_options.dart" \
-      --ios-bundle-id=com.example.demo \
+      --ios-bundle-id=com.fitlink.app \
       --ios-out="ios/flavors/prod/GoogleService-Info.plist" \
-      --android-package-name=com.example.demo \
+      --android-package-name=com.fitlink.app \
       # --android-out="$ROOT_DIR/android/app/src/prod/google-services.json"
     ;;
   *)

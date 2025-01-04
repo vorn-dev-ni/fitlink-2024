@@ -1,40 +1,48 @@
 {
   "project_info": {
-    "project_number": "905655582501",
-    "project_id": "demoleng-a6300",
-    "storage_bucket": "demoleng-a6300.firebasestorage.app"
+    "project_number": "77080916809",
+    "project_id": "fitlink-b3d6b",
+    "storage_bucket": "fitlink-b3d6b.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:905655582501:android:2f4f4799613180c26ae4cc",
+        "mobilesdk_app_id": "1:77080916809:android:09ec1787731c23985b2098",
         "android_client_info": {
-          "package_name": "com.example.demo"
+          "package_name": "com.fitlink.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "905655582501-f40t9u8onieu5pllmn0pgqc7j2f7452o.apps.googleusercontent.com",
+          "client_id": "77080916809-mj0d4vgj8mn60v29grp9i8bordkfahug.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fitlink.app",
+            "certificate_hash": "f9d2117f9da6cb4bb7443c1c85e1dd454f79188c"
+          }
+        },
+        {
+          "client_id": "77080916809-m7um334qh7pg3gp1o5bikcjtg6bib1qa.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCn0daOPDn3sBHfLJOS6sel01o8lS8WBlc"
+          "current_key": "AIzaSyAi_T6gFYy31O_jaSmUjZrBOK9kTxJvoAU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "905655582501-f40t9u8onieu5pllmn0pgqc7j2f7452o.apps.googleusercontent.com",
+              "client_id": "77080916809-m7um334qh7pg3gp1o5bikcjtg6bib1qa.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "905655582501-b3b07i1hc5t9ru03r6d148n1g75jpanu.apps.googleusercontent.com",
+              "client_id": "77080916809-17o7q33b7eker6c285pqqktf77db8nhf.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.demo.staging"
+                "bundle_id": "com.com.fitness.app"
               }
             }
           ]
@@ -43,34 +51,42 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:905655582501:android:69e28154a4b311746ae4cc",
+        "mobilesdk_app_id": "1:77080916809:android:415565f25dee482a5b2098",
         "android_client_info": {
-          "package_name": "com.example.demo.dev"
+          "package_name": "com.fitlink.app.dev"
         }
       },
       "oauth_client": [
         {
-          "client_id": "905655582501-f40t9u8onieu5pllmn0pgqc7j2f7452o.apps.googleusercontent.com",
+          "client_id": "77080916809-j0gjnfkj651qdogk0irge1mb0jh21lr1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fitlink.app.dev",
+            "certificate_hash": "f9d2117f9da6cb4bb7443c1c85e1dd454f79188c"
+          }
+        },
+        {
+          "client_id": "77080916809-m7um334qh7pg3gp1o5bikcjtg6bib1qa.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCn0daOPDn3sBHfLJOS6sel01o8lS8WBlc"
+          "current_key": "AIzaSyAi_T6gFYy31O_jaSmUjZrBOK9kTxJvoAU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "905655582501-f40t9u8onieu5pllmn0pgqc7j2f7452o.apps.googleusercontent.com",
+              "client_id": "77080916809-m7um334qh7pg3gp1o5bikcjtg6bib1qa.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "905655582501-b3b07i1hc5t9ru03r6d148n1g75jpanu.apps.googleusercontent.com",
+              "client_id": "77080916809-17o7q33b7eker6c285pqqktf77db8nhf.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.demo.staging"
+                "bundle_id": "com.com.fitness.app"
               }
             }
           ]
@@ -79,34 +95,42 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:905655582501:android:8e8eb962bbf0871e6ae4cc",
+        "mobilesdk_app_id": "1:77080916809:android:ebe1398ec028ced65b2098",
         "android_client_info": {
-          "package_name": "com.example.demo.staging"
+          "package_name": "com.fitlink.app.staging"
         }
       },
       "oauth_client": [
         {
-          "client_id": "905655582501-f40t9u8onieu5pllmn0pgqc7j2f7452o.apps.googleusercontent.com",
+          "client_id": "77080916809-sj7slc1k91upluve62vopppkrj7ctig1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fitlink.app.staging",
+            "certificate_hash": "f9d2117f9da6cb4bb7443c1c85e1dd454f79188c"
+          }
+        },
+        {
+          "client_id": "77080916809-m7um334qh7pg3gp1o5bikcjtg6bib1qa.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCn0daOPDn3sBHfLJOS6sel01o8lS8WBlc"
+          "current_key": "AIzaSyAi_T6gFYy31O_jaSmUjZrBOK9kTxJvoAU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "905655582501-f40t9u8onieu5pllmn0pgqc7j2f7452o.apps.googleusercontent.com",
+              "client_id": "77080916809-m7um334qh7pg3gp1o5bikcjtg6bib1qa.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "905655582501-b3b07i1hc5t9ru03r6d148n1g75jpanu.apps.googleusercontent.com",
+              "client_id": "77080916809-17o7q33b7eker6c285pqqktf77db8nhf.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.demo.staging"
+                "bundle_id": "com.com.fitness.app"
               }
             }
           ]

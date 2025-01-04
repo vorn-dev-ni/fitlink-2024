@@ -50,20 +50,22 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCn0daOPDn3sBHfLJOS6sel01o8lS8WBlc',
-    appId: '1:905655582501:android:69e28154a4b311746ae4cc',
-    messagingSenderId: '905655582501',
-    projectId: 'demoleng-a6300',
-    storageBucket: 'demoleng-a6300.firebasestorage.app',
+    apiKey: 'AIzaSyAi_T6gFYy31O_jaSmUjZrBOK9kTxJvoAU',
+    appId: '1:77080916809:android:415565f25dee482a5b2098',
+    messagingSenderId: '77080916809',
+    projectId: 'fitlink-b3d6b',
+    storageBucket: 'fitlink-b3d6b.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD7-fIC4sWX0bYu_fsvwA1X3Gr4EuITxRs',
-    appId: '1:905655582501:ios:c919f5809c4ed79d6ae4cc',
-    messagingSenderId: '905655582501',
-    projectId: 'demoleng-a6300',
-    storageBucket: 'demoleng-a6300.firebasestorage.app',
-    iosClientId: '905655582501-k1v3u2i19objnv3u4ui5ccbfiihdt5ej.apps.googleusercontent.com',
-    iosBundleId: 'com.example.demo.dev',
+    apiKey: 'AIzaSyDulurCIwalUxwEFJtmEbDE7aAYQH5KnvY',
+    appId: '1:77080916809:ios:009923377a7495785b2098',
+    messagingSenderId: '77080916809',
+    projectId: 'fitlink-b3d6b',
+    storageBucket: 'fitlink-b3d6b.firebasestorage.app',
+    androidClientId: '77080916809-j0gjnfkj651qdogk0irge1mb0jh21lr1.apps.googleusercontent.com',
+    iosClientId: '77080916809-584bmt7lkfujgjfkbr88v170r69lmf4p.apps.googleusercontent.com',
+    iosBundleId: 'com.fitlink.app.dev',
   );
+
 }

@@ -9,7 +9,7 @@ class SchemaData {
   static ThemeData lightThemeData({String? locale}) {
     return ThemeData(
             useMaterial3: true,
-            fontFamily: locale == 'en' ? 'DMSans' : 'KohSantepheap')
+            fontFamily: locale == 'en' ? 'Lexend' : 'KohSantepheap')
         .copyWith(
       textTheme: AppTextTheme.lightTextTheme,
       scaffoldBackgroundColor: AppColors.backgroundLight,
@@ -29,7 +29,7 @@ class SchemaData {
   static ThemeData darkThemeData({String? locale}) {
     return ThemeData(
             useMaterial3: true,
-            fontFamily: locale == 'en' ? 'DMSans' : 'KohSantepheap')
+            fontFamily: locale == 'en' ? 'Lexend' : 'KohSantepheap')
         .copyWith(
       scaffoldBackgroundColor: Colors.black12,
       textTheme: AppTextTheme.darkTextTheme,

@@ -23,6 +23,30 @@ class _DemoScreenState extends ConsumerState<DemoScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Text(
+              'This is  KohSantepheap',
+              style: TextStyle(
+                fontFamily: 'KohSantepheap',
+                fontWeight: FontWeight.w600, // Regular
+                fontSize: 16,
+              ),
+            ),
+            const Text(
+              'This is  DMSans',
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                fontWeight: FontWeight.w600, // Regular
+                fontSize: 16,
+              ),
+            ),
+            const Text(
+              'This is Lexend',
+              style: TextStyle(
+                fontFamily: 'Lexend',
+                fontWeight: FontWeight.w600, // Regular
+                fontSize: 16,
+              ),
+            ),
             Text(tr(context).welcome,
                 style:
                     AppTextTheme.getTextTheme(appSettings.appTheme!).bodyLarge),

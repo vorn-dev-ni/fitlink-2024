@@ -10,77 +10,77 @@ class AppTextTheme {
                 fontSize: 57,
                 color: AppColors.textColor,
                 fontWeight: FontWeight.w400,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             displayMedium: const TextStyle(
                 fontSize: 45,
                 color: AppColors.textColor,
                 fontWeight: FontWeight.w400,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             displaySmall: const TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.w400,
                 color: AppColors.textColor,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             headlineLarge: const TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.w400,
                 color: AppColors.textColor,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             headlineMedium: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w400,
                 color: AppColors.textColor,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             headlineSmall: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w400,
                 color: AppColors.textColor,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             titleLarge: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w500,
                 color: AppColors.textColor,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             titleMedium: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: AppColors.textColor,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             titleSmall: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: AppColors.textColor,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             bodyLarge: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textColor,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             bodyMedium: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: AppColors.textColor,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             bodySmall: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
                 color: AppColors.textColor,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             labelLarge: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: AppColors.textColor,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             labelMedium: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: AppColors.textColor,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             labelSmall: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
                 color: AppColors.textColor,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
           );
 
   // Dark Theme Text Styles
@@ -89,63 +89,63 @@ class AppTextTheme {
             displayLarge: const TextStyle(
                 fontSize: 57,
                 fontWeight: FontWeight.w400,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             displayMedium: const TextStyle(
                 fontSize: 45,
                 fontWeight: FontWeight.w400,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             displaySmall: const TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.w400,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             headlineLarge: const TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.w400,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             headlineMedium: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w400,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             headlineSmall: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w400,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             titleLarge: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w500,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             titleMedium: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             titleSmall: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             bodyLarge: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             bodyMedium: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             bodySmall: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             labelLarge: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             labelMedium: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
             labelSmall: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
-                fontFamily: 'DMSans'),
+                fontFamily: 'Lexend'),
           );
 
   static TextTheme getTextTheme(AppTheme appTheme) {

@@ -95,16 +95,67 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material  class.
   uses-material-design: true
-  
-  # To add assets to your application, add an assets section, like this:
+    # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+    - assets/fonts/
     - assets/lotties/
     - assets/icon/svg/
     - assets/icon/
     - assets/utils/
     - .env.dev
     - .env
+  fonts:
+    - family: DMSans
+      fonts:
+        - asset: assets/fonts/dmsans/DMSans-Black.ttf
+          weight: 900
+        - asset: assets/fonts/dmsans/DMSans-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/dmsans/DMSans-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/dmsans/DMSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/dmsans/DMSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/dmsans/DMSans-Light.ttf
+          weight: 200
+        - asset: assets/fonts/dmsans/DMSans-Thin.ttf
+          weight: 100
+
+    - family: Lexend
+      fonts:
+        - asset: assets/fonts/lexend/Lexend-Black.ttf
+          weight: 900
+        - asset: assets/fonts/lexend/Lexend-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/lexend/Lexend-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/lexend/Lexend-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/lexend/Lexend-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/lexend/Lexend-Light.ttf
+          weight: 200
+        - asset: assets/fonts/lexend/Lexend-Thin.ttf
+          weight: 100
+
+    - family: KohSantepheap
+      fonts:
+        - asset: assets/fonts/kohsantapheap/KohSantepheap-Black.ttf
+          weight: 900
+        - asset: assets/fonts/kohsantapheap/KohSantepheap-Bold.ttf
+          weight: 600
+        - asset: assets/fonts/kohsantapheap/KohSantepheap-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/kohsantapheap/KohSantepheap-Regular.ttf
+          weight: 300
+        - asset: assets/fonts/kohsantapheap/KohSantepheap-Light.ttf
+          weight: 200
+        - asset: assets/fonts/kohsantapheap/KohSantepheap-Thin.ttf
+          weight: 100
+
+
 
 flutter_intl:
   flutter_intl:
@@ -127,47 +178,7 @@ flutter_intl:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  fonts:
-    - family: DMSans
-      fonts:
-        - asset: assets/fonts/DMSans-Black.ttf
-          weight: 900
-        - asset: assets/fonts/DMSans-Black.ttf
-          weight: 800
-        - asset: assets/fonts/DMSans-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/DMSans-ExtraBold.ttf
-          weight: 600
-        - asset: assets/fonts/DMSans-Bold.ttf
-          weight: 500
-        - asset: assets/fonts/DMSans-Medium.ttf
-          weight: 400
-        - asset: assets/fonts/DMSans-Regular.ttf
-          weight: 300
-        - asset: assets/fonts/DMSans-Light.ttf
-          weight: 200
-        - asset: assets/fonts/DMSans-Thin.ttf
-          weight: 100
-    - family: KohSantepheap
-      fonts:
-        - asset: assets/fonts/KohSantepheap-Black.ttf
-          weight: 900
-        - asset: assets/fonts/KohSantepheap-Black.ttf
-          weight: 800
-        - asset: assets/fonts/KohSantepheap-Black.ttf
-          weight: 700
-        - asset: assets/fonts/KohSantepheap-Bold.ttf
-          weight: 600
-        - asset: assets/fonts/KohSantepheap-Bold.ttf
-          weight: 500
-        - asset: assets/fonts/KohSantepheap-Medium.ttf
-          weight: 400
-        - asset: assets/fonts/KohSantepheap-Regular.ttf
-          weight: 300
-        - asset: assets/fonts/KohSantepheap-Light.ttf
-          weight: 200
-        - asset: assets/fonts/KohSantepheap-Thin.ttf
-          weight: 100  
-  #
+
+ #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

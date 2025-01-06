@@ -159,20 +159,17 @@ platform :android do
   lane :increment_version do
     # Get current version code from build.gradle
     version_code = get_version_code(
-      gradle_file_path: "./android/app/build.gradle"
+      gradle_file_path: "./android/app/build.gradle",
     )
+
+    put("Versoon code is #{version_code}")
     
     # Increment version code
-    increment_version_code(
-      gradle_file_path: "./android/app/build.gradle"
-        #ext_constant_name: "test"
-        #app_folder_name:"app"
-  )
-
+    increment_version_code(  gradle_file_path: "./android/app/build.gradle"
+)
     # Get current version name from build.gradle
     version_name = get_version_name(
          gradle_file_path: "./android/app/build.gradle",
-         ext_constant_name:"versionName"
 
     )
 
@@ -186,43 +183,39 @@ end
   desc "Build and distribute APK for Staging"
   lane :staging_beta do
     load_env(env:"staging")  # Pass "staging" as a hash parameter
-    gradle(
-      task: "clean"
-    )
+    gradle(task: "clean",project_dir: "./android")
     version_name = get_version_name(
       gradle_file_path: "./android/app/build.gradle",
       ext_constant_name:"versionName"
-
     )
     
     increment_version_code(
-      gradle_file_path: "app/build.gradle"
+      gradle_file_path: "./android/app/build.gradle",
     )
     version_code = get_version_code(
       gradle_file_path: "./android/app/build.gradle"
+      
     )
-
  
    gradle(
-    task: "assembleStaging", 
-    build_type: "Release"
-   )
-   
- 
+    task: "assemble",
+    build_type: "Release",
+    project_dir: "./android",
+    flavor: "staging"
+  )
     
    firebase_app_distribution(
-    app: "1:905655582501:android:8e8eb962bbf0871e6ae4cc",  # Your Firebase App ID
-    testers: "Sivsovanpanhavorn@gmail.com,Ochhengkheang@gmail.com,hvireakboth64@gmail.com",  # Testers' email addresses
+    app: "1:77080916809:android:ebe1398ec028ced65b2098",  # Your Firebase App ID
+    testers: "Sivsovanpanhavorn@gmail.com, Sovanpanhavorn.siv@tovtrip.com",  # Testers' email addresses
     release_notes: "Release notes for staging test",
-    apk_path: "../build/app/outputs/flutter-apk/app-staging-release.apk"  # Adjust the path for flavor1
+apk_path: "/Users/macbook/Documents/flutter/fitlink-2024/build/app/outputs/flutter-apk/app-staging-release.apk"
   )
-
    deploy_message = "New build Android is available on Firebase App Distribution!!
   • Environment : Staging
   • Build : #{version_code}
   • Version : #{version_name}
    And check your email for testing invitation. Thank you."
-   puts "CHATID: #{ENV['CHAT_ID']} >>> TLETOKEN: #{ENV['TELE_TOKEN']}"
+   puts "CHATID: #{ENV['CHAT_ID']} >>> TElETOKEN: #{ENV['TELE_TOKEN']}"
     telegram(
         text: deploy_message,
         chat_id: ENV['CHAT_ID'], # Your Telegram group chat ID

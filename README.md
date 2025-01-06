@@ -5,7 +5,6 @@
 - Firebase Integration: Seamless authentication and database storage.
 - Native Splash Screen: A custom splash screen for your app's launch.
 - App Configuration: Using .env for environment variables.
-- AI Integration: Integration with Google Generative AI for additional features.
 - File Picker: Easy selection of files from the device.
 - Riverpod for State Management: A robust state management solution.
 - Image and File Management: Integration of image picking and file handling.

@@ -1,8 +1,10 @@
 import 'package:demo/common/model/route_app.dart';
 import 'package:demo/common/model/screen_app.dart';
+import 'package:demo/features/authentication/auth.dart';
 import 'package:demo/features/home/about.dart';
 import 'package:demo/features/home/demo.dart';
 import 'package:demo/features/home/welcome_screen.dart';
+import 'package:demo/features/on_boarding/on_boarding.dart';
 import 'package:demo/features/other/no_internet.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/svg_asset.dart';
@@ -12,6 +14,11 @@ class AppRoutes {
   AppRoutes._();
 
   static final List<RoutesApp> mainStacks = [
+    RoutesApp(
+        routeName: AppPage.auth, builder: (context) => const AuthScreen()),
+    RoutesApp(
+        routeName: AppPage.onBoarding,
+        builder: (context) => const OnBoardingScreen()),
     RoutesApp(
         routeName: AppPage.FIRST, builder: (context) => const WelcomeScreen()),
     RoutesApp(

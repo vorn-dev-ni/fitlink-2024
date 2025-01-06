@@ -108,6 +108,7 @@ class _MyAppState extends ConsumerState<MyApp> {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
+
         // routes: AppRoutes.getAppRoutes(),
         navigatorKey: navigatorKey,
         onGenerateRoute: (settings) =>
@@ -117,7 +118,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         theme: SchemaData.lightThemeData(locale: appSettingState.localization),
         darkTheme:
             SchemaData.darkThemeData(locale: appSettingState.localization),
-        initialRoute: AppPage.FIRST,
+        initialRoute: AppPage.START,
         // home: const WelcomeScreen(),
       );
     });

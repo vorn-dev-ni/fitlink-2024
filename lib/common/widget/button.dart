@@ -23,7 +23,7 @@ class ButtonApp extends StatelessWidget {
     this.color = Colors.blue, // Default color
     this.textColor = Colors.white, // Default text color
     this.elevation = 0.0, // Default elevation
-    this.radius = 8.0, // Default border radius
+    this.radius = 0, // Default border radius
     this.iconButton = const SizedBox(
       width: 0,
       height: 0,
@@ -44,6 +44,10 @@ class ButtonApp extends StatelessWidget {
               }
               return 0;
             }),
+            shape: radius > 0
+                ? const WidgetStatePropertyAll(CircleBorder(eccentricity: 0))
+                : null,
+            padding: WidgetStatePropertyAll(EdgeInsets.all(radius)),
             backgroundColor: WidgetStatePropertyAll(color),
             overlayColor:
                 WidgetStateProperty.all(splashColor.withOpacity(0.1))),

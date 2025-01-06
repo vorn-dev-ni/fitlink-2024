@@ -8,13 +8,17 @@ class AppPage {
 
   static const RESULT = "Result";
 
+  //Onboarding
+
+  static const onBoarding = 'first';
+
   // Navigation Bar
   static const NAV_WELCOME_HOME = 'NAV_HOME';
   static const NAV_SCAN = "Scan";
   static const NAV_ACCOUNT = "Account";
 
   //STARTING
-  static const AUTH = 'auth';
+  static const auth = 'auth';
   static const LOGIN = 'login';
   static const REGISTER = 'register';
   static const FIRST = 'Welcome';

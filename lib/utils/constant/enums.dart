@@ -10,6 +10,41 @@ enum AppTheme { dark, light }
 
 enum NutritionFactsType { calories, fat, protein, sugar, carbohydrate }
 
+enum TimeSelection { startTime, endTime }
+
+// ignore: constant_identifier_names
+enum UserRoles { ADMIN, NORMAL, GYM_OWNER, GUEST }
+
+extension UserRolesExtension on UserRoles {
+  String toValue() {
+    switch (this) {
+      case UserRoles.ADMIN:
+        return "admin";
+      case UserRoles.NORMAL:
+        return "normal";
+      case UserRoles.GYM_OWNER:
+        return "gym_owner";
+      case UserRoles.GUEST:
+        return "guest";
+    }
+  }
+
+  static UserRoles? fromValue(String? value) {
+    switch (value?.toLowerCase()) {
+      case "admin":
+        return UserRoles.ADMIN;
+      case "normal":
+        return UserRoles.NORMAL;
+      case "gym_owner":
+        return UserRoles.GYM_OWNER;
+      case "guest":
+        return UserRoles.GUEST;
+      default:
+        return null;
+    }
+  }
+}
+
 enum AppState {
   DATA_NOT_FETCHED,
   FETCHING_DATA,

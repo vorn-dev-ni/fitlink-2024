@@ -55,11 +55,34 @@ class FormatterUtils {
     return '${date.day.toString().padLeft(2, '0')}$separator${date.month.toString().padLeft(2, '0')}$separator${date.year}';
   }
 
+  static String? formatDateToDuration(DateTime? datetime) {
+    if (datetime == null) {
+      return null;
+    }
+    String formattedTime = DateFormat('HH:mm').format(datetime);
+    return formattedTime;
+  }
+
   static String formatAppDateString(String dateString) {
     try {
       DateTime date = DateTime.parse(dateString);
 
       return DateFormat('MMM d, y').format(date);
+    } catch (e) {
+      return "Invalid date format";
+    }
+  }
+
+  static String getFormattedMonth(DateTime date) {
+    return DateFormat('MMM').format(date);
+  } // Month as "JUN", "APR", etc.
+
+  static String? formatDateToString(DateTime? dateTime) {
+    try {
+      if (dateTime == null) {
+        return null;
+      }
+      return DateFormat('MMM d, y').format(dateTime);
     } catch (e) {
       return "Invalid date format";
     }

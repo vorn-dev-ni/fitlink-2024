@@ -70,6 +70,24 @@ dependencies:
   change_app_package_name: ^1.4.0
   google_sign_in: ^6.2.2
   google_sign_in_ios: ^5.7.8
+  smooth_page_indicator: ^1.2.0+3
+  fluttertoast: ^8.2.10
+  flutter_facebook_auth: ^6.0.4
+  otp_autofill: ^4.1.0
+  firebase_app_check: ^0.3.2
+  fancy_shimmer_image: ^2.0.3
+  flutter_animate: ^4.5.2
+  google_maps_flutter: 2.10.0
+  photo_view: ^0.15.0
+  syncfusion_flutter_datepicker:  27.2.5
+  geolocator: ^13.0.2
+  dotted_border: ^2.1.0
+  image_cropper: 8.1.0
+  path_provider: ^2.1.5
+  firebase_storage: ^12.4.1
+  skeletonizer: ^1.4.3
+  share_plus: ^10.1.4
+  country_picker: ^2.0.27
   # flutter_config: ^2.0.2
 
 dev_dependencies:
@@ -83,6 +101,7 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   riverpod_generator: ^2.6.2
   build_runner: ^2.4.13
+  flutter_gen_runner:
   custom_lint: ^0.7.0
   riverpod_lint: ^2.6.2
 
@@ -98,12 +117,15 @@ flutter:
     # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+    - assets/splash/
+    - assets/app/
     - assets/fonts/
     - assets/lotties/
     - assets/icon/svg/
     - assets/icon/
     - assets/utils/
     - .env.dev
+    - .env.staging
     - .env
   fonts:
     - family: DMSans
@@ -155,8 +177,13 @@ flutter:
         - asset: assets/fonts/kohsantapheap/KohSantepheap-Thin.ttf
           weight: 100
 
-
-
+flutter_gen:
+  output: lib/gen/ # Optional (default: lib/gen/)
+  line_length: 80 # Optional (default: 80)
+  assets:
+    exclude:
+      - .env*
+  
 flutter_intl:
   flutter_intl:
   enabled: true

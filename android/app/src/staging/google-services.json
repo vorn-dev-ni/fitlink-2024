@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "77080916809-mj0d4vgj8mn60v29grp9i8bordkfahug.apps.googleusercontent.com",
+          "client_id": "77080916809-4i6mmvvfm1k9g06eddgq1hcjdc6m367h.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.fitlink.app",
-            "certificate_hash": "f9d2117f9da6cb4bb7443c1c85e1dd454f79188c"
+            "certificate_hash": "bf660fc903707cd181c92062ed5a9c0219f0a4b1"
           }
         },
         {
@@ -29,6 +29,9 @@
       "api_key": [
         {
           "current_key": "AIzaSyAi_T6gFYy31O_jaSmUjZrBOK9kTxJvoAU"
+        },
+        {
+          "current_key": "AIzaSyAHa05TAy5-ErDGdcHMJsNoco8Q_PsGm4Q"
         }
       ],
       "services": {
@@ -58,11 +61,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "77080916809-j0gjnfkj651qdogk0irge1mb0jh21lr1.apps.googleusercontent.com",
+          "client_id": "77080916809-ij9licf4evqcjjtdj9fpg8ksqoj3f9de.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.fitlink.app.dev",
-            "certificate_hash": "f9d2117f9da6cb4bb7443c1c85e1dd454f79188c"
+            "certificate_hash": "bf660fc903707cd181c92062ed5a9c0219f0a4b1"
           }
         },
         {
@@ -73,6 +76,9 @@
       "api_key": [
         {
           "current_key": "AIzaSyAi_T6gFYy31O_jaSmUjZrBOK9kTxJvoAU"
+        },
+        {
+          "current_key": "AIzaSyAHa05TAy5-ErDGdcHMJsNoco8Q_PsGm4Q"
         }
       ],
       "services": {
@@ -102,11 +108,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "77080916809-sj7slc1k91upluve62vopppkrj7ctig1.apps.googleusercontent.com",
+          "client_id": "77080916809-dd2lpd5tcf37efi3foc0e1l5n8p1c5vd.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.fitlink.app.staging",
-            "certificate_hash": "f9d2117f9da6cb4bb7443c1c85e1dd454f79188c"
+            "certificate_hash": "bf660fc903707cd181c92062ed5a9c0219f0a4b1"
           }
         },
         {
@@ -117,6 +123,9 @@
       "api_key": [
         {
           "current_key": "AIzaSyAi_T6gFYy31O_jaSmUjZrBOK9kTxJvoAU"
+        },
+        {
+          "current_key": "AIzaSyAHa05TAy5-ErDGdcHMJsNoco8Q_PsGm4Q"
         }
       ],
       "services": {

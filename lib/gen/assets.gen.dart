@@ -18,12 +18,21 @@ class $AssetsAppGen {
   /// File path: assets/app/art_two.png
   AssetGenImage get artTwo => const AssetGenImage('assets/app/art_two.png');
 
+  /// File path: assets/app/default_avatar.jpg
+  AssetGenImage get defaultAvatar =>
+      const AssetGenImage('assets/app/default_avatar.jpg');
+
   /// File path: assets/app/gym_background.png
   AssetGenImage get gymBackground =>
       const AssetGenImage('assets/app/gym_background.png');
 
+  /// File path: assets/app/no_img_available.png
+  AssetGenImage get noImgAvailable =>
+      const AssetGenImage('assets/app/no_img_available.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [artOne, artTwo, gymBackground];
+  List<AssetGenImage> get values =>
+      [artOne, artTwo, defaultAvatar, gymBackground, noImgAvailable];
 }
 
 class $AssetsIconGen {
@@ -39,8 +48,11 @@ class $AssetsLottiesGen {
   /// File path: assets/lotties/loading.json
   String get loading => 'assets/lotties/loading.json';
 
+  /// File path: assets/lotties/loading_two.json
+  String get loadingTwo => 'assets/lotties/loading_two.json';
+
   /// List of all assets
-  List<String> get values => [loading];
+  List<String> get values => [loading, loadingTwo];
 }
 
 class $AssetsSplashGen {
@@ -60,37 +72,98 @@ class $AssetsSplashGen {
   List<AssetGenImage> get values => [flutter, icLauncher, logo];
 }
 
+class $AssetsUtilsGen {
+  const $AssetsUtilsGen();
+
+  /// File path: assets/utils/amy.jpg
+  AssetGenImage get amy => const AssetGenImage('assets/utils/amy.jpg');
+
+  /// File path: assets/utils/fitlink_logo.jpg
+  AssetGenImage get fitlinkLogo =>
+      const AssetGenImage('assets/utils/fitlink_logo.jpg');
+
+  /// File path: assets/utils/kith.jpg
+  AssetGenImage get kith => const AssetGenImage('assets/utils/kith.jpg');
+
+  /// File path: assets/utils/long.jpg
+  AssetGenImage get long => const AssetGenImage('assets/utils/long.jpg');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [amy, fitlinkLogo, kith, long];
+}
+
 class $AssetsIconSvgGen {
   const $AssetsIconSvgGen();
 
-  /// File path: assets/icon/svg/email.svg
-  String get email => 'assets/icon/svg/email.svg';
+  /// File path: assets/icon/svg/chat.svg
+  String get chat => 'assets/icon/svg/chat.svg';
 
-  /// File path: assets/icon/svg/oops.svg
-  String get oops => 'assets/icon/svg/oops.svg';
+  /// File path: assets/icon/svg/check.svg
+  String get check => 'assets/icon/svg/check.svg';
 
-  /// File path: assets/icon/svg/oops_two.svg
-  String get oopsTwo => 'assets/icon/svg/oops_two.svg';
+  /// File path: assets/icon/svg/circle.svg
+  String get circle => 'assets/icon/svg/circle.svg';
 
-  /// File path: assets/icon/svg/yoga.svg
-  String get yoga => 'assets/icon/svg/yoga.svg';
+  /// File path: assets/icon/svg/cloud-up.svg
+  String get cloudUp => 'assets/icon/svg/cloud-up.svg';
+
+  /// File path: assets/icon/svg/dot_indicator.svg
+  String get dotIndicator => 'assets/icon/svg/dot_indicator.svg';
+
+  /// File path: assets/icon/svg/dumbell.svg
+  String get dumbell => 'assets/icon/svg/dumbell.svg';
+
+  /// File path: assets/icon/svg/eye-closed.svg
+  String get eyeClosed => 'assets/icon/svg/eye-closed.svg';
+
+  /// File path: assets/icon/svg/eye.svg
+  String get eye => 'assets/icon/svg/eye.svg';
+
+  /// File path: assets/icon/svg/file-neutral.svg
+  String get fileNeutral => 'assets/icon/svg/file-neutral.svg';
+
+  /// File path: assets/icon/svg/house.svg
+  String get house => 'assets/icon/svg/house.svg';
+
+  /// File path: assets/icon/svg/mdi_location.svg
+  String get mdiLocation => 'assets/icon/svg/mdi_location.svg';
+
+  /// File path: assets/icon/svg/not_found.svg
+  String get notFound => 'assets/icon/svg/not_found.svg';
+
+  /// File path: assets/icon/svg/plus.svg
+  String get plus => 'assets/icon/svg/plus.svg';
+
+  /// File path: assets/icon/svg/share.svg
+  String get share => 'assets/icon/svg/share.svg';
 
   /// List of all assets
-  List<String> get values => [email, oops, oopsTwo, yoga];
+  List<String> get values => [
+        chat,
+        check,
+        circle,
+        cloudUp,
+        dotIndicator,
+        dumbell,
+        eyeClosed,
+        eye,
+        fileNeutral,
+        house,
+        mdiLocation,
+        notFound,
+        plus,
+        share
+      ];
 }
 
 class Assets {
   Assets._();
 
-  static const String aEnv = '.env';
-  static const String aEnvdev = '.env.dev';
   static const $AssetsAppGen app = $AssetsAppGen();
   static const $AssetsIconGen icon = $AssetsIconGen();
   static const $AssetsLottiesGen lotties = $AssetsLottiesGen();
   static const $AssetsSplashGen splash = $AssetsSplashGen();
-
-  /// List of all assets
-  static List<String> get values => [aEnv, aEnvdev];
+  static const $AssetsUtilsGen utils = $AssetsUtilsGen();
 }
 
 class AssetGenImage {

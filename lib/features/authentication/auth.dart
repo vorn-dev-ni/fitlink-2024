@@ -1,39 +1,73 @@
-import 'package:demo/features/authentication/phone_num.dart';
-import 'package:demo/features/authentication/widget/login/email_login.dart';
-import 'package:demo/utils/constant/app_colors.dart';
-import 'package:demo/utils/constant/sizes.dart';
-import 'package:demo/utils/theme/text/text_theme.dart';
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-class AuthScreen extends StatefulWidget {
+import 'package:demo/common/widget/backdrop_loading.dart';
+import 'package:demo/core/riverpod/app_provider.dart';
+import 'package:demo/data/service/firebase/firebase_service.dart';
+import 'package:demo/features/authentication/views/login/login_email.dart';
+import 'package:demo/features/authentication/views/login/login_phone.dart';
+import 'package:demo/utils/constant/app_colors.dart';
+import 'package:demo/utils/constant/app_page.dart';
+import 'package:demo/utils/constant/sizes.dart';
+import 'package:demo/utils/device/device_utils.dart';
+import 'package:demo/utils/helpers/helpers_utils.dart';
+import 'package:demo/utils/theme/text/text_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
+  ConsumerState<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
+class _AuthScreenState extends ConsumerState<AuthScreen>
+    with TickerProviderStateMixin {
   late TabController _tabController;
+  StreamSubscription<User?>? streamAuthState;
   final List<Widget> _screens = const [EmailLoginTab(), PhoneNumberTab()];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: _screens.length, vsync: this);
+
+    _tabController.addListener(() {
+      DeviceUtils.hideKeyboard(context);
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    // streamAuthState?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(Sizes.xl),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    final appLoading = ref.watch(appLoadingStateProvider);
+    return GestureDetector(
+      onTap: () => DeviceUtils.hideKeyboard(context),
+      child: Scaffold(
+        body: SafeArea(
+          child: Stack(
             children: [
-              headerTitle(),
-              tabBarHeader(),
-              tabBarContent(),
+              Padding(
+                padding: const EdgeInsets.all(Sizes.xl),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    headerTitle(),
+                    tabBarHeader(),
+                    tabBarContent(),
+                  ],
+                ),
+              ),
+              if (appLoading == true)
+                backDropLoading(
+                    backgroundColor: const Color.fromARGB(255, 0, 0, 0)),
             ],
           ),
         ),
@@ -66,6 +100,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       indicatorColor: AppColors.secondaryColor,
       indicatorSize: TabBarIndicatorSize.label,
       isScrollable: true,
+
       tabAlignment: TabAlignment.start,
       labelStyle: AppTextTheme.lightTextTheme.titleMedium,
       overlayColor: const WidgetStatePropertyAll(AppColors.backgroundLight),
@@ -73,8 +108,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       // indicatorPadding: const EdgeInsets.all(2),
       indicatorWeight: 1,
 
-      labelColor: AppColors.secondaryColor, // Active tab text color
-      unselectedLabelColor: AppColors.neutralDark, // Inactive tab text color
+      labelColor: AppColors.secondaryColor,
+      unselectedLabelColor: AppColors.neutralDark,
       tabs: const [
         Tab(text: 'Email'),
         Tab(text: 'Phone Number'),

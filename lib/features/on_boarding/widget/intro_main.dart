@@ -29,7 +29,7 @@ class _IntroMainState extends ConsumerState<IntroMain> {
     return Stack(
       children: [
         background_boarding(image: widget.backgroundAssets),
-        if (activeIndex < 2) introHeader(),
+        if (activeIndex < 2) introHeader(context),
         introContent(body: widget.body, title: widget.title),
       ],
     );

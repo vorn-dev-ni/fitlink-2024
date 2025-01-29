@@ -30,7 +30,7 @@ class BottomButtonStarter extends ConsumerWidget {
         splashColor: AppColors.backgroundLight,
         onPressed: () {
           HelpersUtils.navigatorState(context).pushNamedAndRemoveUntil(
-            AppPage.auth,
+            AppPage.home,
             (route) => false,
           );
         },

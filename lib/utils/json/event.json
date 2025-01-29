@@ -1,0 +1,38 @@
+[
+  {
+    "event_title": "Sunrise Yoga Session",
+    "descriptions": "A refreshing yoga session to start your day with energy and mindfulness.",
+    "event_date": "2025-02-12",
+    "free_entry": true,
+    "feature": "Guided yoga, meditation, scenic view",
+    "address": "Central Park, Yoga Hill, Cityville",
+    "distanceMeasurement": "3 miles",
+    "time_schedule": "6:30 AM - 8:00 AM",
+    "lat": 40.785091,
+    "lng": -73.968285,
+    "participants": [
+      {
+        "userId": "X0KJH6V2lFfUmfpjY415e4cZeAm1",
+        "fullName": "ZrXaar"
+      }
+    ]
+  },
+  {
+    "event_title": "Sunrise Yoga Session",
+    "descriptions": "A refreshing yoga session to start your day with energy and mindfulness.",
+    "event_date": "2025-02-12",
+    "free_entry": true,
+    "feature": "Guided yoga, meditation, scenic view",
+    "address": "Central Park, Yoga Hill, Cityville",
+    "distanceMeasurement": "3 miles",
+    "time_schedule": "6:30 AM - 8:00 AM",
+    "lat": 40.785091,
+    "lng": -73.968285,
+    "participants": [
+      {
+        "userId": "X0KJH6V2lFfUmfpjY415e4cZeAm1",
+        "fullName": "ZrXaar"
+      }
+    ]
+  }
+]

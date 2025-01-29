@@ -5,7 +5,6 @@ class AppPage {
 
   static const SECOND = 'About';
   static const DEMO = 'Demo';
-
   static const RESULT = "Result";
 
   //Onboarding
@@ -20,13 +19,25 @@ class AppPage {
   //STARTING
   static const auth = 'auth';
   static const LOGIN = 'login';
-  static const REGISTER = 'register';
-  static const FIRST = 'Welcome';
-  static const FORGET = 'Forget Password';
-  static const EMAIL_VERIFY = 'Email Verify';
-  static const SUCESS = 'Success';
+  static const register = 'register';
+  static const forgetpassword = 'ForgetPassword';
+  static const emailSuccess = 'EmailVerify';
+  static const forgetpasswordSuccess = 'PasswordResetSUccess';
+
+  static const otpVerify = 'OTPVerify';
 
   //Utils
   static const NOTFOUND = 'NotFound';
   static const NO_INTERNET = 'No internet';
+
+  //HOME
+  static const home = 'Welcome';
+
+  //Events
+
+  static const eventDetail = 'EventDetail';
+  static const eventCreate = 'EventCreate';
+  static const eventRequestGymTrainer = 'EventRequest';
+
+  //SUCCCESS_OTP
 }

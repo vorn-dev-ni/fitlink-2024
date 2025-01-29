@@ -3,6 +3,7 @@ import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/theme/button/elevation_theme.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class SchemaData {
   SchemaData._();
@@ -12,6 +13,9 @@ class SchemaData {
             fontFamily: locale == 'en' ? 'Lexend' : 'KohSantepheap')
         .copyWith(
       textTheme: AppTextTheme.lightTextTheme,
+      extensions: const [
+        SkeletonizerConfigData(),
+      ],
       scaffoldBackgroundColor: AppColors.backgroundLight,
       primaryColor: AppColors.primaryColor,
       brightness: Brightness.light,
@@ -34,6 +38,9 @@ class SchemaData {
       scaffoldBackgroundColor: Colors.black12,
       textTheme: AppTextTheme.darkTextTheme,
       brightness: Brightness.dark,
+      extensions: const [
+        SkeletonizerConfigData(),
+      ],
       elevatedButtonTheme: ElevationTheme.elevationButtonDark,
       primaryColorDark: AppColors.primaryDark,
       colorScheme: const ColorScheme.dark(

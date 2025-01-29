@@ -9,7 +9,6 @@ import 'package:demo/l10n/I10n.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/enums.dart';
-import 'package:demo/utils/device/device_utils.dart';
 import 'package:demo/utils/flavor/config.dart';
 import 'package:demo/utils/global_config.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';

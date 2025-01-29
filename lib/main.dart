@@ -9,6 +9,7 @@ import 'package:demo/l10n/I10n.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/enums.dart';
+import 'package:demo/utils/device/device_utils.dart';
 import 'package:demo/utils/flavor/config.dart';
 import 'package:demo/utils/global_config.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
@@ -18,15 +19,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sizer/sizer.dart';
 import 'generated/l10n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 // import 'package:flutter_config/flutter_config.dart';
 void main() async {
   // await FlutterConfig.loadEnvVariables();
+
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.black,
+    statusBarIconBrightness: Brightness.light,
+  ));
   AppConfig.create(flavor: Flavor.production);
   await GlobalConfig().init();
   await LocalStorageUtils().init();
@@ -35,6 +43,10 @@ void main() async {
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
+  await FirebaseAppCheck.instance.activate(
+    appleProvider: AppleProvider.appAttestWithDeviceCheckFallback,
+    androidProvider: AndroidProvider.playIntegrity,
+  );
 
   //Detech Native Platform crash
   PlatformDispatcher.instance.onError = (error, stack) {
@@ -63,16 +75,17 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
+
     _firebaseAuthService = FirebaseAuthService();
     HelpersUtils.removeSplashScreen();
+
     streamAuthState = _firebaseAuthService.authStateChanges.listen(
       (user) async {
-        debugPrint("Auth state has changed:");
-        if (user != null && user.emailVerified) {
+        String? provider = user?.providerData[0].providerId;
+        if (user != null && user.emailVerified || provider == 'facebook.com') {
           if (mounted && !isNavigating) {
             isNavigating = true;
-            await LocalStorageUtils().setKeyString('email', user.email!);
-            await Future.delayed(const Duration(seconds: 2));
+            await LocalStorageUtils().setKeyString('email', user!.email!);
             ref.read(appLoadingStateProvider.notifier).setState(false);
             navigatorKey.currentState?.pushNamedAndRemoveUntil(
               AppPage.home,
@@ -80,6 +93,7 @@ class _MyAppState extends ConsumerState<MyApp> {
             );
           }
         } else {
+          isNavigating = false;
           await user?.reload();
         }
       },
@@ -89,9 +103,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         .onConnectivityChange()
         .listen(
       (event) {
-        if (kDebugMode) {
-          print("Connection state is ${event.toString()}");
-        }
+        debugPrint("Connection state is ${event.toString()}");
         _handleCheckConnection(event);
       },
     );
@@ -140,7 +152,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         : ThemeMode.dark;
     return Sizer(builder: (context, orientation, screenType) {
       return MaterialApp(
-        title: 'Flutter Dev',
+        title: 'Flutter Production',
         builder: FToastBuilder(),
         debugShowCheckedModeBanner: false,
         locale: Locale(appSettingState.localization),

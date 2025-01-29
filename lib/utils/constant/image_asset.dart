@@ -9,4 +9,6 @@ final class ImageAsset {
   static const fitnessHealth = 'assets/icon/health.png';
   static const lottiesloadng = 'assets/lotties/loading.json';
   static const emailSvg = 'assets/utils/email.png';
+  static const errorPlaceholderImage =
+      'https://demofree.sirv.com/nope-not-here.jpg';
 }

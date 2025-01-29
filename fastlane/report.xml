@@ -5,42 +5,7 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: Switch to android load_env lane" time="0.000179">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="1: clean" time="2.704209">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="2: get_version_name" time="0.000401">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="3: increment_version_code" time="0.001129">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="4: get_version_code" time="0.000224">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="5: assemblestagingRelease" time="44.10284">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="6: firebase_app_distribution" time="15.881992">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="7: telegram" time="0.932174">
+      <testcase classname="fastlane.lanes" name="0: flutter pub run build_runner watch --delete-conflicting-outputs" time="1048.646732">
         
       </testcase>
     

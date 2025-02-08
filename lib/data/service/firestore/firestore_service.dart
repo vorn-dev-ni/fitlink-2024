@@ -23,7 +23,11 @@ class FirestoreService {
         .snapshots()
         .map((snapshot) {
       if (snapshot.exists) {
-        return AuthModel.fromFirestore(snapshot);
+        debugPrint("call exist tah ${uid}");
+        final data = AuthModel.fromFirestore(snapshot);
+        debugPrint("call exist tah ${data.toString()}");
+
+        return data;
       } else {
         return null;
       }
@@ -74,17 +78,18 @@ class FirestoreService {
     return null;
   }
 
-  Future<AuthModel> getEmail(String uid) async {
-    final User? currentUser = FirebaseAuth.instance.currentUser;
+  Future<AuthModel> getEmail(String? uid) async {
+    // final User? currentUser = FirebaseAuth.instance.currentUser;
+    debugPrint("SYNC USER ${uid}");
 
-    if (currentUser != null) {
+    if (uid != null) {
       try {
         DocumentSnapshot snapshot =
             await _firestore.collection('users').doc(uid).get();
         debugPrint(
-            "The email 222 is  snap shot ${snapshot.exists ? 'tue' : 'false'}");
+            "The email snapshot is is  snap shot ${snapshot.data() != null ? 'tue' : 'false'}");
 
-        if (!snapshot.exists) {
+        if (snapshot.data() == null) {
           return AuthModel();
         }
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;

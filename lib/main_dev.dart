@@ -27,27 +27,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sizer/sizer.dart';
 import 'generated/l10n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
-
-String? currentRouteName;
-
-void updateRoute(String? routeName) {
-  currentRouteName = routeName;
-}
-
-class MyNavigatorObserver extends NavigatorObserver {
-  @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    updateRoute(route.settings.name);
-    super.didPush(route, previousRoute);
-  }
-
-  @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    updateRoute(previousRoute?.settings.name);
-    super.didPop(route, previousRoute);
-  }
-}
 
 void main() async {
   // await FlutterConfig.loadEnvVariables();
@@ -60,10 +39,6 @@ void main() async {
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
-  await FirebaseAppCheck.instance.activate(
-    appleProvider: AppleProvider.appAttestWithDeviceCheckFallback,
-    androidProvider: AndroidProvider.playIntegrity,
-  );
 
   //Detech Native Platform crash
   PlatformDispatcher.instance.onError = (error, stack) {
@@ -86,6 +61,8 @@ class _MyAppState extends ConsumerState<MyApp> {
   late StreamSubscription<dynamic> _streamSubscription;
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   StreamSubscription<User?>? streamAuthState;
+  StreamSubscription<AuthModel?>? streamUserFirestore;
+
   late FirebaseAuthService _firebaseAuthService;
   bool isNavigating = false;
   late FirestoreService firestoreService;
@@ -114,19 +91,23 @@ class _MyAppState extends ConsumerState<MyApp> {
             provider == 'facebook.com' ||
             user?.phoneNumber != null && user?.phoneNumber != "") {
           if (mounted && !isNavigating) {
-            ref.invalidate(profileUserControllerProvider);
             isNavigating = true;
             await LocalStorageUtils().setKeyString('email',
-                user?.email != null ? user!.email! : user!.phoneNumber!);
-            ref.read(appLoadingStateProvider.notifier).setState(false);
-            // ref.invalidate(navbarControllerProvider);
-            await syncUser();
+                user?.email != null ? user!.email! : user?.phoneNumber ?? "");
+            if (user != null) {
+              streamUserFirestore = firestoreService
+                  .getUserStream(user.uid)
+                  .listen((userDoc) async {
+                if (userDoc != null) {
+                  await syncUser(user.uid);
+                }
+              });
+            }
+            await Future.delayed(const Duration(milliseconds: 1000));
             if (navigatorKey.currentState?.canPop() == true) {
               navigatorKey.currentState!
                   .popUntil((route) => route.settings.name == AppPage.auth);
               navigatorKey.currentState!.pop();
-            } else {
-              navigatorKey.currentState!.popAndPushNamed(AppPage.home);
             }
           }
         } else {
@@ -151,16 +132,23 @@ class _MyAppState extends ConsumerState<MyApp> {
   void dispose() {
     _streamSubscription.cancel();
     streamAuthState?.cancel();
+    streamUserFirestore?.cancel();
     super.dispose();
   }
 
-  Future syncUser() async {
+  Future syncUser(String uid) async {
     try {
-      AuthModel? authModel = await firestoreService
-          .getEmail(firestoreService.firebaseAuthService.currentUser!.uid);
-      ref
-          .read(navbarControllerProvider.notifier)
-          .updateProfileTab(authModel.avatar ?? "");
+      debugPrint("SYNC USER ${uid}");
+      AuthModel? authModel = await firestoreService.getEmail(uid);
+      debugPrint("SYNC vatar ${authModel.avatar}");
+
+      if (mounted) {
+        ref
+            .read(navbarControllerProvider.notifier)
+            .updateProfileTab(authModel.avatar ?? "");
+        ref.invalidate(profileUserControllerProvider);
+        ref.read(appLoadingStateProvider.notifier).setState(false);
+      }
     } catch (e) {
       if (mounted) {
         HelpersUtils.showErrorSnackbar(
@@ -224,8 +212,6 @@ class _MyAppState extends ConsumerState<MyApp> {
 
         // routes: AppRoutes.getAppRoutes(),
         navigatorKey: navigatorKey,
-        navigatorObservers: [MyNavigatorObserver()], // Set the observer here
-
         onGenerateRoute: (settings) =>
             GlobalConfig.instance.onGenerateRoute(settings),
 

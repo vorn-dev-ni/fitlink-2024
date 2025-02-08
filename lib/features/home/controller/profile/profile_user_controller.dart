@@ -31,10 +31,13 @@ class ProfileUserController extends _$ProfileUserController {
             ProfileService(firebaseAuthService: FirebaseAuthService()));
     firestoreService =
         FirestoreService(firebaseAuthService: FirebaseAuthService());
+
     return await getData();
   }
 
   FutureOr<AuthModel?> getData() async {
+    debugPrint(
+        "Fireabse user data is ${FirebaseAuth.instance.currentUser?.uid}");
     if (FirebaseAuth.instance.currentUser == null) {
       return AuthModel();
     } else {

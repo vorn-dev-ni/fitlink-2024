@@ -183,7 +183,7 @@ end
   desc "Build and distribute APK for Staging"
   lane :staging_beta do
     load_env(env:"staging")  # Pass "staging" as a hash parameter
-    gradle(task: "clean",project_dir: "./android")
+    # gradle(task: "clean",project_dir: "./android")
     version_name = get_version_name(
       gradle_file_path: "./android/app/build.gradle",
       ext_constant_name:"versionName"
@@ -194,16 +194,12 @@ end
     )
     version_code = get_version_code(
       gradle_file_path: "./android/app/build.gradle"
-      
+    
     )
- 
-    # sh "flutter build apk --release --flavor staging"
-    # sh "flutter run --release --flavor staging"
-
     
    firebase_app_distribution(
     app: "1:77080916809:android:ebe1398ec028ced65b2098",  # Your Firebase App ID
-    testers: "Sivsovanpanhavorn@gmail.com, Sovanpanhavorn.siv@tovtrip.com",  # Testers' email addresses
+    testers: "Sivsovanpanhavorn@gmail.com, Sovanpanhavorn.siv@tovtrip.com,amyjohn922@gmail.com, henghuylong1@gmail.com, narakithya@gmail.com",  # Testers' email addresses
     release_notes: "🚀 New Build Available!  
 📌 **Environment:** Staging  
 📌 **Build:** #{version_code}  
@@ -229,7 +225,6 @@ end
 - Seamless Google Maps integration for location-based features  
 
 ⚠ **Known Issues:**  
-- Pitch black when image crop. fix later on !!!
 - OTP functionality is **not working** in the Android beta version (only available in production mode). iOS version is unaffected.  
 
 🛠 **Bug Fixes:**  
@@ -239,7 +234,8 @@ end
 🧪 **Enjoy testing and feel free to report any issues!**",
 
 apk_path: "/Users/macbook/Documents/flutter/fitlink-2024/build/app/outputs/flutter-apk/app-staging-release.apk"
-  )
+
+)
     deploy_message = "New build Android is available on Firebase App Distribution!!
   • Environment: Staging
   • Build: #{version_code}
@@ -264,9 +260,9 @@ apk_path: "/Users/macbook/Documents/flutter/fitlink-2024/build/app/outputs/flutt
 ✅ Google Maps Authentication:
 - Seamless Google Maps integration for location-based features
 
-Known Issues:
-- Pitch black when image crop. fix later on !!!
-- OTP functionality is not working in the Android beta version only in production mode. This issue does not affect the iOS version.
+⚠ **Known Issues:**  
+- OTP functionality is **not working** in the Android beta version (only available in production mode). iOS version is unaffected.  
+
 🛠 Bug Fixes:
 - Fixed crash issue on app startup when network is unavailable.
 - Improved memory management and app stability.

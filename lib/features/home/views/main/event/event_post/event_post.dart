@@ -410,7 +410,7 @@ class _EventPostingState extends ConsumerState<EventPosting> {
             },
 
             prefixIcon: const Icon(
-              Icons.money,
+              Icons.attach_money,
               color: AppColors.secondaryColor,
             ),
             hintText: 'Price',

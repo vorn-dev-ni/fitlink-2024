@@ -22,15 +22,11 @@ class AuthModel {
     if (data == null) return AuthModel();
 
     return AuthModel(
-      fullname: data['fullname'] as String?,
-      email: data['email'] as String?,
-      avatar: data['avatar'] as String?,
-      bio: data['bio'] as String?,
-      cover_feature: data['cover_feature'] as String?,
-      userRoles: data['userRoles'] != null
-          ? UserRoles.values.byName(data['userRoles'])
-          : null,
-    );
+        fullname: data['fullName'] as String?,
+        email: data['email'] as String?,
+        avatar: data['avatar'] as String?,
+        bio: data['bio'] as String?,
+        cover_feature: data['cover_feature'] as String?);
   }
   @override
   String toString() =>

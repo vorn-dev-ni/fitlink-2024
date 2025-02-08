@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class ProfileHeader extends ConsumerStatefulWidget {
   final Function onLogout;
@@ -43,308 +44,329 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
       },
       data: (data) {
         final currentUser = data;
+        final showLoading =
+            currentUser?.email == null || currentUser?.email == "";
         return SliverAppBar(
           expandedHeight: 60.h,
           actions: [
             const SizedBox(
               height: Sizes.lg,
             ),
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.backgroundDark.withOpacity(0.4),
+            Skeletonizer(
+              enabled: showLoading,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.backgroundDark.withOpacity(0.4),
+                ),
+                margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
+                child: IconButton(
+                    padding: const EdgeInsets.all(0),
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.notifications,
+                      size: Sizes.xxl,
+                      color: AppColors.backgroundLight,
+                    )),
               ),
-              margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
-              child: IconButton(
-                  padding: const EdgeInsets.all(0),
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.notifications,
-                    size: Sizes.xxl,
-                    color: AppColors.backgroundLight,
-                  )),
             ),
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.backgroundDark.withOpacity(0.4),
+            Skeletonizer(
+              enabled: showLoading,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.backgroundDark.withOpacity(0.4),
+                ),
+                margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
+                child: IconButton(
+                    padding: const EdgeInsets.all(0),
+                    onPressed: () =>
+                        _openBottomSheet(context, currentUser?.cover_feature),
+                    icon: const Icon(
+                      Icons.camera_alt_outlined,
+                      size: Sizes.xxl,
+                      color: AppColors.backgroundLight,
+                    )),
               ),
-              margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
-              child: IconButton(
-                  padding: const EdgeInsets.all(0),
-                  onPressed: () =>
-                      _openBottomSheet(context, currentUser?.cover_feature),
-                  icon: const Icon(
-                    Icons.camera_alt_outlined,
-                    size: Sizes.xxl,
-                    color: AppColors.backgroundLight,
-                  )),
             ),
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.backgroundDark.withOpacity(0.4),
+            Skeletonizer(
+              enabled: showLoading,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.backgroundDark.withOpacity(0.4),
+                ),
+                margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
+                child: const IconButton(
+                    padding: const EdgeInsets.all(0),
+                    onPressed: null,
+                    icon: const Icon(
+                      Icons.more_vert,
+                      size: Sizes.xxl,
+                      color: AppColors.backgroundLight,
+                    )),
               ),
-              margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
-              child: const IconButton(
-                  padding: const EdgeInsets.all(0),
-                  onPressed: null,
-                  icon: const Icon(
-                    Icons.more_vert,
-                    size: Sizes.xxl,
-                    color: AppColors.backgroundLight,
-                  )),
             )
           ],
           backgroundColor: AppColors.backgroundDark,
-          flexibleSpace: FlexibleSpaceBar(
-              background: Stack(
-            children: [
-              Positioned.fill(
-                  child: InkWell(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return ZoomableImage(
-                        imageUrl: currentUser?.cover_feature != ""
-                            ? currentUser!.cover_feature!
-                            : "https://cdn.statically.io/gh/Anime-Sama/IMG/img/contenu/dumbbell-nan-kilo-moteru.jpg",
-                      );
-                    },
-                  );
-                },
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: FancyShimmerImage(
-                        imageUrl: currentUser?.cover_feature != null &&
-                                currentUser!.cover_feature != ""
-                            ? currentUser.cover_feature!
-                            : 'https://cdn.statically.io/gh/Anime-Sama/IMG/img/contenu/dumbbell-nan-kilo-moteru.jpg',
-                        boxFit: BoxFit.cover,
+          flexibleSpace: Skeletonizer(
+            enabled: showLoading,
+            child: FlexibleSpaceBar(
+                background: Stack(
+              children: [
+                Positioned.fill(
+                    child: InkWell(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return ZoomableImage(
+                          imageUrl: currentUser?.cover_feature != ""
+                              ? currentUser!.cover_feature!
+                              : "https://cdn.statically.io/gh/Anime-Sama/IMG/img/contenu/dumbbell-nan-kilo-moteru.jpg",
+                        );
+                      },
+                    );
+                  },
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: FancyShimmerImage(
+                          imageUrl: currentUser?.cover_feature != null &&
+                                  currentUser!.cover_feature != ""
+                              ? currentUser.cover_feature!
+                              : 'https://cdn.statically.io/gh/Anime-Sama/IMG/img/contenu/dumbbell-nan-kilo-moteru.jpg',
+                          boxFit: BoxFit.cover,
+                        ),
+                      ),
+                      Container(
+                        color: Colors.black.withOpacity(0.5),
+                      ),
+                    ],
+                  ),
+                )),
+                Positioned(
+                  top: 45,
+                  left: 12,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color.fromARGB(255, 233, 235, 237),
+                        width: 2,
                       ),
                     ),
-                    Container(
-                      color: Colors.black.withOpacity(0.5),
-                    ),
-                  ],
-                ),
-              )),
-              Positioned(
-                top: 45,
-                left: 12,
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: const Color.fromARGB(255, 233, 235, 237),
-                      width: 2,
-                    ),
-                  ),
-                  child: InkWell(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return ZoomableImage(
-                            imageUrl: currentUser?.avatar != "" &&
-                                    currentUser?.avatar != null
-                                ? currentUser!.avatar!
-                                : "https://cdn3d.iconscout.com/3d/premium/thumb/man-avatar-3d-icon-download-in-png-blend-fbx-gltf-file-formats--men-people-male-pack-avatars-icons-5187871.png?f=webp",
-                          );
-                        },
-                      );
-                    },
-                    child: ClipOval(
-                      child: currentUser?.avatar != "" &&
-                              currentUser?.avatar != null
-                          ? FancyShimmerImage(
-                              errorWidget: errorImgplaceholder(),
-                              width: 100,
-                              height: 100,
-                              boxFit: BoxFit.cover,
-                              imageUrl: currentUser?.avatar ?? "")
-                          : Assets.app.defaultAvatar.image(
-                              width: 100,
-                              height: 100,
-                            ),
+                    child: InkWell(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return ZoomableImage(
+                              imageUrl: currentUser?.avatar != "" &&
+                                      currentUser?.avatar != null
+                                  ? currentUser!.avatar!
+                                  : "https://cdn3d.iconscout.com/3d/premium/thumb/man-avatar-3d-icon-download-in-png-blend-fbx-gltf-file-formats--men-people-male-pack-avatars-icons-5187871.png?f=webp",
+                            );
+                          },
+                        );
+                      },
+                      child: ClipOval(
+                        child: currentUser?.avatar != "" &&
+                                currentUser?.avatar != null
+                            ? FancyShimmerImage(
+                                errorWidget: errorImgplaceholder(),
+                                width: 100,
+                                height: 100,
+                                boxFit: BoxFit.cover,
+                                imageUrl: currentUser?.avatar ?? "")
+                            : Assets.app.defaultAvatar.image(
+                                width: 100,
+                                height: 100,
+                              ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                bottom: 10,
-                child: Padding(
-                  padding: const EdgeInsets.all(Sizes.lg),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: 90.w,
-                            child: transparentContainer(
-                              child: Text(
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                '${currentUser?.fullname}',
-                                style: AppTextTheme
-                                    .lightTextTheme.headlineMedium
-                                    ?.copyWith(
-                                  color: AppColors.backgroundLight,
+                Positioned(
+                  bottom: 10,
+                  child: Padding(
+                    padding: const EdgeInsets.all(Sizes.lg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 90.w,
+                              child: transparentContainer(
+                                child: Text(
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  '${currentUser?.fullname}',
+                                  style: AppTextTheme
+                                      .lightTextTheme.headlineMedium
+                                      ?.copyWith(
+                                    color: AppColors.backgroundLight,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: Sizes.md,
-                          ),
-                          transparentContainer(
-                            child: SizedBox(
-                              width: 85.w,
-                              child: Text(
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                                currentUser?.bio == null ||
-                                        currentUser?.bio == ""
-                                    ? "This user has no bio yet !!!"
-                                    : currentUser!.bio!,
-                                style: AppTextTheme.lightTextTheme.bodyMedium
-                                    ?.copyWith(
-                                        color: AppColors.backgroundLight,
-                                        fontWeight: FontWeight.w300),
+                            const SizedBox(
+                              height: Sizes.md,
+                            ),
+                            transparentContainer(
+                              child: SizedBox(
+                                width: 85.w,
+                                child: Text(
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  currentUser?.bio == null ||
+                                          currentUser?.bio == ""
+                                      ? "This user has no bio yet !!!"
+                                      : currentUser!.bio!,
+                                  style: AppTextTheme.lightTextTheme.bodyMedium
+                                      ?.copyWith(
+                                          color: AppColors.backgroundLight,
+                                          fontWeight: FontWeight.w300),
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: Sizes.md,
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              ClipRRect(
-                                clipBehavior: Clip.antiAlias,
-                                child: TextButton(
-                                    style: TextButton.styleFrom(
-                                        backgroundColor: AppColors.primaryColor
-                                            .withOpacity(0.15),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                Sizes.lg))),
-                                    onPressed: () {
-                                      HelpersUtils.navigatorState(context)
-                                          .pushNamed(AppPage.editProfile);
-                                    },
-                                    child: const Text('Edit Profile')),
-                              ),
-                              const SizedBox(
-                                width: Sizes.lg,
-                              ),
-                              const SizedBox(
-                                width: Sizes.lg,
-                              ),
-                              ClipRRect(
-                                clipBehavior: Clip.antiAlias,
-                                child: TextButton(
-                                    style: TextButton.styleFrom(
-                                        backgroundColor: AppColors.errorLight
-                                            .withOpacity(0.15),
-                                        overlayColor: AppColors.errorLight,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                Sizes.lg))),
-                                    onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) => AppALertDialog(
-                                              onConfirm: () {},
-                                              negativeButton: SizedBox(
-                                                  width: 100.w,
-                                                  child: FilledButton(
-                                                      style: FilledButton.styleFrom(
-                                                          backgroundColor:
-                                                              AppColors
-                                                                  .neutralBlack),
-                                                      onPressed: () {
-                                                        HelpersUtils
-                                                                .navigatorState(
-                                                                    context)
-                                                            .pop();
-                                                      },
-                                                      child: const Text(
-                                                          'Cancel'))),
-                                              positivebutton: SizedBox(
-                                                  width: 100.w,
-                                                  child: FilledButton(
-                                                      style: FilledButton
-                                                          .styleFrom(
-                                                              backgroundColor:
-                                                                  AppColors
-                                                                      .errorColor),
-                                                      onPressed: () {
-                                                        HelpersUtils
-                                                                .navigatorState(
-                                                                    context)
-                                                            .pop();
+                            const SizedBox(
+                              height: Sizes.md,
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                ClipRRect(
+                                  clipBehavior: Clip.antiAlias,
+                                  child: TextButton(
+                                      style: TextButton.styleFrom(
+                                          backgroundColor: AppColors
+                                              .primaryColor
+                                              .withOpacity(0.15),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      Sizes.lg))),
+                                      onPressed: () {
+                                        HelpersUtils.navigatorState(context)
+                                            .pushNamed(AppPage.editProfile);
+                                      },
+                                      child: const Text('Edit Profile')),
+                                ),
+                                const SizedBox(
+                                  width: Sizes.lg,
+                                ),
+                                const SizedBox(
+                                  width: Sizes.lg,
+                                ),
+                                ClipRRect(
+                                  clipBehavior: Clip.antiAlias,
+                                  child: TextButton(
+                                      style: TextButton.styleFrom(
+                                          backgroundColor: AppColors.errorLight
+                                              .withOpacity(0.15),
+                                          overlayColor: AppColors.errorLight,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      Sizes.lg))),
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                AppALertDialog(
+                                                    onConfirm: () {},
+                                                    negativeButton: SizedBox(
+                                                        width: 100.w,
+                                                        child: FilledButton(
+                                                            style: FilledButton
+                                                                .styleFrom(
+                                                                    backgroundColor:
+                                                                        AppColors
+                                                                            .neutralBlack),
+                                                            onPressed: () {
+                                                              HelpersUtils
+                                                                      .navigatorState(
+                                                                          context)
+                                                                  .pop();
+                                                            },
+                                                            child: const Text(
+                                                                'Cancel'))),
+                                                    positivebutton: SizedBox(
+                                                        width: 100.w,
+                                                        child: FilledButton(
+                                                            style: FilledButton
+                                                                .styleFrom(
+                                                                    backgroundColor:
+                                                                        AppColors
+                                                                            .errorColor),
+                                                            onPressed: () {
+                                                              HelpersUtils
+                                                                      .navigatorState(
+                                                                          context)
+                                                                  .pop();
 
-                                                        widget.onLogout();
-                                                      },
-                                                      child: const Text(
-                                                          'Confirm'))),
-                                              title: 'Are you sure?',
-                                              desc:
-                                                  "do you want to logout from this account?"));
-                                    },
-                                    child: const Text(
-                                      'Log Out',
-                                      style: TextStyle(
-                                          color: AppColors.errorColor),
-                                    )),
-                              )
-                            ],
-                          ),
-                          const SizedBox(
-                            height: Sizes.md,
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 95.w,
-                            child: transparentContainer(
-                              child: Row(
-                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                      child: userSocialMediaTab(
-                                          floatingText: '0', type: 'Workouts')),
-                                  Expanded(
-                                      child: userSocialMediaTab(
-                                          floatingText: '0',
-                                          type: 'Followings')),
-                                  Expanded(
-                                      child: userSocialMediaTab(
-                                          floatingText: '0', type: 'Followers'))
-                                ],
-                              ),
+                                                              widget.onLogout();
+                                                            },
+                                                            child: const Text(
+                                                                'Confirm'))),
+                                                    title: 'Are you sure?',
+                                                    desc:
+                                                        "do you want to logout from this account?"));
+                                      },
+                                      child: const Text(
+                                        'Log Out',
+                                        style: TextStyle(
+                                            color: AppColors.errorColor),
+                                      )),
+                                )
+                              ],
                             ),
-                          )
-                        ],
-                      )
-                    ],
+                            const SizedBox(
+                              height: Sizes.md,
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 95.w,
+                              child: transparentContainer(
+                                child: Row(
+                                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                        child: userSocialMediaTab(
+                                            floatingText: '0',
+                                            type: 'Workouts')),
+                                    Expanded(
+                                        child: userSocialMediaTab(
+                                            floatingText: '0',
+                                            type: 'Followings')),
+                                    Expanded(
+                                        child: userSocialMediaTab(
+                                            floatingText: '0',
+                                            type: 'Followers'))
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              )
-            ],
-          )),
+                )
+              ],
+            )),
+          ),
         );
       },
     );

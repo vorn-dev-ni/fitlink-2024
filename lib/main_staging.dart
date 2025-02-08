@@ -27,7 +27,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sizer/sizer.dart';
 import 'generated/l10n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
 
 void main() async {
   // await FlutterConfig.loadEnvVariables();
@@ -100,11 +99,10 @@ class _MyAppState extends ConsumerState<MyApp> {
                   .getUserStream(user.uid)
                   .listen((userDoc) async {
                 if (userDoc != null) {
-                  await syncUser();
+                  await syncUser(user.uid);
                 }
               });
             }
-
             await Future.delayed(const Duration(milliseconds: 1000));
             if (navigatorKey.currentState?.canPop() == true) {
               navigatorKey.currentState!
@@ -147,12 +145,12 @@ class _MyAppState extends ConsumerState<MyApp> {
     super.dispose();
   }
 
-  Future syncUser() async {
+  Future syncUser(String uid) async {
     try {
-      AuthModel? authModel = await firestoreService
-          .getEmail(FirebaseAuth.instance.currentUser!.uid);
+      debugPrint("SYNC USER ${uid}");
+      AuthModel? authModel = await firestoreService.getEmail(uid);
+      debugPrint("SYNC vatar ${authModel.avatar}");
 
-      debugPrint("SYNC USER ${FirebaseAuth.instance.currentUser!.uid}");
       if (mounted) {
         ref
             .read(navbarControllerProvider.notifier)

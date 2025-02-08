@@ -31,7 +31,6 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
   AuthModel? currentUser;
   late List<Tab> _tabBarheaders;
   late List<Widget> _screens;
-  late bool isLoading = true;
 
   @override
   void initState() {
@@ -71,7 +70,6 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     ];
     if (mounted) {
       authController = AuthController(ref: ref);
-      fetchUserProfile();
     }
 
     super.initState();
@@ -84,9 +82,10 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     return DefaultTabController(
       length: _screens.length,
       child: Scaffold(
-          extendBodyBehindAppBar: isLoading,
+          extendBodyBehindAppBar: false,
           body: asyncUser.when(
             data: (data) {
+              final emailExisted = data?.email;
               return NestedScrollView(
                 headerSliverBuilder: (context, innerBoxIsScrolled) => [
                   ProfileHeader(
@@ -95,41 +94,9 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                     },
                   ),
                 ],
-                body: SafeArea(
-                  child: Column(
-                    children: [
-                      TabBar(
-                        tabAlignment: TabAlignment.center,
-                        isScrollable: true,
-                        indicatorSize: TabBarIndicatorSize.label,
-                        dividerColor: Colors.transparent,
-                        tabs: _tabBarheaders,
-                        indicatorColor: AppColors.secondaryColor,
-                      ),
-                      renderView()
-                    ],
-                  ),
-                ),
-              );
-            },
-            error: (error, stackTrace) => const Text(''),
-            loading: () {
-              return Skeletonizer(
-                enabled: true,
-                ignorePointers: true,
-                justifyMultiLineText: false,
-                effect: const ShimmerEffect(
-                    highlightColor: Colors.white,
-                    baseColor: Color.fromARGB(212, 213, 213, 213)),
-                child: NestedScrollView(
-                  headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                    ProfileHeader(
-                      onLogout: () {
-                        handleLogout();
-                      },
-                    ),
-                  ],
-                  body: SafeArea(
+                body: Skeletonizer(
+                  enabled: emailExisted == null ? true : false,
+                  child: SafeArea(
                     child: Column(
                       children: [
                         TabBar(
@@ -147,7 +114,46 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                 ),
               );
             },
+            error: (error, stackTrace) => const Text(''),
+            loading: () {
+              return build_loading();
+            },
           )),
+    );
+  }
+
+  Skeletonizer build_loading() {
+    return Skeletonizer(
+      enabled: true,
+      ignorePointers: true,
+      justifyMultiLineText: false,
+      effect: const ShimmerEffect(
+          highlightColor: Colors.white,
+          baseColor: Color.fromARGB(212, 213, 213, 213)),
+      child: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          ProfileHeader(
+            onLogout: () {
+              // handleLogout();
+            },
+          ),
+        ],
+        body: SafeArea(
+          child: Column(
+            children: [
+              TabBar(
+                tabAlignment: TabAlignment.center,
+                isScrollable: true,
+                indicatorSize: TabBarIndicatorSize.label,
+                dividerColor: Colors.transparent,
+                tabs: _tabBarheaders,
+                indicatorColor: AppColors.secondaryColor,
+              ),
+              renderView()
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -162,7 +168,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
   void handleLogout() async {
     if (mounted) {
       Fluttertoast.showToast(
-          msg: 'See you soon 😔 !!!',
+          msg: 'See you soon love 😔 !!!',
           timeInSecForIosWeb: 5,
           toastLength: Toast.LENGTH_LONG);
     }
@@ -173,31 +179,5 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     ref.invalidate(profileUserControllerProvider);
     LocalStorageUtils().setKeyString('email', '');
     await authController.logout();
-  }
-
-  void fetchUserProfile() async {
-    try {
-      final asyncValues = await ref.read(profileUserControllerProvider.future);
-
-      if (asyncValues != null) {
-        currentUser = asyncValues;
-        isLoading = false;
-      } else {
-        currentUser = null;
-        isLoading = false;
-      }
-      ;
-      Future.delayed(const Duration(seconds: 2), () {
-        WidgetsBinding.instance.addPostFrameCallback(
-          (timeStamp) {
-            if (mounted) {
-              setState(() {});
-            }
-          },
-        );
-      });
-    } catch (e) {
-      debugPrint(e.toString());
-    }
   }
 }

@@ -54,6 +54,13 @@ class _HomeTabState extends ConsumerState<HomeTab>
 
   @override
   void initState() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.dark, // For iOS
+    ));
     firestoreService =
         FirestoreService(firebaseAuthService: FirebaseAuthService());
     _tabController = TabController(length: _screens.length, vsync: this);

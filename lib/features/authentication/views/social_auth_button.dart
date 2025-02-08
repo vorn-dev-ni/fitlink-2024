@@ -1,6 +1,8 @@
 import 'package:demo/common/widget/button.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/features/authentication/controller/auth_controller.dart';
+import 'package:demo/features/home/controller/navbar_controller.dart';
+import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
@@ -82,10 +84,21 @@ class _SocialAuthButtonState extends ConsumerState<SocialAuthButton> {
 
   void _continueGoogle() async {
     try {
-      ref.read(appLoadingStateProvider.notifier).setState(true);
-      await authController.loginWithGoogle();
+      if (mounted) {
+        ref.read(appLoadingStateProvider.notifier).setState(true);
+      }
+      final isEmpty = await authController.loginWithGoogle();
+
+      if (isEmpty == null) {
+        ref.read(appLoadingStateProvider.notifier).setState(false);
+      }
+      if (mounted) {
+        ref.invalidate(navbarControllerProvider);
+        ref.invalidate(profileUserControllerProvider);
+      }
     } catch (e) {
       if (mounted) {
+        ref.read(appLoadingStateProvider.notifier).setState(false);
         ScaffoldMessenger.of(context).removeCurrentSnackBar();
         if (e is AppException) {
           HelpersUtils.showErrorSnackbar(
@@ -102,10 +115,6 @@ class _SocialAuthButtonState extends ConsumerState<SocialAuthButton> {
               e.toString(),
               StatusSnackbar.failed);
         }
-      }
-    } finally {
-      if (mounted) {
-        ref.read(appLoadingStateProvider.notifier).setState(false);
       }
     }
   }
@@ -113,9 +122,18 @@ class _SocialAuthButtonState extends ConsumerState<SocialAuthButton> {
   void _continueWithFacebook() async {
     try {
       ref.read(appLoadingStateProvider.notifier).setState(true);
-      await authController.loginUserWithFacebook();
+      final isEmpty = await authController.loginUserWithFacebook();
+      if (isEmpty == null) {
+        ref.read(appLoadingStateProvider.notifier).setState(false);
+      }
+      if (mounted) {
+        ref.invalidate(navbarControllerProvider);
+        ref.invalidate(profileUserControllerProvider);
+      }
     } catch (e) {
       if (mounted) {
+        ref.read(appLoadingStateProvider.notifier).setState(false);
+
         ScaffoldMessenger.of(context).removeCurrentSnackBar();
         if (e is AppException) {
           HelpersUtils.showErrorSnackbar(
@@ -133,10 +151,6 @@ class _SocialAuthButtonState extends ConsumerState<SocialAuthButton> {
               StatusSnackbar.failed);
         }
       }
-    } finally {
-      if (mounted) {
-        ref.read(appLoadingStateProvider.notifier).setState(false);
-      }
-    }
+    } finally {}
   }
 }

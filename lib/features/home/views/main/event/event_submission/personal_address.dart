@@ -189,8 +189,17 @@ class _PersonalAddressState extends ConsumerState<PersonalAddress> {
             labelText: 'Search',
             labelStyle: AppTextTheme.lightTextTheme.bodyMedium,
             hintText: '',
-            prefixIcon: const Icon(Icons.search),
+            prefixIcon: const Icon(
+              Icons.search,
+              color: AppColors.secondaryColor,
+            ),
             focusColor: AppColors.secondaryColor,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(Sizes.lg),
+              borderSide: const BorderSide(
+                color: Color.fromARGB(255, 226, 231, 231),
+              ),
+            ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(Sizes.lg),
               borderSide: const BorderSide(
@@ -200,11 +209,12 @@ class _PersonalAddressState extends ConsumerState<PersonalAddress> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(Sizes.lg),
               borderSide: BorderSide(
-                color: const Color(0xFF8C98A8).withOpacity(0.2),
+                color:
+                    const Color.fromARGB(255, 226, 231, 239).withOpacity(0.2),
               ),
             ),
           ),
-          searchTextStyle: AppTextTheme.lightTextTheme.bodyMedium),
+          searchTextStyle: AppTextTheme.lightTextTheme.bodyMedium?.copyWith()),
     );
   }
 

@@ -14,6 +14,22 @@ class FirestoreService {
   FirestoreService({
     required this.firebaseAuthService,
   });
+  Stream<AuthModel?> getUserStream(String uid) {
+    debugPrint("call stream ${uid}");
+
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.exists) {
+        return AuthModel.fromFirestore(snapshot);
+      } else {
+        return null;
+      }
+    });
+  }
+
   Future<AuthModel?> addUserToFirestore(String fullName, String email,
       {String? authprovider = 'password', String? socialAvatar = ""}) async {
     final FirebaseAuth? auth = firebaseAuthService.getAuth;
@@ -25,6 +41,10 @@ class FirestoreService {
           'fullName': fullName,
           'provider': authprovider,
           'email': email,
+          'role': 'normal',
+          'bio': '',
+          'cover_feature': '',
+          'createdAt': Timestamp.now(),
           'avatar': socialAvatar
         }, SetOptions(merge: true));
         return AuthModel(
@@ -39,35 +59,51 @@ class FirestoreService {
     }
   }
 
-  Stream<Map<String, dynamic>?> getUserRoleRealTime() {
+  Future checkUserRole() async {
     final FirebaseAuth? auth = firebaseAuthService.getAuth;
-    final snapshot =
-        _firestore.collection('users').doc(auth!.currentUser!.uid).snapshots();
 
-    return snapshot.map(
-      (docSnapShot) {
-        return docSnapShot.data();
-      },
-    );
+    if (auth?.currentUser == null) {
+      return null;
+    }
+    final snapshot =
+        await _firestore.collection('users').doc(auth!.currentUser!.uid).get();
+    if (snapshot.exists) {
+      final result = snapshot.data() as Map<String, dynamic>;
+      return result['role'] ?? "normal";
+    }
+    return null;
   }
 
   Future<AuthModel> getEmail(String uid) async {
-    final FirebaseAuth? auth = firebaseAuthService.getAuth;
-    if (auth != null) {
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser != null) {
       try {
         DocumentSnapshot snapshot =
             await _firestore.collection('users').doc(uid).get();
+        debugPrint(
+            "The email 222 is  snap shot ${snapshot.exists ? 'tue' : 'false'}");
 
-        if (snapshot.exists) {
-          String email = snapshot['email'];
-          String fullname = snapshot['fullName'];
-          String avatar = snapshot['avatar'];
-          String role = snapshot['role'];
+        if (!snapshot.exists) {
+          return AuthModel();
+        }
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        debugPrint('snap shot is ${data['email']} with id of ${uid}');
+
+        if (data.isNotEmpty) {
+          String email = data['email'] ?? "";
+          String fullname = data['fullName'] ?? "";
+          String avatar = data['avatar'] ?? "";
+          String role = data['role'] ?? "";
+          String bio = data['bio'] ?? "";
+          String cover_image = snapshot.get('cover_feature') ?? '';
 
           return AuthModel(
               fullname: fullname,
               email: email,
               avatar: avatar,
+              bio: bio,
+              cover_feature: cover_image,
               userRoles: role.isEmpty
                   ? UserRoles.GUEST
                   : role == 'admin'
@@ -76,7 +112,8 @@ class FirestoreService {
                           ? UserRoles.NORMAL
                           : UserRoles.GYM_OWNER);
         } else {
-          throw Exception("User not found in Firestore.");
+          // throw Exception("User not found in Firestore.");
+          return AuthModel();
         }
       } on FirebaseException catch (e) {
         // Handle Firestore specific errors
@@ -84,8 +121,32 @@ class FirestoreService {
       }
     } else {
       debugPrint('FirebaseAuth is not initialized.');
+
       throw UnknownException(
           message: "Oops", title: "'FirebaseAuth is not initialized.");
+    }
+  }
+
+  Future<AuthModel> getAvatar(String uid) async {
+    try {
+      DocumentSnapshot snapshot =
+          await _firestore.collection('users').doc(uid).get();
+      if (!snapshot.exists) {
+        return AuthModel();
+      }
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+      if (data.isNotEmpty) {
+        String avatar = snapshot.get('avatar') ?? '';
+
+        return AuthModel(avatar: avatar);
+      } else {
+        // throw Exception("User not found in Firestore.");
+        return AuthModel();
+      }
+    } on FirebaseException catch (e) {
+      // Handle Firestore specific errors
+      throw handleFirebaseErrorResponse(e);
     }
   }
 }

@@ -21,19 +21,37 @@ class RegisterController extends _$RegisterController {
     state = state.copyWith(password: password);
   }
 
-  void updateFullName(String fullName) {
-    state = state.copyWith(fullname: fullName);
+  void updateFirstName(String firstName) {
+    state = state.copyWith(firstName: firstName);
+  }
+
+  void updateLastName(String lastName) {
+    state = state.copyWith(lastname: lastName);
   }
 
   bool checkRegisterState() {
-    debugPrint(
-        "Check register recevived ${state.email} ${state.password} ${state.fullname}");
-
+    debugPrint("Check register recevived ${state.toString()}");
     if (state.email == null ||
         state.password == null ||
-        state.fullname == null) {
+        state.lastname == null ||
+        state.firstName == null) {
+      // debugPrint(
+      //     "Check register recevived ${state.lastname} ${state.firstName}");
+
       Fluttertoast.showToast(
           msg: 'Email or password and fullname must not be empty !!!',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 5,
+          backgroundColor: AppColors.errorColor,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return false;
+    }
+
+    if (state.firstName!.length < 3 || state.lastname!.length < 3) {
+      Fluttertoast.showToast(
+          msg: 'First name or last name must be more then 3 characters !!!',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 5,

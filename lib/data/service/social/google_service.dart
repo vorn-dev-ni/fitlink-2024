@@ -9,7 +9,7 @@ class GoogleService {
   ];
 
   GoogleService() {
-    _googleIOS = GoogleSignIn();
+    _googleIOS = GoogleSignIn(hostedDomain: "");
   }
   Future<GoogleSignInAccount?> signIngoogleIos({List<String>? scopes}) async {
     final GoogleSignInAccount? googleSignIn = await _googleIOS.signIn();

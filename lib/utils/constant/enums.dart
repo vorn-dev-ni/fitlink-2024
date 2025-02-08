@@ -45,6 +45,8 @@ extension UserRolesExtension on UserRoles {
   }
 }
 
+enum UploadType { camera, photo }
+
 enum AppState {
   DATA_NOT_FETCHED,
   FETCHING_DATA,

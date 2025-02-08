@@ -46,7 +46,7 @@ class AppBarCustom extends ConsumerWidget implements PreferredSizeWidget {
       leading: trailing ?? trailing,
       actions: [
         Padding(
-          padding: const EdgeInsets.only(right: 16.0),
+          padding: const EdgeInsets.only(right: 0.0),
           child: leading,
         ),
       ],

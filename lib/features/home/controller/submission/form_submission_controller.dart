@@ -24,9 +24,12 @@ class FormSubmissionController extends _$FormSubmissionController {
   }
 
   void updatePersonalInfo(
-      {String? fullName, String? email, String? phoneNumber}) {
+      {String? fullName, String? email, String? phoneNumber, String? code}) {
     state = state.copyWith(
-        contactName: fullName, email: email, phoneNumber: phoneNumber);
+        contactName: fullName,
+        email: email,
+        phoneNumber: phoneNumber,
+        code: code);
   }
 
   void updateAddressInfo({String? address, String? country, String? zipCode}) {

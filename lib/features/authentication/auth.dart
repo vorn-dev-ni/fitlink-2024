@@ -50,11 +50,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
     final appLoading = ref.watch(appLoadingStateProvider);
     return GestureDetector(
       onTap: () => DeviceUtils.hideKeyboard(context),
-      child: Scaffold(
-        body: SafeArea(
-          child: Stack(
-            children: [
-              Padding(
+      child: Stack(
+        children: [
+          Scaffold(
+            appBar: AppBar(
+              backgroundColor: AppColors.backgroundLight,
+              foregroundColor: AppColors.secondaryColor,
+            ),
+            body: SafeArea(
+              child: Padding(
                 padding: const EdgeInsets.all(Sizes.xl),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,12 +69,12 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                   ],
                 ),
               ),
-              if (appLoading == true)
-                backDropLoading(
-                    backgroundColor: const Color.fromARGB(255, 0, 0, 0)),
-            ],
+            ),
           ),
-        ),
+          if (appLoading == true)
+            backDropLoading(
+                backgroundColor: const Color.fromARGB(255, 0, 0, 0)),
+        ],
       ),
     );
   }

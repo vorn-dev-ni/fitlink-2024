@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:demo/features/home/controller/navbar_controller.dart';
-import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/core/riverpod/navigation_state.dart';
 import 'package:demo/features/home/views/chat/chat_tab.dart';
 import 'package:demo/features/home/views/main/home_tab.dart';
@@ -13,7 +12,7 @@ import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-List<Widget> tabScreens = [
+List<Widget> tabScreens = const [
   HomeTab(),
   ChatTab(),
   UploadTab(),
@@ -42,7 +41,10 @@ class _MyHomeScreenState extends ConsumerState<MyHomeScreen> {
     final navBars = ref.watch(navbarControllerProvider);
     return Scaffold(
       extendBody: true,
-      body: tabScreens[tabIndex],
+      body: IndexedStack(
+        index: tabIndex,
+        children: tabScreens,
+      ),
       bottomNavigationBar: ClipRRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),

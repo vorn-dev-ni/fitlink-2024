@@ -7,7 +7,7 @@ part of 'events_listing_controller.dart';
 // **************************************************************************
 
 String _$eventsListingControllerHash() =>
-    r'e7f183c2b184a88c2b4250c1e6881a866283579b';
+    r'd60bb6b59577ed89fb60c458b20952d50a5ad168';
 
 /// See also [EventsListingController].
 @ProviderFor(EventsListingController)

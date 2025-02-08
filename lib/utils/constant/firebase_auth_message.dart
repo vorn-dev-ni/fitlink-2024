@@ -18,7 +18,7 @@ class FirebaseAuthMessage {
       case 'account-exists-with-different-credential':
         return "An account already exists with the same email address but different sign-in credentials";
       default:
-        return "An unknown error occurred. Please try again.";
+        return errorCode.toString();
     }
   }
 }

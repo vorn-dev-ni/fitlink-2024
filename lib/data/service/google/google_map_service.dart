@@ -2,6 +2,7 @@
 import 'package:demo/common/model/google_address.dart';
 import 'package:demo/utils/device/device_utils.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:demo/utils/https/https_client.dart';
 
@@ -15,6 +16,7 @@ class GoogleMapService {
   });
 
   Future<GoogleAddress> getAddressFromLatLng(double lat, double lng) async {
+    debugPrint("Address received is ${lat} ${lng}");
     final String url =
         'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey';
 

@@ -6,7 +6,7 @@ import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
-Widget errorFallback(AppException appError, {required void cb()}) {
+Widget errorFallback(AppException appError, {required void Function() cb}) {
   return SizedBox(
     height: 80.h,
     child: Center(

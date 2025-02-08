@@ -152,3 +152,15 @@ class AppTextTheme {
     return appTheme == AppTheme.light ? lightTextTheme : darkTextTheme;
   }
 }
+
+class AppTextThemeSelection {
+  AppTextThemeSelection._();
+
+  static const TextSelectionThemeData lightTheme = TextSelectionThemeData(
+    cursorColor: AppColors.secondaryColor,
+  );
+
+  static const TextSelectionThemeData darkTheme = const TextSelectionThemeData(
+    cursorColor: AppColors.secondaryColor,
+  );
+}

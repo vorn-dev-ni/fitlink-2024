@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:demo/common/model/user_model.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/core/riverpod/app_setting.dart';
 import 'package:demo/core/riverpod/connectivity_state.dart';
 import 'package:demo/data/service/firebase/firebase_remote_config.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
+import 'package:demo/data/service/firestore/firestore_service.dart';
+import 'package:demo/features/home/controller/navbar_controller.dart';
+import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/l10n/I10n.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
@@ -18,7 +22,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sizer/sizer.dart';
@@ -26,14 +29,29 @@ import 'generated/l10n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 
-// import 'package:flutter_config/flutter_config.dart';
+String? currentRouteName;
+
+void updateRoute(String? routeName) {
+  currentRouteName = routeName;
+}
+
+class MyNavigatorObserver extends NavigatorObserver {
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    updateRoute(route.settings.name);
+    super.didPush(route, previousRoute);
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    updateRoute(previousRoute?.settings.name);
+    super.didPop(route, previousRoute);
+  }
+}
+
 void main() async {
   // await FlutterConfig.loadEnvVariables();
 
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.black,
-    statusBarIconBrightness: Brightness.light,
-  ));
   AppConfig.create(flavor: Flavor.dev);
   await GlobalConfig().init();
   await LocalStorageUtils().init();
@@ -70,26 +88,46 @@ class _MyAppState extends ConsumerState<MyApp> {
   StreamSubscription<User?>? streamAuthState;
   late FirebaseAuthService _firebaseAuthService;
   bool isNavigating = false;
+  late FirestoreService firestoreService;
 
   @override
   void initState() {
     super.initState();
 
     _firebaseAuthService = FirebaseAuthService();
+    firestoreService =
+        FirestoreService(firebaseAuthService: _firebaseAuthService);
     HelpersUtils.removeSplashScreen();
 
     streamAuthState = _firebaseAuthService.authStateChanges.listen(
       (user) async {
+        if (user == null &&
+            LocalStorageUtils().getKey('email') != null &&
+            LocalStorageUtils().getKey('email')!.isNotEmpty) {
+          FirebaseAuth.instance.signOut();
+          await user?.reload();
+          LocalStorageUtils().setKeyString('email', '');
+        }
+
         String? provider = user?.providerData[0].providerId;
-        if (user != null && user.emailVerified || provider == 'facebook.com') {
+        if (user != null && user.emailVerified ||
+            provider == 'facebook.com' ||
+            user?.phoneNumber != null && user?.phoneNumber != "") {
           if (mounted && !isNavigating) {
+            ref.invalidate(profileUserControllerProvider);
             isNavigating = true;
-            await LocalStorageUtils().setKeyString('email', user!.email!);
+            await LocalStorageUtils().setKeyString('email',
+                user?.email != null ? user!.email! : user!.phoneNumber!);
             ref.read(appLoadingStateProvider.notifier).setState(false);
-            navigatorKey.currentState?.pushNamedAndRemoveUntil(
-              AppPage.home,
-              (route) => false,
-            );
+            // ref.invalidate(navbarControllerProvider);
+            await syncUser();
+            if (navigatorKey.currentState?.canPop() == true) {
+              navigatorKey.currentState!
+                  .popUntil((route) => route.settings.name == AppPage.auth);
+              navigatorKey.currentState!.pop();
+            } else {
+              navigatorKey.currentState!.popAndPushNamed(AppPage.home);
+            }
           }
         } else {
           isNavigating = false;
@@ -97,6 +135,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         }
       },
     );
+
     _streamSubscription = ref
         .read(connectivityStateProvider.notifier)
         .onConnectivityChange()
@@ -113,6 +152,25 @@ class _MyAppState extends ConsumerState<MyApp> {
     _streamSubscription.cancel();
     streamAuthState?.cancel();
     super.dispose();
+  }
+
+  Future syncUser() async {
+    try {
+      AuthModel? authModel = await firestoreService
+          .getEmail(firestoreService.firebaseAuthService.currentUser!.uid);
+      ref
+          .read(navbarControllerProvider.notifier)
+          .updateProfileTab(authModel.avatar ?? "");
+    } catch (e) {
+      if (mounted) {
+        HelpersUtils.showErrorSnackbar(
+            duration: 2000,
+            context,
+            'Oop!',
+            e.toString(),
+            StatusSnackbar.failed);
+      }
+    }
   }
 
   void _handleCheckConnection(List<ConnectivityResult> event) {
@@ -152,6 +210,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     return Sizer(builder: (context, orientation, screenType) {
       return MaterialApp(
         title: 'Flutter Dev',
+
         builder: FToastBuilder(),
         debugShowCheckedModeBanner: false,
         locale: Locale(appSettingState.localization),
@@ -165,6 +224,8 @@ class _MyAppState extends ConsumerState<MyApp> {
 
         // routes: AppRoutes.getAppRoutes(),
         navigatorKey: navigatorKey,
+        navigatorObservers: [MyNavigatorObserver()], // Set the observer here
+
         onGenerateRoute: (settings) =>
             GlobalConfig.instance.onGenerateRoute(settings),
 

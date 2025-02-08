@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FormSubmission {
   String? userId; // User ID
   String? address;
+  String? code;
   String? contactName;
   String? email;
   String? phoneNumber;
@@ -19,6 +20,7 @@ class FormSubmission {
   FormSubmission({
     this.userId,
     this.address,
+    this.code = '855',
     this.temporaryFiles,
     this.country,
     this.contactName,
@@ -57,7 +59,7 @@ class FormSubmission {
       'address': address,
       'contact_name': contactName,
       'email': email,
-      'phone_number': phoneNumber,
+      'phone_number': '${code}${phoneNumber}',
       'proof_documents': proofDocuments,
       'status': 'pending',
       'country': country,
@@ -68,22 +70,23 @@ class FormSubmission {
     };
   }
 
-  FormSubmission copyWith({
-    String? userId,
-    String? address,
-    String? contactName,
-    String? email,
-    List<File>? temporaryFiles,
-    String? phoneNumber,
-    List<String>? proofDocuments,
-    String? status,
-    Timestamp? submissionDate,
-    bool? trainerCertification,
-    String? website,
-    String? country,
-    String? zipCode,
-  }) {
+  FormSubmission copyWith(
+      {String? userId,
+      String? address,
+      String? contactName,
+      String? email,
+      List<File>? temporaryFiles,
+      String? phoneNumber,
+      List<String>? proofDocuments,
+      String? status,
+      Timestamp? submissionDate,
+      bool? trainerCertification,
+      String? website,
+      String? country,
+      String? zipCode,
+      String? code}) {
     return FormSubmission(
+      code: code ?? this.code,
       userId: userId ?? this.userId,
       temporaryFiles: temporaryFiles ?? this.temporaryFiles,
       address: address ?? this.address,

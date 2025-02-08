@@ -4,10 +4,13 @@ import 'package:demo/common/widget/app_dialog.dart';
 import 'package:demo/common/widget/app_input.dart';
 import 'package:demo/common/widget/app_loading.dart';
 import 'package:demo/common/widget/backdrop_loading.dart';
+import 'package:demo/common/widget/bottom_upload_sheet.dart';
 import 'package:demo/common/widget/button.dart';
 import 'package:demo/common/widget/focus_label.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
+import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firebase/storage_service.dart';
+import 'package:demo/data/service/firestore/firestore_service.dart';
 import 'package:demo/features/home/controller/event_create/event_form_controller.dart';
 import 'package:demo/features/home/views/main/event/event_post/event_date_picker.dart';
 import 'package:demo/features/home/views/main/event/event_post/event_label.dart';
@@ -16,6 +19,7 @@ import 'package:demo/features/home/views/main/event/event_post/event_time_picker
 import 'package:demo/features/home/views/map_display.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
+import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/device/device_utils.dart';
@@ -25,6 +29,7 @@ import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:demo/utils/validation/event_create_validation.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -55,11 +60,15 @@ class _EventPostingState extends ConsumerState<EventPosting> {
   final FocusNode _focusNodeGymName = FocusNode();
   final FocusNode _focusNodeMap = FocusNode();
   final FocusNode _focusDateTime = FocusNode();
-
+  UserRoles? userRoles;
+  late FirestoreService firestoreService;
   @override
   void initState() {
     storageService = StorageService();
+    firestoreService =
+        FirestoreService(firebaseAuthService: FirebaseAuthService());
 
+    checkUserRole();
     super.initState();
   }
 
@@ -243,7 +252,7 @@ class _EventPostingState extends ConsumerState<EventPosting> {
   InkWell renderImageBanner() {
     return InkWell(
       borderRadius: BorderRadius.circular(Sizes.lg),
-      onTap: _uploadingImage,
+      onTap: () => _openBottomSheet(context),
       child: previewImages != null
           ? ClipRRect(
               borderRadius: BorderRadius.circular(Sizes.lg),
@@ -281,7 +290,7 @@ class _EventPostingState extends ConsumerState<EventPosting> {
                     ),
                     const Center(
                         child: Text(
-                      'Browse and choose the files',
+                      'Browse and upload an image',
                       style: TextStyle(color: AppColors.secondaryColor),
                     )),
                   ],
@@ -604,18 +613,17 @@ class _EventPostingState extends ConsumerState<EventPosting> {
     );
   }
 
-  void _uploadingImage() async {
+  void _uploadingImage(UploadType type) async {
     try {
+      File? fileImage = await HelpersUtils.pickImage(
+          type == UploadType.photo ? ImageSource.gallery : ImageSource.camera);
       setState(() {
         isUploading = true;
       });
 
-      File? fileImage = await HelpersUtils.pickImage(ImageSource.gallery);
-
       if (fileImage != null) {
         File? compressImage =
             await HelpersUtils.cropAndCompressImage(fileImage.path);
-
         if (compressImage != null) {
           setState(() {
             previewImages = compressImage;
@@ -632,6 +640,41 @@ class _EventPostingState extends ConsumerState<EventPosting> {
     } finally {
       setState(() {});
       isUploading = false;
+    }
+  }
+
+  void checkUserRole() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      final roleString = await firestoreService.checkUserRole();
+      final newRole = UserRolesExtension.fromValue(roleString);
+      if (newRole == UserRoles.NORMAL) {
+        if (mounted) {
+          HelpersUtils.navigatorState(context).pop();
+        }
+        if (mounted) {
+          showDialog(
+              context: context,
+              builder: (context) => AppALertDialog(
+                  onConfirm: () {
+                    // HelpersUtils.navigatorState(context).pop();
+                    // HelpersUtils.navigatorState(context).pop();
+                  },
+                  positivebutton: SizedBox(
+                      width: 100.w,
+                      child: FilledButton(
+                          style: FilledButton.styleFrom(
+                              backgroundColor: AppColors.errorColor),
+                          onPressed: () {
+                            HelpersUtils.navigatorState(context).pop();
+                            HelpersUtils.navigatorState(context)
+                                .pushNamed(AppPage.eventRequestGymTrainer);
+                          },
+                          child: const Text('Confirm'))),
+                  title: 'Notice',
+                  desc:
+                      "To proceed, please submit proof that you are a gym owner or trainer. This information is required to unlock full access to the app’s features"));
+        }
+      }
     }
   }
 
@@ -745,6 +788,20 @@ class _EventPostingState extends ConsumerState<EventPosting> {
   bool isKeyboardVisible(BuildContext context) {
     final padding = MediaQuery.of(context).viewInsets.bottom;
     return padding > 0;
+  }
+
+  void _openBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: AppColors.backgroundLight,
+        builder: (context) {
+          return BottomUploadImage(
+            context,
+            (type) {
+              _uploadingImage(type);
+            },
+          );
+        });
   }
 
   void navigateToMap() {

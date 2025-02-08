@@ -20,7 +20,13 @@ class EventService extends BaseService {
 
   @override
   Stream<QuerySnapshot<Map<String, dynamic>>> getAllRealTime() {
-    return _firestore.collection('events').snapshots();
+    DateTime now = DateTime.now();
+    return _firestore
+        .collection('events')
+        .where('preStartDate', isGreaterThanOrEqualTo: now)
+        .orderBy('preStartDate', descending: false)
+        .orderBy('preEndDate', descending: false)
+        .snapshots();
   }
 
   @override
@@ -83,7 +89,20 @@ class EventService extends BaseService {
   @override
   Future<QuerySnapshot<Map<String, dynamic>>> getAllOneTime() async {
     try {
-      return await _firestore.collection('events').get();
+      DateTime now = DateTime.now();
+      DateTime tomorrow = now.add(const Duration(days: 1));
+
+      Timestamp todayTimestamp =
+          Timestamp.fromDate(DateTime(now.year, now.month, now.day).toUtc());
+      Timestamp tomorrowTimestamp = Timestamp.fromDate(
+          DateTime(tomorrow.year, tomorrow.month, tomorrow.day).toUtc());
+
+      return await _firestore
+          .collection('events')
+          .where('preStartDate', isGreaterThanOrEqualTo: todayTimestamp)
+          .where('preStartDate', isLessThanOrEqualTo: tomorrowTimestamp)
+          .orderBy('preStartDate', descending: false)
+          .get();
     } on FirebaseException catch (e) {
       throw AppException(
           title: 'Error Adding document: ', message: e.toString());

@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:demo/common/model/user_model.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/core/riverpod/app_setting.dart';
 import 'package:demo/core/riverpod/connectivity_state.dart';
 import 'package:demo/data/service/firebase/firebase_remote_config.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
+import 'package:demo/data/service/firestore/firestore_service.dart';
+import 'package:demo/features/home/controller/navbar_controller.dart';
+import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/l10n/I10n.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
@@ -18,7 +22,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sizer/sizer.dart';
@@ -26,14 +29,9 @@ import 'generated/l10n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 
-// import 'package:flutter_config/flutter_config.dart';
 void main() async {
   // await FlutterConfig.loadEnvVariables();
 
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.black,
-    statusBarIconBrightness: Brightness.light,
-  ));
   AppConfig.create(flavor: Flavor.staging);
   await GlobalConfig().init();
   await LocalStorageUtils().init();
@@ -42,10 +40,6 @@ void main() async {
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
-  await FirebaseAppCheck.instance.activate(
-    appleProvider: AppleProvider.appAttestWithDeviceCheckFallback,
-    androidProvider: AndroidProvider.playIntegrity,
-  );
 
   //Detech Native Platform crash
   PlatformDispatcher.instance.onError = (error, stack) {
@@ -68,28 +62,63 @@ class _MyAppState extends ConsumerState<MyApp> {
   late StreamSubscription<dynamic> _streamSubscription;
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   StreamSubscription<User?>? streamAuthState;
+  StreamSubscription<AuthModel?>? streamUserFirestore;
+
   late FirebaseAuthService _firebaseAuthService;
   bool isNavigating = false;
+  late FirestoreService firestoreService;
 
   @override
   void initState() {
     super.initState();
 
     _firebaseAuthService = FirebaseAuthService();
+    firestoreService =
+        FirestoreService(firebaseAuthService: _firebaseAuthService);
     HelpersUtils.removeSplashScreen();
 
     streamAuthState = _firebaseAuthService.authStateChanges.listen(
       (user) async {
+        if (user == null &&
+            LocalStorageUtils().getKey('email') != null &&
+            LocalStorageUtils().getKey('email')!.isNotEmpty) {
+          FirebaseAuth.instance.signOut();
+          await user?.reload();
+          LocalStorageUtils().setKeyString('email', '');
+        }
+
         String? provider = user?.providerData[0].providerId;
-        if (user != null && user.emailVerified || provider == 'facebook.com') {
+        if (user != null && user.emailVerified ||
+            provider == 'facebook.com' ||
+            user?.phoneNumber != null && user?.phoneNumber != "") {
           if (mounted && !isNavigating) {
             isNavigating = true;
-            await LocalStorageUtils().setKeyString('email', user!.email!);
-            ref.read(appLoadingStateProvider.notifier).setState(false);
-            navigatorKey.currentState?.pushNamedAndRemoveUntil(
-              AppPage.home,
-              (route) => false,
-            );
+            await LocalStorageUtils().setKeyString('email',
+                user?.email != null ? user!.email! : user?.phoneNumber ?? "");
+            if (user != null) {
+              streamUserFirestore = firestoreService
+                  .getUserStream(user.uid)
+                  .listen((userDoc) async {
+                if (userDoc != null) {
+                  await syncUser();
+                  // Navigate only when the user data is available
+                  if (navigatorKey.currentState?.canPop() == true) {
+                    navigatorKey.currentState!.popUntil(
+                        (route) => route.settings.name == AppPage.auth);
+                    navigatorKey.currentState!.pop();
+                  }
+                }
+              });
+            }
+
+            // await LocalStorageUtils().setKeyString('email',
+            //     user?.email != null ? user!.email! : user?.phoneNumber ?? "");
+
+            // if (navigatorKey.currentState?.canPop() == true) {
+            //   navigatorKey.currentState!
+            //       .popUntil((route) => route.settings.name == AppPage.auth);
+            //   navigatorKey.currentState!.pop();
+            // }
           }
         } else {
           isNavigating = false;
@@ -97,6 +126,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         }
       },
     );
+
     _streamSubscription = ref
         .read(connectivityStateProvider.notifier)
         .onConnectivityChange()
@@ -112,7 +142,33 @@ class _MyAppState extends ConsumerState<MyApp> {
   void dispose() {
     _streamSubscription.cancel();
     streamAuthState?.cancel();
+    streamUserFirestore?.cancel();
     super.dispose();
+  }
+
+  Future syncUser() async {
+    try {
+      AuthModel? authModel = await firestoreService
+          .getEmail(FirebaseAuth.instance.currentUser!.uid);
+
+      debugPrint("SYNC USER ${FirebaseAuth.instance.currentUser!.uid}");
+      if (mounted) {
+        ref
+            .read(navbarControllerProvider.notifier)
+            .updateProfileTab(authModel.avatar ?? "");
+        ref.invalidate(profileUserControllerProvider);
+        ref.read(appLoadingStateProvider.notifier).setState(false);
+      }
+    } catch (e) {
+      if (mounted) {
+        HelpersUtils.showErrorSnackbar(
+            duration: 2000,
+            context,
+            'Oop!',
+            e.toString(),
+            StatusSnackbar.failed);
+      }
+    }
   }
 
   void _handleCheckConnection(List<ConnectivityResult> event) {
@@ -152,6 +208,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     return Sizer(builder: (context, orientation, screenType) {
       return MaterialApp(
         title: 'Flutter Staging',
+
         builder: FToastBuilder(),
         debugShowCheckedModeBanner: false,
         locale: Locale(appSettingState.localization),

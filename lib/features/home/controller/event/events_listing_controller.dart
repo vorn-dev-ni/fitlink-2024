@@ -15,10 +15,12 @@ class EventsListingController extends _$EventsListingController {
     return getAllEvents();
   }
 
-  Stream<List<Event>> getAllEvents() {
+  Stream<List<Event>> getAllEvents() async* {
     try {
+      // await Future.delayed(const Duration(milliseconds: 100));
+
       final stream = eventsRepository.getAllRealTimeEvents();
-      return stream;
+      yield* stream;
     } catch (e) {
       rethrow;
     }

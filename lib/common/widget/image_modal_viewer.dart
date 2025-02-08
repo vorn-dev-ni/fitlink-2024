@@ -22,11 +22,15 @@ class _ZoomableImageState extends State<ZoomableImage> {
         imageProvider: NetworkImage(widget.imageUrl),
         maxScale: PhotoViewComputedScale.covered,
         enablePanAlways: false,
+        wantKeepAlive: true,
         basePosition: Alignment.center,
         disableGestures: false,
         onTapUp: (context, details, controllerValue) {
           HelpersUtils.navigatorState(context).pop();
         },
+        minScale: PhotoViewComputedScale.contained, // Set minimum scale
+
+        tightMode: true,
         loadingBuilder: (context, event) {
           return appLoadingSpinner();
         },

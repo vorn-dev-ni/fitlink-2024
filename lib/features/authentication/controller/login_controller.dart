@@ -31,6 +31,11 @@ class LoginController extends _$LoginController {
     state = state.copyWith(phoneNumber: phoneNumber);
   }
 
+  void updateCountryCode(String code) {
+    debugPrint(code);
+    state = state.copyWith(countryCode: code);
+  }
+
   bool checkLoginPhoneState() {
     debugPrint('Phone number ${state.phoneNumber}');
     if (state.phoneNumber == null) {
@@ -80,8 +85,9 @@ class LoginController extends _$LoginController {
 
       final authRepository =
           AuthLoginRepository(firebaseAuthService: FirebaseAuthService());
+
       authRepository.sendPhoneOtp(
-        state.phoneNumber!,
+        '${state.countryCode}${state.phoneNumber!}',
         verificationCompleted: (PhoneAuthCredential credential) {
           debugPrint('Verification completed: $credential');
         },

@@ -1,7 +1,6 @@
 import 'package:demo/common/widget/app_bar_custom.dart';
 import 'package:demo/common/widget/backdrop_loading.dart';
 import 'package:demo/common/widget/button.dart';
-import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/features/home/controller/submission/form_loading.dart';
 import 'package:demo/features/home/controller/submission/form_submission_controller.dart';
 import 'package:demo/features/home/controller/submission/step_header_controller.dart';
@@ -43,7 +42,7 @@ class _EventFormSubmissionState extends ConsumerState<EventFormSubmission> {
         DeviceUtils.hideKeyboard(context);
       },
       child: PopScope(
-          canPop: false,
+          canPop: true,
           child: Stack(
             children: [
               Scaffold(

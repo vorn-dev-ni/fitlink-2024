@@ -55,6 +55,11 @@ class FormatterUtils {
     return '${date.day.toString().padLeft(2, '0')}$separator${date.month.toString().padLeft(2, '0')}$separator${date.year}';
   }
 
+  static String getFormattedTime(DateTime dateTime) {
+    final DateFormat timeFormat = DateFormat('h:mm a');
+    return timeFormat.format(dateTime);
+  }
+
   static String? formatDateToDuration(DateTime? datetime) {
     if (datetime == null) {
       return null;

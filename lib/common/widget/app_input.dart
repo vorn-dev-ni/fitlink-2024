@@ -71,6 +71,7 @@ class AppInput extends StatelessWidget {
           TextFormField(
             controller: controller,
             focusNode: focusNode,
+            selectionControls: materialTextSelectionControls,
             validator: (value) {
               // debugPrint("Value is ${value}");
               return validator != null ? validator!(value) : null;
@@ -79,7 +80,7 @@ class AppInput extends StatelessWidget {
               onSaved != null ? onSaved!(newValue) : null;
             },
             keyboardType: keyboardType,
-            cursorColor: AppColors.primaryDark,
+            cursorColor: AppColors.secondaryColor,
             obscureText: obscureText,
             maxLength: maxLength,
             readOnly: isEnable! ? false : true,

@@ -1,8 +1,11 @@
+import 'package:country_picker/country_picker.dart';
 import 'package:demo/common/widget/app_input.dart';
 import 'package:demo/features/home/controller/submission/form_submission_controller.dart';
 import 'package:demo/features/home/controller/submission/step_header_controller.dart';
 import 'package:demo/features/home/views/main/event/event_submission/submit_button.dart';
+import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/sizes.dart';
+import 'package:demo/utils/device/device_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:demo/utils/validation/event_submit_validation.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +33,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
 
   @override
   Widget build(BuildContext context) {
+    final code = ref.watch(formSubmissionControllerProvider).code;
     return Form(
       key: _formKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -96,13 +100,23 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(
-                      width: 5,
+                      width: 14,
                     ),
-                    Text(
-                      '+855',
-                      style: AppTextTheme.lightTextTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: const Color(0xff4B5768)),
+                    GestureDetector(
+                      onTap: () {
+                        openCountryPicker();
+                      },
+                      child: SizedBox(
+                        width: 35,
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          '${code}',
+                          style: AppTextTheme.lightTextTheme.bodyLarge
+                              ?.copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  color: const Color(0xff4B5768)),
+                        ),
+                      ),
                     ),
                     const VerticalDivider(
                       thickness: 1,
@@ -132,6 +146,58 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
           }, 'Next'),
         ],
       ),
+    );
+  }
+
+  void openCountryPicker() {
+    showCountryPicker(
+      context: context,
+      useSafeArea: true,
+      favorite: <String>['KH'],
+      showPhoneCode: false,
+      onSelect: (Country country) {
+        DeviceUtils.hideKeyboard(context);
+        ref
+            .read(formSubmissionControllerProvider.notifier)
+            .updatePersonalInfo(code: country.phoneCode ?? "");
+      },
+      moveAlongWithKeyboard: false,
+      countryListTheme: CountryListThemeData(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(40.0),
+            topRight: Radius.circular(40.0),
+          ),
+          flagSize: 30,
+          inputDecoration: InputDecoration(
+            labelText: 'Search',
+            labelStyle: AppTextTheme.lightTextTheme.bodyMedium,
+            hintText: '',
+            prefixIcon: const Icon(
+              Icons.search,
+              color: AppColors.secondaryColor,
+            ),
+            focusColor: AppColors.secondaryColor,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(Sizes.lg),
+              borderSide: const BorderSide(
+                color: Color.fromARGB(255, 226, 231, 231),
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(Sizes.lg),
+              borderSide: const BorderSide(
+                color: AppColors.secondaryColor,
+              ),
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(Sizes.lg),
+              borderSide: BorderSide(
+                color:
+                    const Color.fromARGB(255, 226, 231, 239).withOpacity(0.2),
+              ),
+            ),
+          ),
+          searchTextStyle: AppTextTheme.lightTextTheme.bodyMedium?.copyWith()),
     );
   }
 

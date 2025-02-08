@@ -55,7 +55,7 @@ Widget eventHeaderSection(
             height: Sizes.xs,
           ),
           Text(
-            'Schedule: 1 : 00pm - 5 : 00pm',
+            'Schedule: ${startTime} - ${endTime}',
             style: AppTextTheme.lightTextTheme.labelMedium?.copyWith(),
           ),
           const SizedBox(

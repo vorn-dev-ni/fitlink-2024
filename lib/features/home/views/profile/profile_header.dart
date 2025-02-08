@@ -17,6 +17,7 @@ import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
@@ -311,7 +312,25 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                                                       .navigatorState(
                                                                           context)
                                                                   .pop();
-
+                                                              SystemChrome.setEnabledSystemUIMode(
+                                                                  SystemUiMode
+                                                                      .manual,
+                                                                  overlays:
+                                                                      SystemUiOverlay
+                                                                          .values);
+                                                              SystemChrome
+                                                                  .setSystemUIOverlayStyle(
+                                                                      const SystemUiOverlayStyle(
+                                                                statusBarColor:
+                                                                    Colors
+                                                                        .transparent,
+                                                                statusBarIconBrightness:
+                                                                    Brightness
+                                                                        .dark,
+                                                                statusBarBrightness:
+                                                                    Brightness
+                                                                        .dark, // For iOS
+                                                              ));
                                                               widget.onLogout();
                                                             },
                                                             child: const Text(

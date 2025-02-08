@@ -49,6 +49,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
   @override
   void dispose() {
     _tabController.dispose();
+
     super.dispose();
   }
 

@@ -380,6 +380,8 @@ class _EventPostingState extends ConsumerState<EventPosting> {
           children: [
             Checkbox(
               activeColor: AppColors.secondaryColor,
+              focusColor: AppColors.secondaryColor,
+              side: const BorderSide(color: AppColors.secondaryColor),
               value: ref.read(eventFormControllerProvider).freeEntry,
               onChanged: (value) {
                 ref
@@ -407,7 +409,10 @@ class _EventPostingState extends ConsumerState<EventPosting> {
                   .updateEntryLevel(pricing: value);
             },
 
-            prefixIcon: const Icon(Icons.money),
+            prefixIcon: const Icon(
+              Icons.money,
+              color: AppColors.secondaryColor,
+            ),
             hintText: 'Price',
           ),
       ],

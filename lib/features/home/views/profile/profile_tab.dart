@@ -71,9 +71,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     ];
     if (mounted) {
       authController = AuthController(ref: ref);
-      Future.delayed(const Duration(milliseconds: 300), () async {
-        fetchUserProfile();
-      });
+      fetchUserProfile();
     }
 
     super.initState();
@@ -81,43 +79,75 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
 
   @override
   Widget build(BuildContext context) {
+    final asyncUser = ref.watch(profileUserControllerProvider);
+
     return DefaultTabController(
       length: _screens.length,
       child: Scaffold(
-        extendBodyBehindAppBar: isLoading,
-        body: Skeletonizer(
-          enabled: isLoading,
-          ignorePointers: true,
-          justifyMultiLineText: false,
-          effect: const ShimmerEffect(
-              highlightColor: Colors.white,
-              baseColor: Color.fromARGB(212, 213, 213, 213)),
-          child: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              ProfileHeader(
-                onLogout: () {
-                  handleLogout();
-                },
-              ),
-            ],
-            body: SafeArea(
-              child: Column(
-                children: [
-                  TabBar(
-                    tabAlignment: TabAlignment.center,
-                    isScrollable: true,
-                    indicatorSize: TabBarIndicatorSize.label,
-                    dividerColor: Colors.transparent,
-                    tabs: _tabBarheaders,
-                    indicatorColor: AppColors.secondaryColor,
+          extendBodyBehindAppBar: isLoading,
+          body: asyncUser.when(
+            data: (data) {
+              return NestedScrollView(
+                headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                  ProfileHeader(
+                    onLogout: () {
+                      handleLogout();
+                    },
                   ),
-                  renderView()
                 ],
-              ),
-            ),
-          ),
-        ),
-      ),
+                body: SafeArea(
+                  child: Column(
+                    children: [
+                      TabBar(
+                        tabAlignment: TabAlignment.center,
+                        isScrollable: true,
+                        indicatorSize: TabBarIndicatorSize.label,
+                        dividerColor: Colors.transparent,
+                        tabs: _tabBarheaders,
+                        indicatorColor: AppColors.secondaryColor,
+                      ),
+                      renderView()
+                    ],
+                  ),
+                ),
+              );
+            },
+            error: (error, stackTrace) => const Text(''),
+            loading: () {
+              return Skeletonizer(
+                enabled: true,
+                ignorePointers: true,
+                justifyMultiLineText: false,
+                effect: const ShimmerEffect(
+                    highlightColor: Colors.white,
+                    baseColor: Color.fromARGB(212, 213, 213, 213)),
+                child: NestedScrollView(
+                  headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                    ProfileHeader(
+                      onLogout: () {
+                        handleLogout();
+                      },
+                    ),
+                  ],
+                  body: SafeArea(
+                    child: Column(
+                      children: [
+                        TabBar(
+                          tabAlignment: TabAlignment.center,
+                          isScrollable: true,
+                          indicatorSize: TabBarIndicatorSize.label,
+                          dividerColor: Colors.transparent,
+                          tabs: _tabBarheaders,
+                          indicatorColor: AppColors.secondaryColor,
+                        ),
+                        renderView()
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          )),
     );
   }
 
@@ -156,14 +186,16 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
         currentUser = null;
         isLoading = false;
       }
-
-      WidgetsBinding.instance.addPostFrameCallback(
-        (timeStamp) {
-          if (mounted) {
-            setState(() {});
-          }
-        },
-      );
+      ;
+      Future.delayed(const Duration(seconds: 2), () {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (timeStamp) {
+            if (mounted) {
+              setState(() {});
+            }
+          },
+        );
+      });
     } catch (e) {
       debugPrint(e.toString());
     }

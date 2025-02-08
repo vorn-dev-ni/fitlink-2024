@@ -1,5 +1,4 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/common/model/user_model.dart';
 import 'package:demo/data/repository/firebase_auth_repo.dart';
 import 'package:demo/data/service/social/facebook_service.dart';
@@ -39,7 +38,10 @@ class AuthLoginRepository extends FirebaseAuthRepository {
         debugPrint("Calling email ${FirebaseAuth.instance.currentUser!.uid}");
         final authModel = await firestoreService
             .getEmail(FirebaseAuth.instance.currentUser!.uid);
-
+        Fluttertoast.showToast(
+            msg: 'Welcome back ${authModel.fullname ?? ""} 😘',
+            timeInSecForIosWeb: 4,
+            toastLength: Toast.LENGTH_LONG);
         await LocalStorageUtils().setKeyString('email', user.email!);
         return authModel;
       } else {

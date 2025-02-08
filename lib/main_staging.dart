@@ -101,14 +101,15 @@ class _MyAppState extends ConsumerState<MyApp> {
                   .listen((userDoc) async {
                 if (userDoc != null) {
                   await syncUser();
-                  // Navigate only when the user data is available
-                  if (navigatorKey.currentState?.canPop() == true) {
-                    navigatorKey.currentState!.popUntil(
-                        (route) => route.settings.name == AppPage.auth);
-                    navigatorKey.currentState!.pop();
-                  }
                 }
               });
+            }
+
+            await Future.delayed(const Duration(milliseconds: 1000));
+            if (navigatorKey.currentState?.canPop() == true) {
+              navigatorKey.currentState!
+                  .popUntil((route) => route.settings.name == AppPage.auth);
+              navigatorKey.currentState!.pop();
             }
 
             // await LocalStorageUtils().setKeyString('email',

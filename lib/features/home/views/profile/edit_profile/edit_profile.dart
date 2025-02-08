@@ -105,7 +105,9 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                           splashFactory: NoSplash.splashFactory,
                         ),
                         iconAlignment: IconAlignment.end,
-                        onPressed: _handleSubmit,
+                        onPressed: () async {
+                          await _handleSubmit();
+                        },
                         icon: const Icon(
                           Icons.check,
                           size: Sizes.iconSm,
@@ -322,7 +324,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     }
   }
 
-  void _handleSubmit() async {
+  Future _handleSubmit() async {
     try {
       DeviceUtils.hideKeyboard(context);
       final isValid = _formkey.currentState?.validate();
@@ -331,11 +333,11 @@ class _EditProfileState extends ConsumerState<EditProfile> {
 
       if (isValid == true) {
         _formkey.currentState!.save();
-
+        await Future.delayed(const Duration(seconds: 1));
         await ref
             .read(userFormControllerProvider.notifier)
             .updateUserProfile(previewImages);
-        ref.invalidate(profileUserControllerProvider);
+        // ref.invalidate(profileUserControllerProvider);
         ref.invalidate(eventDetailParticipantProvider);
         debugPrint("Update profile successfully !!!");
         Fluttertoast.showToast(
@@ -347,7 +349,6 @@ class _EditProfileState extends ConsumerState<EditProfile> {
             textColor: Colors.white,
             fontSize: 16.0);
       }
-      ref.read(appLoadingStateProvider.notifier).setState(false);
     } catch (e) {
       if (mounted) {
         Fluttertoast.showToast(

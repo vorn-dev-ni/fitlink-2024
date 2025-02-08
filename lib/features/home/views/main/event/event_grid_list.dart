@@ -3,6 +3,7 @@ import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/features/home/controller/event/events_listing_controller.dart';
 import 'package:demo/features/home/model/event.dart';
 import 'package:demo/features/home/views/main/event/event_submission/event_skeleton_item.dart';
+import 'package:demo/features/home/views/profile/post/post_profile.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/formatters/formatter_utils.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:sizer/sizer.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class EventGridList extends ConsumerStatefulWidget {
@@ -162,13 +164,16 @@ class _EventGridListState extends ConsumerState<EventGridList> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Text(
-                          events.establishment,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style:
-                              AppTextTheme.lightTextTheme.bodyMedium?.copyWith(
-                            color: AppColors.primaryColor,
+                        SizedBox(
+                          width: 25.w,
+                          child: Text(
+                            events.establishment,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTextTheme.lightTextTheme.bodyMedium
+                                ?.copyWith(
+                              color: AppColors.primaryColor,
+                            ),
                           ),
                         ),
                         Text(

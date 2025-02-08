@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:demo/common/model/transparent_container.dart';
+import 'package:demo/common/widget/app_dialog.dart';
 import 'package:demo/common/widget/bottom_upload_sheet.dart';
 import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/common/widget/error_image_placeholder.dart';
@@ -259,7 +260,46 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                             borderRadius: BorderRadius.circular(
                                                 Sizes.lg))),
                                     onPressed: () {
-                                      widget.onLogout();
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) => AppALertDialog(
+                                              onConfirm: () {},
+                                              negativeButton: SizedBox(
+                                                  width: 100.w,
+                                                  child: FilledButton(
+                                                      style: FilledButton.styleFrom(
+                                                          backgroundColor:
+                                                              AppColors
+                                                                  .neutralBlack),
+                                                      onPressed: () {
+                                                        HelpersUtils
+                                                                .navigatorState(
+                                                                    context)
+                                                            .pop();
+                                                      },
+                                                      child: const Text(
+                                                          'Cancel'))),
+                                              positivebutton: SizedBox(
+                                                  width: 100.w,
+                                                  child: FilledButton(
+                                                      style: FilledButton
+                                                          .styleFrom(
+                                                              backgroundColor:
+                                                                  AppColors
+                                                                      .errorColor),
+                                                      onPressed: () {
+                                                        HelpersUtils
+                                                                .navigatorState(
+                                                                    context)
+                                                            .pop();
+
+                                                        widget.onLogout();
+                                                      },
+                                                      child: const Text(
+                                                          'Confirm'))),
+                                              title: 'Are you sure?',
+                                              desc:
+                                                  "do you want to logout from this account?"));
                                     },
                                     child: const Text(
                                       'Log Out',

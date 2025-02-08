@@ -73,7 +73,7 @@ class _ForgetPasswordState extends ConsumerState<ForgetPassword> {
                                 try {
                                   debugPrint(
                                       'email is ${textEditingController.text}');
-
+                                  DeviceUtils.hideKeyboard(context);
                                   ref
                                       .read(appLoadingStateProvider.notifier)
                                       .setState(true);

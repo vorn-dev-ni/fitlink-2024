@@ -1,20 +1,19 @@
 import 'package:demo/common/widget/app_input.dart';
-import 'package:demo/common/widget/backdrop_loading.dart';
 import 'package:demo/common/widget/button.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
-import 'package:demo/data/repository/firebase/auth_login_repo.dart';
-import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/features/authentication/controller/auth_controller.dart';
 import 'package:demo/features/authentication/controller/login_controller.dart';
 import 'package:demo/features/authentication/views/forget_password_button.dart';
 import 'package:demo/features/authentication/views/login/divider_auth.dart';
 import 'package:demo/features/authentication/views/login/footer_text_auth.dart';
 import 'package:demo/features/authentication/views/social_auth_button.dart';
+import 'package:demo/features/other/app_info.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
+import 'package:demo/utils/device/device_utils.dart';
 import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:flutter/material.dart';
@@ -106,6 +105,7 @@ class _EmailLoginTabState extends ConsumerState<EmailLoginTab> {
               },
               text1: 'Dont have an account?',
               text2: ' Register here'),
+          const AppInfo(),
         ],
       ),
     );
@@ -113,23 +113,26 @@ class _EmailLoginTabState extends ConsumerState<EmailLoginTab> {
 
   Future _handleLoginState() async {
     try {
+      DeviceUtils.hideKeyboard(context);
       ref.read(appLoadingStateProvider.notifier).setState(true);
       final authState = ref.read(loginControllerProvider);
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
       await authController.loginUser(authState);
     } catch (e) {
-      ref.read(appLoadingStateProvider.notifier).setState(false);
       if (mounted) {
+        ref.read(appLoadingStateProvider.notifier).setState(false);
+
         ScaffoldMessenger.of(context).removeCurrentSnackBar();
         if (e is AppException) {
           HelpersUtils.showErrorSnackbar(
-              duration: 4000,
+              duration: 3000,
               context,
               e.title,
               e.message,
               StatusSnackbar.failed);
         } else {
           HelpersUtils.showErrorSnackbar(
-              duration: 4000,
+              duration: 3000,
               context,
               'Something went wrong',
               e.toString(),

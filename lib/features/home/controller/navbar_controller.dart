@@ -278,6 +278,7 @@ class NavbarController extends _$NavbarController {
   }
 
   void updateProfileTab(String avatar) {
+    debugPrint("Got avatar ${avatar}");
     state = state.map(
       (e) {
         if (e.tooltip == "profile") {

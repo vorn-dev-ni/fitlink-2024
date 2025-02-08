@@ -27,6 +27,7 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundDark,
       body: Stack(
         children: [
           PageView.builder(

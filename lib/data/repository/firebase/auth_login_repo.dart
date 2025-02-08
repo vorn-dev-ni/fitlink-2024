@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:demo/common/model/user_model.dart';
 import 'package:demo/data/repository/firebase_auth_repo.dart';
 import 'package:demo/data/service/social/facebook_service.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
@@ -9,6 +10,7 @@ import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthLoginRepository extends FirebaseAuthRepository {
@@ -26,13 +28,22 @@ class AuthLoginRepository extends FirebaseAuthRepository {
   }
 
   @override
-  Future loginUserEmailPassword(AuthUser auth) async {
+  Future<AuthModel?> loginUserEmailPassword(AuthUser auth) async {
     try {
       User? user = await firebaseAuthService.signInWithEmailAndPassword(
           email: auth.email!, password: auth.password!);
       if (user != null && user.emailVerified) {
         await firebaseAuthService.reloadUser();
+
+        debugPrint("Calling email ${FirebaseAuth.instance.currentUser!.uid}");
+        final authModel = await firestoreService
+            .getEmail(FirebaseAuth.instance.currentUser!.uid);
+        Fluttertoast.showToast(
+            msg: 'Welcome back ${authModel.fullname ?? ""} 😘',
+            timeInSecForIosWeb: 4,
+            toastLength: Toast.LENGTH_LONG);
         await LocalStorageUtils().setKeyString('email', user.email!);
+        return authModel;
       } else {
         throw AppException(
             title: 'Unauthorized',
@@ -47,24 +58,45 @@ class AuthLoginRepository extends FirebaseAuthRepository {
   Future loginUserWithFacebook() async {
     try {
       final facebookResult = await facebookService.loginFacebook();
+
       if (facebookResult.accessToken?.token != null) {
         final OAuthCredential facebookCrediential =
             FacebookAuthProvider.credential(facebookResult.accessToken!.token);
         // debugPrint("facebookCrediential ${facebookCrediential}");
         UserCredential? userCredential = await firebaseAuthService.getAuth
             ?.signInWithCredential(facebookCrediential);
-        // debugPrint("userCredential ${userCredential}");
+        await firebaseAuthService.reloadUser();
         if (userCredential != null) {
-          await firebaseAuthService.currentUser!
-              .updateDisplayName(userCredential.user!.displayName);
-          await firestoreService.addUserToFirestore(
-              userCredential.user!.displayName!, userCredential.user!.email!,
-              authprovider: 'facebook',
-              socialAvatar: userCredential.user!.photoURL ?? "");
+          AuthModel? userDoc =
+              await firestoreService.getEmail(userCredential.user!.uid);
+          if (userDoc.fullname == null || userDoc.fullname == "") {
+            Fluttertoast.showToast(
+                msg: 'Welcome back ${userCredential.user!.displayName} 😘',
+                timeInSecForIosWeb: 4,
+                toastLength: Toast.LENGTH_LONG);
+            await firebaseAuthService.currentUser!
+                .updateDisplayName(userCredential.user!.displayName);
+            await firestoreService.addUserToFirestore(
+                userCredential.user!.displayName!, userCredential.user!.email!,
+                authprovider: 'facebook',
+                socialAvatar: userCredential.user!.photoURL ?? "");
+          } else {
+            Fluttertoast.showToast(
+                msg: 'Welcome back ${userDoc.fullname} 😘',
+                timeInSecForIosWeb: 4,
+                toastLength: Toast.LENGTH_LONG);
+            await firebaseAuthService.currentUser!
+                .updateDisplayName(userDoc.fullname);
+          }
+
+          return userDoc;
         } else {
           throw FirebaseCredentialException(
-              title: 'Oops', message: 'Facebookk invalid crediential !!!');
+              title: 'Oops', message: 'Facebook invalid crediential !!!');
         }
+      } else {
+        // User cancel
+        return null;
       }
     } catch (e) {
       debugPrint("Error is  ${e.toString()}");
@@ -102,7 +134,8 @@ class AuthLoginRepository extends FirebaseAuthRepository {
       await firebaseAuthService.reloadUser();
       if (user != null) {
         await firebaseAuthService.currentUser!.sendEmailVerification();
-        await firestoreService.addUserToFirestore(auth.fullname!, auth.email!);
+        await firestoreService.addUserToFirestore(
+            "${auth.firstName!} ${auth.lastname!}", auth.email!);
         await firebaseAuthService.currentUser!.updateDisplayName(auth.fullname);
       }
     } catch (e) {
@@ -128,12 +161,13 @@ class AuthLoginRepository extends FirebaseAuthRepository {
   Future loginUserWithIOSAndroidGoogle() async {
     try {
       GoogleSignInAccount? googleSignInAccount =
-          await googleService.signIngoogleIos(); //For popup google native
+          await googleService.signIngoogleIos(); // For popup google native
 
       if (googleSignInAccount == null) {
         debugPrint("User has cancelled");
-        return;
+        return null;
       }
+
       final GoogleSignInAuthentication googleSignInAuthentication =
           await googleSignInAccount.authentication;
 
@@ -143,17 +177,41 @@ class AuthLoginRepository extends FirebaseAuthRepository {
 
       UserCredential? userCredential =
           await firebaseAuthService.getAuth!.signInWithCredential(credential);
-      await firebaseAuthService.currentUser!
-          .updateDisplayName(userCredential.user?.displayName);
-      if (userCredential.user != null) {
+      await firebaseAuthService.reloadUser();
+
+      AuthModel? userDoc =
+          await firestoreService.getEmail(userCredential.user!.uid);
+
+      if (userDoc.fullname == null || userDoc.fullname == "") {
+        Fluttertoast.showToast(
+            msg:
+                'Welcome back ${userCredential.user?.displayName ?? "Annouymouse User"} 😘',
+            timeInSecForIosWeb: 4,
+            toastLength: Toast.LENGTH_LONG);
+        await firebaseAuthService.currentUser!.updateDisplayName(
+            userCredential.user?.displayName ?? "Annouymouse User");
         await firestoreService.addUserToFirestore(
-            userCredential.user!.displayName!, userCredential.user!.email!,
-            authprovider: 'google',
-            socialAvatar: userCredential.user!.photoURL ?? "");
+          userCredential.user?.displayName ?? "Annouymouse User",
+          userCredential.user!.email!,
+          authprovider: 'google',
+          socialAvatar: userCredential.user?.photoURL ?? "",
+        );
       } else {
-        throw FirebaseCredentialException(
-            title: 'Oops', message: 'Invalid crediential !!!');
+        debugPrint("User already exists in Firestore.");
+        Fluttertoast.showToast(
+            msg: 'Welcome back ${userDoc.fullname} 😘',
+            timeInSecForIosWeb: 4,
+            toastLength: Toast.LENGTH_LONG);
+        await firebaseAuthService.currentUser!
+            .updateDisplayName(userDoc.fullname ?? "Annouymouse User");
       }
+
+      // Update display name if necessary
+      if (userCredential.user == null) {
+        throw FirebaseCredentialException(
+            title: 'Oops', message: 'Invalid credential !!!');
+      }
+      return userDoc;
     } catch (e) {
       debugPrint(e.toString());
       rethrow;

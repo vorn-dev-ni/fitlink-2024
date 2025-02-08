@@ -31,14 +31,17 @@ class RegisterScreen extends ConsumerStatefulWidget {
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   bool showPassword = false;
-  late TextEditingController _textEditingControllerFullName;
+  late TextEditingController _textEditingControllerFirstName;
+  late TextEditingController _textEditingControllerLastName;
+
   late TextEditingController _textEditingControllerEmail;
   late TextEditingController _textEditingControllerPassword;
   late AuthController authController;
   @override
   void initState() {
     _textEditingControllerEmail = TextEditingController();
-    _textEditingControllerFullName = TextEditingController();
+    _textEditingControllerFirstName = TextEditingController();
+    _textEditingControllerLastName = TextEditingController();
     _textEditingControllerPassword = TextEditingController();
     authController = AuthController(ref: ref);
     super.initState();
@@ -67,13 +70,24 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       headerTitle(),
                       AppInput(
                         hintText: 'Chovy',
-                        labelText: 'Fullname',
-                        controller: _textEditingControllerFullName,
-                        maxLength: 25,
+                        labelText: 'First Name',
+                        controller: _textEditingControllerFirstName,
+                        maxLength: 30,
                         onChanged: (value) {
                           ref
                               .read(registerControllerProvider.notifier)
-                              .updateFullName(value.trim());
+                              .updateFirstName(value.trim());
+                        },
+                      ),
+                      AppInput(
+                        hintText: 'Chovy',
+                        labelText: 'Last Name',
+                        controller: _textEditingControllerLastName,
+                        maxLength: 30,
+                        onChanged: (value) {
+                          ref
+                              .read(registerControllerProvider.notifier)
+                              .updateLastName(value.trim());
                         },
                       ),
                       AppInput(
@@ -181,6 +195,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   Future _handleRegister() async {
     try {
+      DeviceUtils.hideKeyboard(context);
       ref.read(appLoadingStateProvider.notifier).setState(true);
       final authState = ref.read(registerControllerProvider);
       await authController.createAccount(authState);

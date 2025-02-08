@@ -30,9 +30,19 @@ class $AssetsAppGen {
   AssetGenImage get noImgAvailable =>
       const AssetGenImage('assets/app/no_img_available.png');
 
+  /// File path: assets/app/no_internet_cat.jpg
+  AssetGenImage get noInternetCat =>
+      const AssetGenImage('assets/app/no_internet_cat.jpg');
+
   /// List of all assets
-  List<AssetGenImage> get values =>
-      [artOne, artTwo, defaultAvatar, gymBackground, noImgAvailable];
+  List<AssetGenImage> get values => [
+        artOne,
+        artTwo,
+        defaultAvatar,
+        gymBackground,
+        noImgAvailable,
+        noInternetCat
+      ];
 }
 
 class $AssetsIconGen {

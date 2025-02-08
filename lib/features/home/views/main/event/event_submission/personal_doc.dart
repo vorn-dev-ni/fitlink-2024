@@ -298,12 +298,11 @@ class _PersonalDocState extends ConsumerState<PersonalDoc> {
       HelpersUtils.navigatorState(context).pop();
     }
     Fluttertoast.showToast(
-        msg:
-            'Thanks you for submitting, We will get to you back in 2-3 business days !!!',
+        msg: 'Thanks you, we will get to you back in 2-3 business days !!!',
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 9,
-        backgroundColor: AppColors.secondaryColor,
+        backgroundColor: AppColors.successColor,
         textColor: Colors.white,
         fontSize: 16.0);
   }

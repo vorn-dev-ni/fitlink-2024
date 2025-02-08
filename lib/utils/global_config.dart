@@ -1,6 +1,5 @@
 import 'package:demo/common/model/route_app.dart';
 import 'package:demo/common/routes/routes.dart';
-import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/features/home/my_home.dart';
 import 'package:demo/features/on_boarding/on_boarding.dart';
 import 'package:demo/features/other/not_found.dart';
@@ -9,8 +8,10 @@ import 'package:demo/utils/firebase/firebase.dart';
 import 'package:demo/utils/firebase/firebase_options.dart';
 import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class GlobalConfig {
   static final GlobalConfig instance = GlobalConfig._internal();
@@ -20,7 +21,14 @@ class GlobalConfig {
   }
   Future<void> init() async {
     WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
     FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.dark,
+    ));
     await dotenv.load(fileName: ".env.dev");
     await initializeFirebaseApp(DefaultFirebaseOptions.currentPlatform);
   }

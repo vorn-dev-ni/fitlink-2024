@@ -183,7 +183,7 @@ end
   desc "Build and distribute APK for Staging"
   lane :staging_beta do
     load_env(env:"staging")  # Pass "staging" as a hash parameter
-    gradle(task: "clean",project_dir: "./android")
+    # gradle(task: "clean",project_dir: "./android")
     version_name = get_version_name(
       gradle_file_path: "./android/app/build.gradle",
       ext_constant_name:"versionName"
@@ -194,27 +194,80 @@ end
     )
     version_code = get_version_code(
       gradle_file_path: "./android/app/build.gradle"
-      
+    
     )
- 
-   gradle(
-    task: "assemble",
-    build_type: "Release",
-    project_dir: "./android",
-    flavor: "staging"
-  )
     
    firebase_app_distribution(
     app: "1:77080916809:android:ebe1398ec028ced65b2098",  # Your Firebase App ID
-    testers: "Sivsovanpanhavorn@gmail.com, Sovanpanhavorn.siv@tovtrip.com",  # Testers' email addresses
-    release_notes: "Release notes for staging test",
+    testers: "Sivsovanpanhavorn@gmail.com, Sovanpanhavorn.siv@tovtrip.com,amyjohn922@gmail.com, henghuylong1@gmail.com, narakithya@gmail.com",  # Testers' email addresses
+    release_notes: "🚀 New Build Available!  
+📌 **Environment:** Staging  
+📌 **Build:** #{version_code}  
+📌 **Version:** #{version_name}  
+
+✨ **New Features & Updates:**  
+
+✅ **Authentication:**  
+- Firebase authentication integration  
+- Login via **Email, Phone, Google, Facebook**  
+- User registration process with validation  
+
+✅ **Events Management:**  
+- View event listings and details  
+- Create, update, and delete events & sub-events  
+- Real-time event status updates  
+
+✅ **Profile Management:**  
+- Edit bio, first name, last name, avatar, and cover image  
+- Customizable privacy options  
+
+✅ **Google Maps Authentication:**  
+- Seamless Google Maps integration for location-based features  
+
+⚠ **Known Issues:**  
+- OTP functionality is **not working** in the Android beta version (only available in production mode). iOS version is unaffected.  
+
+🛠 **Bug Fixes:**  
+- Fixed crash on app startup when network is unavailable  
+- Improved memory management & app stability  
+
+🧪 **Enjoy testing and feel free to report any issues!**",
+
 apk_path: "/Users/macbook/Documents/flutter/fitlink-2024/build/app/outputs/flutter-apk/app-staging-release.apk"
-  )
-   deploy_message = "New build Android is available on Firebase App Distribution!!
-  • Environment : Staging
-  • Build : #{version_code}
-  • Version : #{version_name}
-   And check your email for testing invitation. Thank you."
+
+)
+    deploy_message = "New build Android is available on Firebase App Distribution!!
+  • Environment: Staging
+  • Build: #{version_code}
+  • Version: #{version_name}
+  
+🚀 New Features & Updates:
+
+✅ Authentication:
+- Firebase authentication integration
+- Login via Email, Phone, Google, Facebook
+- User registration process with validation
+
+✅ Events Management:
+- View event listings and event details
+- Create, update, and delete events and sub-events
+- Real-time updates on event status
+
+✅ Profile Management:
+- Edit bio, first name, last name, avatar, and cover image
+- Customizable user profile with privacy options
+
+✅ Google Maps Authentication:
+- Seamless Google Maps integration for location-based features
+
+⚠ **Known Issues:**  
+- OTP functionality is **not working** in the Android beta version (only available in production mode). iOS version is unaffected.  
+
+🛠 Bug Fixes:
+- Fixed crash issue on app startup when network is unavailable.
+- Improved memory management and app stability.
+Thank you for testing this release! Your feedback helps us improve the app.
+🧪 Enjoy testing and feel free to report any issues."
    puts "CHATID: #{ENV['CHAT_ID']} >>> TElETOKEN: #{ENV['TELE_TOKEN']}"
     telegram(
         text: deploy_message,

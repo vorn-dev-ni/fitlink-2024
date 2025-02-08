@@ -20,12 +20,14 @@ class SchemaData {
       primaryColor: AppColors.primaryColor,
       brightness: Brightness.light,
       elevatedButtonTheme: ElevationTheme.elevationButtonLight,
+      textSelectionTheme: AppTextThemeSelection.lightTheme,
       colorScheme: const ColorScheme.light(
         primary: AppColors.primaryColor,
         secondary: AppColors.secondaryColor,
         tertiary: AppColors.tertiaryColor,
         error: AppColors.errorColor,
         surface: AppColors.secondaryColor,
+        onSurface: AppColors.primaryColor,
       ),
     );
   }
@@ -43,12 +45,16 @@ class SchemaData {
       ],
       elevatedButtonTheme: ElevationTheme.elevationButtonDark,
       primaryColorDark: AppColors.primaryDark,
+      textSelectionTheme: AppTextThemeSelection.darkTheme,
       colorScheme: const ColorScheme.dark(
         primary: AppColors.primaryDark,
         secondary: AppColors.secondaryDark,
         tertiary: AppColors.tertiaryDark,
         error: AppColors.errorColor,
+        onSurface: AppColors.primaryColor,
+
         surface: AppColors.neutralBlack,
+        // onSurface: Colors.white
       ),
     );
   }

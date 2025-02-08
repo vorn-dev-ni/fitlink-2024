@@ -8,5 +8,11 @@ abstract class BaseService {
   Future<QuerySnapshot<Map<String, dynamic>>> getAllOneTime();
   Future getById({required String uid});
   Future joinEvents(String docId);
+
   Future uploadCertificate(Map<String, dynamic> data);
+}
+
+abstract class BaseUserService {
+  Future updateCoverImage(Map<String, dynamic> data);
+  Future updateProfile(Map<String, dynamic> data);
 }

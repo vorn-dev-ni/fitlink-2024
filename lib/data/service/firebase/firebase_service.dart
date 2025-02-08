@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
 import 'package:demo/utils/firebase/firebase.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
@@ -44,8 +45,9 @@ class FirebaseAuthService {
     required Function(String) codeAutoRetrievalTimeout,
   }) async {
     try {
+      debugPrint("iphone is ${phoneNumber}");
       await _auth.verifyPhoneNumber(
-        phoneNumber: '+855 $phoneNumber',
+        phoneNumber: '+$phoneNumber',
         verificationCompleted: verificationCompleted,
         verificationFailed: verificationFailed,
         codeSent: codeSent,
@@ -73,11 +75,21 @@ class FirebaseAuthService {
       if (userCredential.user != null) {
         await LocalStorageUtils()
             .setKeyString('email', userCredential.user!.phoneNumber!);
-        String randomName = HelpersUtils.generateRandomUsername();
-        await syncUsertoFirestore(randomName, userCredential.user!.phoneNumber!,
-            authprovider: 'phone');
 
-        debugPrint("User has been failed");
+        String phoneNumber = userCredential.user!.phoneNumber!;
+        String uid = userCredential.user!.uid;
+        // Check if the user already exists in Firestore
+        DocumentSnapshot userDoc =
+            await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+        if (!userDoc.exists) {
+          String randomName = "Anonymous Unnamed";
+          await syncUsertoFirestore(randomName, phoneNumber,
+              authprovider: 'phone');
+          debugPrint("User has been registered and synced to Firestore");
+        } else {
+          debugPrint("User already exists, skipping Firestore sync");
+        }
 
         onSuccessOtp();
       }
@@ -93,7 +105,7 @@ class FirebaseAuthService {
           .createUserWithEmailAndPassword(
               email: email ?? "", password: password ?? "");
       if (credential.user != null && password != null) {
-        syncUsertoFirestore(credential!.user!.email!, password);
+        syncUsertoFirestore(credential.user!.email!, password);
       }
       return credential;
     } on FirebaseAuthException catch (e) {

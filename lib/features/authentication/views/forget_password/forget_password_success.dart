@@ -37,8 +37,6 @@ class _ForgetPasswordSuccessState extends ConsumerState<ForgetPasswordSuccess> {
     return Stack(
       children: [
         Scaffold(
-          appBar: const AppBarCustom(
-              bgColor: AppColors.backgroundLight, showheader: false),
           body: renderBody(),
         ),
         if (appLoading == true)
@@ -48,94 +46,53 @@ class _ForgetPasswordSuccessState extends ConsumerState<ForgetPasswordSuccess> {
   }
 
   Widget renderBody() {
-    return SafeArea(
-        child: Padding(
-      padding: const EdgeInsets.all(Sizes.xl),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(
-            height: Sizes.lg,
-          ),
-          SvgPicture.asset(
-            Assets.icon.svg.check,
-            width: 200,
-            height: 200,
-            colorFilter: const ColorFilter.mode(
-                AppColors.secondaryColor, BlendMode.srcIn),
-          ),
-          Text(
-            'Success',
-            style: AppTextTheme.lightTextTheme.headlineLarge,
-          ),
-          Text(
-            'Please check your email to reset your password',
-            textAlign: TextAlign.center,
-            style: AppTextTheme.lightTextTheme.bodyMedium
-                ?.copyWith(color: AppColors.neutralDark),
-          ),
-          const Spacer(),
-          ButtonApp(
-              height: 18,
-              splashColor: const Color.fromARGB(255, 207, 225, 255),
-              label: "Back to login",
-              onPressed: () {
-                HelpersUtils.navigatorState(context).pushNamedAndRemoveUntil(
-                  AppPage.auth,
-                  (route) => false,
-                );
-              },
-              radius: 0,
-              textStyle: AppTextTheme.lightTextTheme.bodyMedium?.copyWith(
-                  color: AppColors.backgroundLight,
-                  fontWeight: FontWeight.w500) as dynamic,
-              color: AppColors.secondaryColor,
-              textColor: Colors.white,
-              elevation: 0),
-
-          // ButtonApp(
-          //     height: 18,
-          //     splashColor: const Color.fromARGB(255, 207, 225, 255),
-          //     label: "Resend Email",
-          //     onPressed: () async {
-          //       try {
-          //         ref.read(appLoadingStateProvider.notifier).setState(true);
-          //         await authController.sendEmailforgetPassword(userEmail ?? '');
-          //       } catch (e) {
-          //         ref.read(appLoadingStateProvider.notifier).setState(false);
-          //         if (mounted) {
-          //           ScaffoldMessenger.of(context).removeCurrentSnackBar();
-          //           if (e is AppException) {
-          //             HelpersUtils.showErrorSnackbar(
-          //                 duration: 4000,
-          //                 context,
-          //                 e.title,
-          //                 e.message,
-          //                 StatusSnackbar.failed);
-          //           } else {
-          //             HelpersUtils.showErrorSnackbar(
-          //                 duration: 4000,
-          //                 context,
-          //                 'Something went wrong',
-          //                 e.toString(),
-          //                 StatusSnackbar.failed);
-          //           }
-          //         }
-          //       } finally {
-          //         if (mounted) {
-          //           ref.read(appLoadingStateProvider.notifier).setState(false);
-          //         }
-          //       }
-          //     },
-          //     radius: 0,
-          //     textStyle: AppTextTheme.lightTextTheme.bodyMedium?.copyWith(
-          //         color: AppColors.backgroundLight,
-          //         fontWeight: FontWeight.w500) as dynamic,
-          //     color: AppColors.secondaryColor,
-          //     textColor: Colors.white,
-          //     elevation: 0),
-        ],
-      ),
-    ));
+    return PopScope(
+      canPop: false,
+      child: SafeArea(
+          child: Padding(
+        padding: const EdgeInsets.all(Sizes.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(
+              height: Sizes.lg,
+            ),
+            SvgPicture.asset(
+              Assets.icon.svg.check,
+              width: 200,
+              height: 200,
+              colorFilter: const ColorFilter.mode(
+                  AppColors.secondaryColor, BlendMode.srcIn),
+            ),
+            Text(
+              'Success',
+              style: AppTextTheme.lightTextTheme.headlineLarge,
+            ),
+            Text(
+              'Please check your email to reset your password',
+              textAlign: TextAlign.center,
+              style: AppTextTheme.lightTextTheme.bodyMedium
+                  ?.copyWith(color: AppColors.neutralDark),
+            ),
+            const Spacer(),
+            ButtonApp(
+                height: 18,
+                splashColor: const Color.fromARGB(255, 207, 225, 255),
+                label: "Back to login",
+                onPressed: () {
+                  HelpersUtils.navigatorState(context)
+                      .popUntil((route) => route.settings.name == AppPage.auth);
+                },
+                radius: 0,
+                textStyle: AppTextTheme.lightTextTheme.bodyMedium?.copyWith(
+                    color: AppColors.backgroundLight,
+                    fontWeight: FontWeight.w500) as dynamic,
+                color: AppColors.secondaryColor,
+                textColor: Colors.white,
+                elevation: 0),
+          ],
+        ),
+      )),
+    );
   }
 }

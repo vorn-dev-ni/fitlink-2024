@@ -1,5 +1,4 @@
 import 'package:demo/common/model/user_model.dart';
-import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
@@ -12,9 +11,10 @@ import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
-import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HomeTab extends ConsumerStatefulWidget {
@@ -36,6 +36,13 @@ class _HomeTabState extends ConsumerState<HomeTab>
 
   @override
   void didChangeDependencies() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.dark, // For iOS
+    ));
     super.didChangeDependencies();
   }
 
@@ -47,10 +54,20 @@ class _HomeTabState extends ConsumerState<HomeTab>
 
   @override
   void initState() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.dark, // For iOS
+    ));
     firestoreService =
         FirestoreService(firebaseAuthService: FirebaseAuthService());
     _tabController = TabController(length: _screens.length, vsync: this);
-    syncUser();
+
+    // if (FirebaseAuth.instance.currentUser != null) {
+    //   syncUser();
+    // }
 
     super.initState();
   }
@@ -125,10 +142,16 @@ class _HomeTabState extends ConsumerState<HomeTab>
   Future syncUser() async {
     try {
       AuthModel? authModel = await firestoreService
-          .getEmail(firestoreService.firebaseAuthService.currentUser!.uid);
+          .getEmail(FirebaseAuth.instance.currentUser!.uid);
+
+      debugPrint("Tab ?>>> ${authModel}");
+
+      ref.invalidate(navbarControllerProvider);
+
       ref
           .read(navbarControllerProvider.notifier)
           .updateProfileTab(authModel.avatar ?? "");
+      ref.invalidate(profileUserControllerProvider);
     } catch (e) {
       if (mounted) {
         HelpersUtils.showErrorSnackbar(

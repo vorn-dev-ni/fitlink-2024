@@ -39,5 +39,13 @@ class AppPage {
   static const eventCreate = 'EventCreate';
   static const eventRequestGymTrainer = 'EventRequest';
 
+  //Utils
+
+  static const previewImage = 'PreviewImage';
+
+  //User
+
+  static const editProfile = 'EditProfile';
+
   //SUCCCESS_OTP
 }

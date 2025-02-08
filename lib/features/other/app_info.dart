@@ -7,7 +7,6 @@ import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:demo/utils/localization/translation_helper.dart';
 
 class AppInfo extends ConsumerStatefulWidget {
   const AppInfo({
@@ -53,15 +52,7 @@ class _AppInfoState extends ConsumerState<AppInfo> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(
-                    height: Sizes.lg,
-                  ),
                   Text(deviceName),
-                  Text(
-                    'App ${appInfo?.packageName}',
-                    style: AppTextTheme.getTextTheme(appSettings.appTheme!)
-                        .bodySmall,
-                  ),
                   Text(
                     'App Version Code ${appInfo?.version}',
                     style: AppTextTheme.getTextTheme(appSettings.appTheme!)
@@ -73,7 +64,7 @@ class _AppInfoState extends ConsumerState<AppInfo> {
                         .bodySmall,
                   ),
                   Text(
-                    'App build Number ${appInfo?.installerStore}',
+                    'App Name ${appInfo?.packageName}',
                     style: AppTextTheme.getTextTheme(appSettings.appTheme!)
                         .bodySmall,
                   ),

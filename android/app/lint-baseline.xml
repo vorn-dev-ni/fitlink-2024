@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.1.0" type="baseline" client="gradle" dependencies="false" name="AGP (8.1.0)" variant="all" version="8.1.0">
+
+    <issue
+        id="MissingClass"
+        message="Class referenced in the manifest, `com.yalantis.ucrop.UCropActivity`, was not found in the project or the libraries"
+        errorLine1="    android:name=&quot;com.yalantis.ucrop.UCropActivity&quot;"
+        errorLine2="                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="48"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="ScopedStorage"
+        message="READ_EXTERNAL_STORAGE is deprecated (and is not granted) when targeting Android 13+. If you need to query or interact with MediaStore or media files on the shared storage, you should instead use one or more new storage permissions: `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO` or `READ_MEDIA_AUDIO`."
+        errorLine1="        &lt;uses-permission android:name=&quot;android.permission.READ_EXTERNAL_STORAGE&quot; />"
+        errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="2"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="ScopedStorage"
+        message="WRITE_EXTERNAL_STORAGE is deprecated (and is not granted) when targeting Android 13+. If you need to write to shared storage, use the `MediaStore.createWriteRequest` intent."
+        errorLine1="&lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot; />"
+        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="10"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="NewApi"
+        message="`android:forceDarkAllowed` requires API level 29 (current min is 23)"
+        errorLine1="        &lt;item name=&quot;android:forceDarkAllowed&quot;>false&lt;/item>"
+        errorLine2="              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/res/values-night/styles.xml"
+            line="8"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="NewApi"
+        message="`android:forceDarkAllowed` requires API level 29 (current min is 23)"
+        errorLine1="        &lt;item name=&quot;android:forceDarkAllowed&quot;>false&lt;/item>"
+        errorLine2="              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/res/values/styles.xml"
+            line="8"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="NewApi"
+        message="`android:windowLayoutInDisplayCutoutMode` requires API level 27 (current min is 23)"
+        errorLine1="        &lt;item name=&quot;android:windowLayoutInDisplayCutoutMode&quot;>shortEdges&lt;/item>"
+        errorLine2="              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/res/values-night/styles.xml"
+            line="11"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="NewApi"
+        message="`android:windowLayoutInDisplayCutoutMode` requires API level 27 (current min is 23)"
+        errorLine1="        &lt;item name=&quot;android:windowLayoutInDisplayCutoutMode&quot;>shortEdges&lt;/item>"
+        errorLine2="              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/res/values/styles.xml"
+            line="11"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="ManifestOrder"
+        message="`&lt;uses-permission>` tag appears after `&lt;application>` tag"
+        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.INTERNET&quot;/>"
+        errorLine2="     ~~~~~~~~~~~~~~~">
+        <location
+            file="src/debug/AndroidManifest.xml"
+            line="9"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="RedundantLabel"
+        message="Redundant label can be removed"
+        errorLine1="        android:label=&quot;@string/app_name&quot; />"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="46"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.facebook.android:facebook-login than 15.2.0 is available: 18.0.1"
+        errorLine1="  implementation &quot;com.facebook.android:facebook-login:15.2.0&quot;"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="111"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="LockedOrientationActivity"
+        message="Expecting `android:screenOrientation=&quot;unspecified&quot;` or `&quot;fullSensor&quot;` for this activity so the user can use the application in any orientation and provide a great experience on Chrome OS devices"
+        errorLine1="    android:screenOrientation=&quot;portrait&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="49"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="PermissionImpliesUnsupportedChromeOsHardware"
+        message="Permission exists without corresponding hardware `&lt;uses-feature android:name=&quot;android.hardware.camera&quot; required=&quot;false&quot;>` tag"
+        errorLine1="        &lt;uses-permission android:name=&quot;android.permission.CAMERA&quot; />"
+        errorLine2="         ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="3"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="This folder configuration (`v21`) is unnecessary; `minSdkVersion` is 23. Merge all the resources in this folder into `drawable`.">
+        <location
+            file="src/dev/res/drawable-v21"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="This folder configuration (`v21`) is unnecessary; `minSdkVersion` is 23. Merge all the resources in this folder into `drawable`.">
+        <location
+            file="src/main/res/drawable-v21"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.mipmap.ic_launcher_background` appears to be unused">
+        <location
+            file="src/dev/res/mipmap-hdpi/ic_launcher_background.png"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.mipmap.ic_launcher_foreground` appears to be unused">
+        <location
+            file="src/dev/res/mipmap-hdpi/ic_launcher_foreground.png"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.mipmap.ic_launcher_monochrome` appears to be unused">
+        <location
+            file="src/dev/res/mipmap-hdpi/ic_launcher_monochrome.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        message="Launcher icons should not fill every pixel of their square region; see the design guide for details">
+        <location
+            file="src/dev/res/mipmap-hdpi/ic_launcher.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        message="Launcher icons should not fill every pixel of their square region; see the design guide for details">
+        <location
+            file="src/dev/res/mipmap-mdpi/ic_launcher.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        message="Launcher icons should not fill every pixel of their square region; see the design guide for details">
+        <location
+            file="src/dev/res/mipmap-xhdpi/ic_launcher.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        message="Launcher icons should not fill every pixel of their square region; see the design guide for details">
+        <location
+            file="src/dev/res/mipmap-xxhdpi/ic_launcher.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        message="Launcher icons should not fill every pixel of their square region; see the design guide for details">
+        <location
+            file="src/dev/res/mipmap-xxxhdpi/ic_launcher.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicatesConfig"
+        message="The `background.png` icon has identical contents in the following configuration folders: drawable-v21, drawable">
+        <location
+            file="src/dev/res/drawable/background.png"/>
+        <location
+            file="src/dev/res/drawable-v21/background.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/background.png` in densityless folder">
+        <location
+            file="src/dev/res/drawable/background.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        message="The following unrelated icon files have identical contents: android12branding.png, branding.png, android12branding.png">
+        <location
+            file="src/dev/res/drawable-night-hdpi-v31/android12branding.png"/>
+        <location
+            file="src/dev/res/drawable-hdpi/branding.png"/>
+        <location
+            file="src/dev/res/drawable-hdpi-v31/android12branding.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        message="The following unrelated icon files have identical contents: android12branding.png, branding.png, android12branding.png">
+        <location
+            file="src/dev/res/drawable-night-mdpi-v31/android12branding.png"/>
+        <location
+            file="src/dev/res/drawable-mdpi/branding.png"/>
+        <location
+            file="src/dev/res/drawable-mdpi-v31/android12branding.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        message="The following unrelated icon files have identical contents: android12splash.png, splash.png, android12splash.png">
+        <location
+            file="src/dev/res/drawable-night-hdpi/android12splash.png"/>
+        <location
+            file="src/dev/res/drawable-hdpi/splash.png"/>
+        <location
+            file="src/dev/res/drawable-hdpi/android12splash.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        message="The following unrelated icon files have identical contents: android12splash.png, splash.png, android12splash.png">
+        <location
+            file="src/dev/res/drawable-night-mdpi/android12splash.png"/>
+        <location
+            file="src/dev/res/drawable-mdpi/splash.png"/>
+        <location
+            file="src/dev/res/drawable-mdpi/android12splash.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        message="The following unrelated icon files have identical contents: android12branding.png, android12branding.png, branding.png">
+        <location
+            file="src/dev/res/drawable-xhdpi/branding.png"/>
+        <location
+            file="src/dev/res/drawable-xhdpi-v31/android12branding.png"/>
+        <location
+            file="src/dev/res/drawable-night-xhdpi-v31/android12branding.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        message="The following unrelated icon files have identical contents: android12branding.png, android12branding.png, branding.png">
+        <location
+            file="src/dev/res/drawable-xxhdpi/branding.png"/>
+        <location
+            file="src/dev/res/drawable-xxhdpi-v31/android12branding.png"/>
+        <location
+            file="src/dev/res/drawable-night-xxhdpi-v31/android12branding.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        message="The following unrelated icon files have identical contents: android12branding.png, android12branding.png, branding.png">
+        <location
+            file="src/dev/res/drawable-xxxhdpi/branding.png"/>
+        <location
+            file="src/dev/res/drawable-xxxhdpi-v31/android12branding.png"/>
+        <location
+            file="src/dev/res/drawable-night-xxxhdpi-v31/android12branding.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        message="The following unrelated icon files have identical contents: android12splash.png, android12splash.png, splash.png">
+        <location
+            file="src/dev/res/drawable-xhdpi/splash.png"/>
+        <location
+            file="src/dev/res/drawable-xhdpi/android12splash.png"/>
+        <location
+            file="src/dev/res/drawable-night-xhdpi/android12splash.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        message="The following unrelated icon files have identical contents: android12splash.png, android12splash.png, splash.png">
+        <location
+            file="src/dev/res/drawable-xxhdpi/splash.png"/>
+        <location
+            file="src/dev/res/drawable-xxhdpi/android12splash.png"/>
+        <location
+            file="src/dev/res/drawable-night-xxhdpi/android12splash.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        message="The following unrelated icon files have identical contents: android12splash.png, android12splash.png, splash.png">
+        <location
+            file="src/dev/res/drawable-xxxhdpi/splash.png"/>
+        <location
+            file="src/dev/res/drawable-xxxhdpi/android12splash.png"/>
+        <location
+            file="src/dev/res/drawable-night-xxxhdpi/android12splash.png"/>
+    </issue>
+
+</issues>

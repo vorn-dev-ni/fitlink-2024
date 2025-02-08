@@ -1,5 +1,11 @@
 class EventSubmitValidation {
   EventSubmitValidation._();
+  static bool isValidEmail(String email) {
+    final emailRegex = RegExp(
+      r".+@.+",
+    );
+    return emailRegex.hasMatch(email);
+  }
 
   static String? validateZipCode(String? value, int maxLength, int minLength) {
     if (value == "" || value == null) {
@@ -76,6 +82,10 @@ class EventSubmitValidation {
     }
     if (value.length > maxLength - 1) {
       return 'Your email address must be more then ${maxLength - 1} characters';
+    }
+
+    if (!isValidEmail(value)) {
+      return 'Please provide valid email address';
     }
     return null;
   }

@@ -22,6 +22,22 @@
           }
         },
         {
+          "client_id": "77080916809-76rog2ibt22f92f0361boegf7pc9qsrl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fitlink.app",
+            "certificate_hash": "1b3fa3e49f316a5b69b5e5eaafadd30e81c48f34"
+          }
+        },
+        {
+          "client_id": "77080916809-ti9g3o8saq2al2a2shu5635vilgtv17q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fitlink.app",
+            "certificate_hash": "3463712301b2c76cff12471b2c2278753ed84ab6"
+          }
+        },
+        {
           "client_id": "77080916809-m7um334qh7pg3gp1o5bikcjtg6bib1qa.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -31,7 +47,7 @@
           "current_key": "AIzaSyAi_T6gFYy31O_jaSmUjZrBOK9kTxJvoAU"
         },
         {
-          "current_key": "AIzaSyAHa05TAy5-ErDGdcHMJsNoco8Q_PsGm4Q"
+          "current_key": "AIzaSyAUZIYr-Bthsu62w4HLlq448-G_63oudrQ"
         }
       ],
       "services": {
@@ -61,11 +77,27 @@
       },
       "oauth_client": [
         {
+          "client_id": "77080916809-ibkvqcuttj6spk84d4l5sed6c2qnhhje.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fitlink.app.dev",
+            "certificate_hash": "3463712301b2c76cff12471b2c2278753ed84ab6"
+          }
+        },
+        {
           "client_id": "77080916809-ij9licf4evqcjjtdj9fpg8ksqoj3f9de.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.fitlink.app.dev",
             "certificate_hash": "bf660fc903707cd181c92062ed5a9c0219f0a4b1"
+          }
+        },
+        {
+          "client_id": "77080916809-lab5gh4vs4ji6nnt1bf5rn4gm0i98490.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fitlink.app.dev",
+            "certificate_hash": "1b3fa3e49f316a5b69b5e5eaafadd30e81c48f34"
           }
         },
         {
@@ -78,7 +110,7 @@
           "current_key": "AIzaSyAi_T6gFYy31O_jaSmUjZrBOK9kTxJvoAU"
         },
         {
-          "current_key": "AIzaSyAHa05TAy5-ErDGdcHMJsNoco8Q_PsGm4Q"
+          "current_key": "AIzaSyAUZIYr-Bthsu62w4HLlq448-G_63oudrQ"
         }
       ],
       "services": {
@@ -116,6 +148,22 @@
           }
         },
         {
+          "client_id": "77080916809-foqg89k67hvsjl8un36trf6l6jgucpq6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fitlink.app.staging",
+            "certificate_hash": "3463712301b2c76cff12471b2c2278753ed84ab6"
+          }
+        },
+        {
+          "client_id": "77080916809-uigf3pf6vrirmdi5li7b8ugd92ad4dev.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fitlink.app.staging",
+            "certificate_hash": "1b3fa3e49f316a5b69b5e5eaafadd30e81c48f34"
+          }
+        },
+        {
           "client_id": "77080916809-m7um334qh7pg3gp1o5bikcjtg6bib1qa.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -125,7 +173,7 @@
           "current_key": "AIzaSyAi_T6gFYy31O_jaSmUjZrBOK9kTxJvoAU"
         },
         {
-          "current_key": "AIzaSyAHa05TAy5-ErDGdcHMJsNoco8Q_PsGm4Q"
+          "current_key": "AIzaSyAUZIYr-Bthsu62w4HLlq448-G_63oudrQ"
         }
       ],
       "services": {

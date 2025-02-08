@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:demo/common/widget/app_dialog.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
@@ -11,7 +8,6 @@ import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sizer/sizer.dart';
 
 class UploadTab extends ConsumerStatefulWidget {
   const UploadTab({super.key});
@@ -20,32 +16,20 @@ class UploadTab extends ConsumerStatefulWidget {
   ConsumerState<UploadTab> createState() => _UploadTabState();
 }
 
-class _UploadTabState extends ConsumerState<UploadTab> {
+class _UploadTabState extends ConsumerState<UploadTab>
+    with AutomaticKeepAliveClientMixin<UploadTab> {
   UserRoles? userRoles;
-  late StreamSubscription<dynamic> streamSubscription;
+  late FirestoreService firestoreService;
 
   @override
   void initState() {
+    firestoreService =
+        FirestoreService(firebaseAuthService: FirebaseAuthService());
     super.initState();
-    fetchUserRole();
-    final streamData =
-        FirestoreService(firebaseAuthService: FirebaseAuthService())
-            .getUserRoleRealTime();
-
-    streamSubscription = streamData.listen((event) {
-      if (event != null && event.containsKey('role')) {
-        final roleString = event['role'];
-        final newRole = UserRolesExtension.fromValue(roleString);
-        setState(() {
-          userRoles = newRole;
-        });
-      }
-    });
   }
 
   @override
   void dispose() {
-    streamSubscription.cancel();
     super.dispose();
   }
 
@@ -53,17 +37,8 @@ class _UploadTabState extends ConsumerState<UploadTab> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Expanded(
-          flex: 6,
-          child: Container(
-            width: 100.w,
-            child: Text('User role ${userRoles?.name}'),
-            // height: 200,
-            decoration: BoxDecoration(color: AppColors.backgroundLight),
-          ),
-        ),
         Container(
-          padding: const EdgeInsets.all(40),
+          padding: const EdgeInsets.all(80),
           decoration: const BoxDecoration(color: Colors.black),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -79,7 +54,10 @@ class _UploadTabState extends ConsumerState<UploadTab> {
                     ?.copyWith(color: AppColors.backgroundLight),
               ),
               GestureDetector(
-                onTap: _handleNavigateEvent,
+                onTap: () {
+                  HelpersUtils.navigatorState(context)
+                      .pushNamed(AppPage.eventCreate);
+                },
                 child: Text(
                   'Events',
                   style: AppTextTheme.lightTextTheme.bodyMedium
@@ -98,38 +76,52 @@ class _UploadTabState extends ConsumerState<UploadTab> {
   }
 
   void fetchUserRole() async {
-    final asyncValues = await ref.read(profileUserControllerProvider.future);
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        setState(() {
-          userRoles = asyncValues?.userRoles;
-        });
-      },
-    );
-  }
-
-  void _handleNavigateEvent() {
-    if (userRoles == UserRoles.NORMAL) {
-      showDialog(
-          context: context,
-          builder: (context) => AppALertDialog(
-              onConfirm: () {},
-              positivebutton: SizedBox(
-                  width: 100.w,
-                  child: FilledButton(
-                      style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.errorColor),
-                      onPressed: () {
-                        HelpersUtils.navigatorState(context).pop();
-                        HelpersUtils.navigatorState(context)
-                            .pushNamed(AppPage.eventRequestGymTrainer);
-                      },
-                      child: const Text('Confirm'))),
-              title: 'Notice',
-              desc:
-                  "To proceed, please submit proof that you are a gym owner or trainer. This information is required to unlock full access to the app’s features"));
-    } else {
-      HelpersUtils.navigatorState(context).pushNamed(AppPage.eventCreate);
+    final asyncValues = await ref.watch(profileUserControllerProvider.future);
+    debugPrint("USer role is ${asyncValues}");
+    if (mounted) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (timeStamp) {
+          setState(() {
+            userRoles = asyncValues?.userRoles;
+          });
+        },
+      );
     }
   }
+
+  // void _handleNavigateEvent() async {
+  //   if (FirebaseAuth.instance.currentUser != null) {
+  //     final roleString = await firestoreService.checkUserRole();
+  //     final newRole = UserRolesExtension.fromValue(roleString);
+  //     if (newRole == UserRoles.NORMAL) {
+  //       if (mounted) {
+  //         showDialog(
+  //             context: context,
+  //             builder: (context) => AppALertDialog(
+  //                 onConfirm: () {},
+  //                 positivebutton: SizedBox(
+  //                     width: 100.w,
+  //                     child: FilledButton(
+  //                         style: FilledButton.styleFrom(
+  //                             backgroundColor: AppColors.errorColor),
+  //                         onPressed: () {
+  //                           HelpersUtils.navigatorState(context).pop();
+  //                           HelpersUtils.navigatorState(context)
+  //                               .pushNamed(AppPage.eventRequestGymTrainer);
+  //                         },
+  //                         child: const Text('Confirm'))),
+  //                 title: 'Notice',
+  //                 desc:
+  //                     "To proceed, please submit proof that you are a gym owner or trainer. This information is required to unlock full access to the app’s features"));
+  //       }
+  //     } else {
+  //       if (mounted) {
+  //         HelpersUtils.navigatorState(context).pushNamed(AppPage.eventCreate);
+  //       }
+  //     }
+  //   }
+  // }
+
+  @override
+  bool get wantKeepAlive => true;
 }

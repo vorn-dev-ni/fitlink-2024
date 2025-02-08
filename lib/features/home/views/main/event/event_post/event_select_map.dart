@@ -11,8 +11,8 @@ import 'package:demo/utils/https/https_client.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:sizer/sizer.dart';
 
 class EventSelectMap extends ConsumerStatefulWidget {
@@ -114,8 +114,8 @@ class EventSelectMapState extends ConsumerState<EventSelectMap> {
             markers: {
               Marker(
                   markerId: const MarkerId('Default'),
-                  infoWindow: const InfoWindow(
-                    title: 'Default',
+                  infoWindow: InfoWindow(
+                    title: tempAddress?.address ?? "Select",
                   ),
                   position: mapPosition!,
                   icon: BitmapDescriptor.defaultMarkerWithHue(
@@ -208,15 +208,27 @@ class EventSelectMapState extends ConsumerState<EventSelectMap> {
   }
 
   Future getAddressess({double? lat, double? lng}) async {
-    final googleMapservice = GoogleMapService(httpsClient: HttpsClient());
-    final result = await googleMapservice.getAddressFromLatLng(
-        lat ?? mapPosition!.latitude, lng ?? mapPosition!.longitude);
+    try {
+      final googleMapservice = GoogleMapService(httpsClient: HttpsClient());
+      final result = await googleMapservice.getAddressFromLatLng(
+          lat ?? mapPosition!.latitude, lng ?? mapPosition!.longitude);
 
-    if (mounted) {
-      setState(() {
-        isFetching = false;
-        tempAddress = result;
-      });
+      if (mounted) {
+        setState(() {
+          isFetching = false;
+          tempAddress = result;
+        });
+      }
+    } catch (e) {
+      // HelpersUtils.navigatorState(context).pop();
+      // Fluttertoast.showToast(
+      //     msg: e.toString(),
+      //     toastLength: Toast.LENGTH_SHORT,
+      //     gravity: ToastGravity.BOTTOM,
+      //     timeInSecForIosWeb: 5,
+      //     backgroundColor: AppColors.errorColor,
+      //     textColor: Colors.white,
+      //     fontSize: 16.0);
     }
   }
 
@@ -224,11 +236,13 @@ class EventSelectMapState extends ConsumerState<EventSelectMap> {
     // ref.read(appLoadingStateProvider.notifier).setState(true);
     final lat = ref.read(eventFormControllerProvider).lat;
     final lng = ref.read(eventFormControllerProvider).lng;
-    Position? position;
+    LocationData? position;
     if (lat == null && lng == null) {
       position = await HelpersUtils.getCurrentLocation();
+
       initMap = CameraPosition(
-        target: LatLng(position.latitude, position.longitude),
+        target: LatLng(
+            position.latitude ?? 11.5564, position.longitude ?? 104.9282),
         zoom: 14,
       );
     } else {
@@ -242,8 +256,8 @@ class EventSelectMapState extends ConsumerState<EventSelectMap> {
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
         setState(() {
-          mapPosition =
-              LatLng(lat ?? position!.latitude, lng ?? position!.longitude);
+          mapPosition = LatLng(lat ?? position!.latitude ?? 11.5564,
+              lng ?? position!.longitude ?? 104.9282);
         });
       },
     );

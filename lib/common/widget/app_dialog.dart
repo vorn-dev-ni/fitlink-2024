@@ -7,10 +7,12 @@ class AppALertDialog extends StatefulWidget {
   final String title;
   final String desc;
   final Function onConfirm;
+  final Widget? negativeButton;
   final Widget? positivebutton;
   const AppALertDialog(
       {super.key,
       required this.onConfirm,
+      this.negativeButton,
       required this.title,
       this.positivebutton,
       required this.desc});
@@ -64,7 +66,21 @@ class _AppALertDialogState extends State<AppALertDialog> {
                   ?.copyWith(color: AppColors.errorColor),
             ),
             const SizedBox(height: 16.0),
-            if (widget.positivebutton != null) widget.positivebutton!
+            Row(
+              children: [
+                if (widget.negativeButton != null)
+                  Expanded(
+                    child: widget.negativeButton!,
+                  ),
+                const SizedBox(
+                  width: Sizes.sm,
+                ),
+                if (widget.positivebutton != null)
+                  Expanded(
+                    child: widget.positivebutton!,
+                  )
+              ],
+            )
           ],
         ),
       ),

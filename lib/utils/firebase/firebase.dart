@@ -1,6 +1,8 @@
 import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/flavor/config.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:flutter/foundation.dart';
 
 Future<void> initializeFirebaseApp(
     FirebaseOptions DefaultFirebaseOptions) async {
@@ -8,8 +10,13 @@ Future<void> initializeFirebaseApp(
     await Firebase.initializeApp(
         name: AppConfig.appConfig.flavor.value,
         options: DefaultFirebaseOptions);
+    await Future.delayed(const Duration(milliseconds: 200));
+    await FirebaseAppCheck.instance.activate(
+      androidProvider: AndroidProvider.playIntegrity,
+      appleProvider: AppleProvider.appAttest,
+    );
   } catch (e) {
-    print('Error initializing Firebase: $e');
+    debugPrint('Error initializing Firebase: $e');
   }
 }
 

@@ -82,36 +82,51 @@ class _EventDatePickerCustomState extends ConsumerState<EventDatePickerCustom> {
       ),
       body: SafeArea(
           child: SizedBox(
-              width: 100.w,
-              height: 100.h,
-              child: SfDateRangePicker(
-                controller: _datePickerController,
-                enablePastDates: false,
-                // initialSelectedRanges: dateRanges,
-                headerHeight: 100,
+        width: 100.w,
+        height: 100.h,
+        child: SfDateRangePicker(
+            controller: _datePickerController,
+            enablePastDates: false,
+            monthViewSettings: DateRangePickerMonthViewSettings(
+                viewHeaderStyle: DateRangePickerViewHeaderStyle(
+                    textStyle: AppTextTheme.lightTextTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.normal,
+                        color: AppColors.secondaryColor))),
+            headerHeight: 100,
+            minDate: DateTime.now(),
+            startRangeSelectionColor: AppColors.secondaryColor,
+            endRangeSelectionColor:
+                AppColors.secondaryColor, // Change to your preferred color
+            rangeSelectionColor: AppColors.secondaryColor.withOpacity(0.5),
+            headerStyle: const DateRangePickerHeaderStyle(
+              backgroundColor:
+                  AppColors.secondaryColor, // Custom header background
+              textStyle: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+            monthCellStyle: DateRangePickerMonthCellStyle(
+              textStyle: AppTextTheme.lightTextTheme.bodyMedium?.copyWith(
+                  color: AppColors.secondaryColor), // Ensure full visibility
+              todayTextStyle: TextStyle(color: AppColors.primaryColor),
 
-                minDate: DateTime.now(),
-                todayHighlightColor: AppColors.primaryColor,
-
-                endRangeSelectionColor: AppColors.secondaryColor,
-                startRangeSelectionColor: AppColors.secondaryColor,
-                rangeSelectionColor: const Color.fromARGB(255, 154, 203, 234),
-                headerStyle: DateRangePickerHeaderStyle(
-                    backgroundColor: AppColors.secondaryColor,
-                    textStyle: AppTextTheme.lightTextTheme.headlineSmall
-                        ?.copyWith(color: AppColors.backgroundLight)),
-                showTodayButton: false,
-
-                selectionMode: DateRangePickerSelectionMode.range,
-                allowViewNavigation: true,
-                showNavigationArrow: true,
-                onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
-                  setState(() {
-                    singleDateRanges = args.value;
-                  });
-                },
-                backgroundColor: AppColors.backgroundLight,
-              ))),
+              todayCellDecoration: const BoxDecoration(
+                color: Color.fromARGB(255, 46, 187, 247),
+                shape: BoxShape.circle,
+              ),
+              disabledDatesTextStyle:
+                  TextStyle(color: Color.fromARGB(255, 226, 224, 224)),
+            ),
+            selectionMode: DateRangePickerSelectionMode.range,
+            allowViewNavigation: true,
+            showNavigationArrow: true,
+            onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+              setState(() {
+                singleDateRanges = args.value;
+              });
+            },
+            backgroundColor:
+                AppColors.backgroundLight // Change the overall background color
+            ),
+      )),
     );
   }
 }

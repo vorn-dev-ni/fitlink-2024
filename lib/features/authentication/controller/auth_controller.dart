@@ -6,6 +6,8 @@ import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/features/authentication/controller/login_controller.dart';
 import 'package:demo/features/authentication/controller/register_controller.dart';
 import 'package:demo/features/authentication/model/auth_user.dart';
+import 'package:demo/features/home/controller/navbar_controller.dart';
+import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/firebase_auth_message.dart';
 import 'package:demo/utils/exception/app_exception.dart';
@@ -24,9 +26,9 @@ class AuthController {
         AuthLoginRepository(firebaseAuthService: FirebaseAuthService());
   }
 
-  Future<void> loginUserWithFacebook() async {
+  Future loginUserWithFacebook() async {
     try {
-      await _authLoginRepository.loginUserWithFacebook();
+      return await _authLoginRepository.loginUserWithFacebook();
       // debugPrint("Login with facebook successfully");
     } catch (e) {
       String message = e.toString();
@@ -67,6 +69,7 @@ class AuthController {
   }
 
   bool checkValidation() {
+    debugPrint("Cjeck");
     return ref.read(registerControllerProvider.notifier).checkRegisterState();
   }
 
@@ -85,7 +88,12 @@ class AuthController {
 
         return;
       }
-      await _authLoginRepository.loginUserEmailPassword(auth);
+      final user = await _authLoginRepository.loginUserEmailPassword(auth);
+
+      ref
+          .read(navbarControllerProvider.notifier)
+          .updateProfileTab(user.avatar ?? "");
+      ref.invalidate(profileUserControllerProvider);
     } catch (e) {
       String message = e.toString();
       if (e is FirebaseException) {
@@ -100,13 +108,11 @@ class AuthController {
 
   Future<void> logout() async {
     await _authLoginRepository.logoutUser();
-    ref.invalidate(navigationStateProvider);
-    // await FirebaseFirestore.instance.clearPersistence(); //Will use later
   }
 
-  Future<void> loginWithGoogle() async {
+  Future loginWithGoogle() async {
     try {
-      await _authLoginRepository.loginUserWithIOSAndroidGoogle();
+      return await _authLoginRepository.loginUserWithIOSAndroidGoogle();
     } catch (e) {
       String message = e.toString();
       if (e is FirebaseException) {
@@ -122,13 +128,15 @@ class AuthController {
 
   Future<void> createAccount(AuthUser authUser) async {
     try {
-      if (!checkValidation()) {
+      final isValid = checkValidation();
+      if (isValid == false) {
         return;
       }
       await _authLoginRepository.registerUserWithEmailPassword(authUser);
-      HelpersUtils.navigatorState(ref.context).pushNamedAndRemoveUntil(
+      ref.invalidate(navbarControllerProvider);
+
+      HelpersUtils.navigatorState(ref.context).pushNamed(
         AppPage.emailSuccess,
-        (route) => false,
       );
     } catch (e) {
       String message = e.toString();

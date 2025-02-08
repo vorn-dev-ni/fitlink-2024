@@ -10,6 +10,8 @@ import 'package:demo/features/home/my_home.dart';
 import 'package:demo/features/home/views/main/event/event_detail/event_detail.dart';
 import 'package:demo/features/home/views/main/event/event_post/event_post.dart';
 import 'package:demo/features/home/views/main/event/event_submission/event_form_submit.dart';
+import 'package:demo/features/home/views/preview/preview_image.dart';
+import 'package:demo/features/home/views/profile/edit_profile/edit_profile.dart';
 import 'package:demo/features/on_boarding/on_boarding.dart';
 import 'package:demo/features/other/no_internet.dart';
 import 'package:demo/utils/constant/app_page.dart';
@@ -19,6 +21,12 @@ class AppRoutes {
   AppRoutes._();
 
   static final List<RoutesApp> mainStacks = [
+    RoutesApp(
+        routeName: AppPage.editProfile,
+        builder: (context) => const EditProfile()),
+    RoutesApp(
+        routeName: AppPage.previewImage,
+        builder: (context) => const PreviewImage()),
     RoutesApp(
         routeName: AppPage.eventRequestGymTrainer,
         builder: (context) => const EventFormSubmission()),

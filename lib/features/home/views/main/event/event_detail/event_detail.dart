@@ -11,19 +11,21 @@ import 'package:demo/utils/formatters/formatter_utils.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class EventDetail extends StatefulWidget {
+class EventDetail extends ConsumerStatefulWidget {
   const EventDetail({super.key});
 
   @override
-  State<EventDetail> createState() => _EventDetailState();
+  ConsumerState<EventDetail> createState() => _EventDetailState();
 }
 
-class _EventDetailState extends State<EventDetail> {
-  late final String tag;
+class _EventDetailState extends ConsumerState<EventDetail> {
+  String tag = "";
 
-  late final Event event;
+  Event? event;
   @override
   void didChangeDependencies() {
     final result =
@@ -36,36 +38,51 @@ class _EventDetailState extends State<EventDetail> {
   }
 
   @override
+  void dispose() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.dark, // For iOS
+    ));
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          appBar(context, event),
-          eventHeaderSection(
-              address: event.address,
-              endTime: FormatterUtils.formatDateToDuration(
-                      event.timeStart.toDate()) ??
-                  "",
-              establishment: event.establishment,
-              isFree: event.freeEntry,
-              startTime: FormatterUtils.formatDateToDuration(
-                      event.timeStart.toDate()) ??
-                  "",
-              title: event.eventTitle,
-              price: event.price?.toString() ?? ""),
-          EventDesc(desc: event.descriptions),
-          eventMapSection(
-              LatLng(
-                event.lat,
-                event.lng,
-              ),
-              event.establishment),
-          EventBottomInterest(
-              users: event.participants,
-              desc: event.descriptions,
-              feature: event.feature,
-              docId: event.docId,
-              title: event.eventTitle)
+          if (event != null) appBar(context, event!),
+          if (event != null)
+            eventHeaderSection(
+                address: event!.address,
+                endTime: FormatterUtils.getFormattedTime(
+                        event!.timeStart.toDate()) ??
+                    "",
+                establishment: event!.establishment,
+                isFree: event!.freeEntry,
+                startTime:
+                    FormatterUtils.getFormattedTime(event!.endTime.toDate()) ??
+                        "",
+                title: event!.eventTitle,
+                price: event!.price?.toString() ?? ""),
+          EventDesc(desc: event!.descriptions),
+          if (event != null)
+            eventMapSection(
+                LatLng(
+                  event!.lat,
+                  event!.lng,
+                ),
+                event!.establishment),
+          if (event != null)
+            EventBottomInterest(
+                users: event!.participants,
+                desc: event!.descriptions,
+                feature: event!.feature,
+                docId: event!.docId,
+                title: event!.eventTitle),
         ],
       ),
     );

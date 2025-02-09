@@ -82,4 +82,4 @@ esac
 
 # Run flutter with the selected environment and mode
 echo "Running Flutter for $FLAVOR environment in $MODE mode..."
-flutter run --flavor "$FLAVOR" --target "$TARGET" $MODE_FLAG
+flutter run --flavor "$FLAVOR" --target "$TARGET" $MODE_FLAG 

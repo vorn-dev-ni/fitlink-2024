@@ -18,6 +18,9 @@ class $AssetsAppGen {
   /// File path: assets/app/art_two.png
   AssetGenImage get artTwo => const AssetGenImage('assets/app/art_two.png');
 
+  /// File path: assets/app/cat_gym.jpg
+  AssetGenImage get catGym => const AssetGenImage('assets/app/cat_gym.jpg');
+
   /// File path: assets/app/default_avatar.jpg
   AssetGenImage get defaultAvatar =>
       const AssetGenImage('assets/app/default_avatar.jpg');
@@ -38,6 +41,7 @@ class $AssetsAppGen {
   List<AssetGenImage> get values => [
         artOne,
         artTwo,
+        catGym,
         defaultAvatar,
         gymBackground,
         noImgAvailable,

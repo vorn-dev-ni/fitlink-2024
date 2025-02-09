@@ -85,6 +85,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
     streamAuthState = _firebaseAuthService.authStateChanges.listen(
       (user) async {
+        debugPrint("Top level user is ${user?.uid}");
         if (user == null &&
             LocalStorageUtils().getKey('email') != null &&
             LocalStorageUtils().getKey('email')!.isNotEmpty) {
@@ -116,15 +117,6 @@ class _MyAppState extends ConsumerState<MyApp> {
                   .popUntil((route) => route.settings.name == AppPage.auth);
               navigatorKey.currentState!.pop();
             }
-
-            // await LocalStorageUtils().setKeyString('email',
-            //     user?.email != null ? user!.email! : user?.phoneNumber ?? "");
-
-            // if (navigatorKey.currentState?.canPop() == true) {
-            //   navigatorKey.currentState!
-            //       .popUntil((route) => route.settings.name == AppPage.auth);
-            //   navigatorKey.currentState!.pop();
-            // }
           }
         } else {
           isNavigating = false;
@@ -154,14 +146,15 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   Future syncUser(String uid) async {
     try {
-      debugPrint("SYNC USER ${uid}");
       AuthModel? authModel = await firestoreService.getEmail(uid);
-      debugPrint("SYNC vatar ${authModel.avatar}");
+      debugPrint(
+          'avatar is ${authModel.avatar} ${FirebaseAuth.instance.currentUser?.uid}');
 
       if (mounted) {
         ref
             .read(navbarControllerProvider.notifier)
             .updateProfileTab(authModel.avatar ?? "");
+
         ref.invalidate(profileUserControllerProvider);
         ref.read(appLoadingStateProvider.notifier).setState(false);
       }

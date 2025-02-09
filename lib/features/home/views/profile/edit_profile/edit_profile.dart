@@ -329,17 +329,22 @@ class _EditProfileState extends ConsumerState<EditProfile> {
       DeviceUtils.hideKeyboard(context);
       final isValid = _formkey.currentState?.validate();
 
-      ref.read(appLoadingStateProvider.notifier).setState(true);
-
       if (isValid == true) {
+        ref.read(appLoadingStateProvider.notifier).setState(true);
+
         _formkey.currentState!.save();
-        await Future.delayed(const Duration(seconds: 1));
+        await Future.delayed(const Duration(milliseconds: 500));
         await ref
             .read(userFormControllerProvider.notifier)
             .updateUserProfile(previewImages);
+        if (mounted) {
+          HelpersUtils.navigatorState(context).pop();
+          ref.read(appLoadingStateProvider.notifier).setState(false);
+        }
         // ref.invalidate(profileUserControllerProvider);
         ref.invalidate(eventDetailParticipantProvider);
         debugPrint("Update profile successfully !!!");
+
         Fluttertoast.showToast(
             msg: "Update profile successfully !!!",
             toastLength: Toast.LENGTH_LONG,

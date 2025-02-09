@@ -277,91 +277,147 @@ class NavbarController extends _$NavbarController {
     ];
   }
 
-  void updateProfileTab(String avatar) {
+  void updateProfileTab(String? avatar) {
     debugPrint("Got avatar ${avatar}");
     state = state.map(
       (e) {
         if (e.tooltip == "profile") {
-          e = BottomNavigationBarItem(
-            icon: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(Sizes.lg),
-                      border: Border.all(
-                          width: 1, color: AppColors.backgroundLight)),
-                  child: ClipOval(
-                    child: avatar.isEmpty
-                        ? Assets.app.defaultAvatar
-                            .image(width: 20, height: 20, fit: BoxFit.cover)
-                        : FancyShimmerImage(
-                            boxFit: BoxFit.cover,
-                            boxDecoration: BoxDecoration(
-                                border: Border.all(
-                                    width: 1,
-                                    color: AppColors.backgroundLight)),
-                            width: 20,
-                            height: 20,
-                            errorWidget: errorImgplaceholder(),
-                            imageUrl: avatar,
-                          ),
+          if (avatar == null) {
+            e = BottomNavigationBarItem(
+              tooltip: 'profile',
+              icon: Column(
+                children: [
+                  SvgPicture.asset(
+                    Assets.icon.svg.circle,
+                    fit: BoxFit.cover,
+                    colorFilter: const ColorFilter.mode(
+                        AppColors.backgroundLight, BlendMode.srcIn),
+                    width: 25,
+                    height: 25,
                   ),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                Opacity(
-                  opacity: 0.0,
-                  child: SvgPicture.asset(
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  Opacity(
+                    opacity: 0.0,
+                    child: SvgPicture.asset(
+                      Assets.icon.svg.dotIndicator,
+                      fit: BoxFit.cover,
+                      colorFilter: const ColorFilter.mode(
+                          AppColors.neutralBlack, BlendMode.hardLight),
+                      width: 7,
+                      height: 7,
+                    ),
+                  ),
+                ],
+              ),
+              activeIcon: Column(
+                children: [
+                  SvgPicture.asset(
+                    Assets.icon.svg.circle,
+                    fit: BoxFit.cover,
+                    colorFilter: const ColorFilter.mode(
+                        AppColors.backgroundLight, BlendMode.srcIn),
+                    width: 25,
+                    height: 25,
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  SvgPicture.asset(
                     Assets.icon.svg.dotIndicator,
                     fit: BoxFit.cover,
                     colorFilter: const ColorFilter.mode(
-                        AppColors.neutralBlack, BlendMode.hardLight),
+                        AppColors.backgroundLight, BlendMode.srcIn),
                     width: 7,
                     height: 7,
                   ),
-                ),
-              ],
-            ),
-            activeIcon: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(Sizes.lg),
-                      border: Border.all(
-                          width: 1, color: AppColors.backgroundLight)),
-                  child: ClipOval(
-                    child: avatar.isEmpty
-                        ? Assets.app.defaultAvatar
-                            .image(width: 20, height: 20, fit: BoxFit.cover)
-                        : FancyShimmerImage(
-                            boxFit: BoxFit.cover,
-                            boxDecoration: BoxDecoration(
-                                border: Border.all(
-                                    width: 1,
-                                    color: AppColors.backgroundLight)),
-                            width: 20,
-                            height: 20,
-                            errorWidget: errorImgplaceholder(),
-                            imageUrl: avatar,
-                          ),
+                ],
+              ),
+              label: '',
+            );
+          } else {
+            e = BottomNavigationBarItem(
+              icon: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(Sizes.lg),
+                        border: Border.all(
+                            width: 1, color: AppColors.backgroundLight)),
+                    child: ClipOval(
+                      child: avatar.isEmpty
+                          ? Assets.app.defaultAvatar
+                              .image(width: 20, height: 20, fit: BoxFit.cover)
+                          : FancyShimmerImage(
+                              boxFit: BoxFit.cover,
+                              boxDecoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 1,
+                                      color: AppColors.backgroundLight)),
+                              width: 20,
+                              height: 20,
+                              errorWidget: errorImgplaceholder(),
+                              imageUrl: avatar,
+                            ),
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                SvgPicture.asset(
-                  Assets.icon.svg.dotIndicator,
-                  fit: BoxFit.cover,
-                  colorFilter: const ColorFilter.mode(
-                      AppColors.backgroundLight, BlendMode.srcIn),
-                  width: 7,
-                  height: 7,
-                ),
-              ],
-            ),
-            label: '',
-          );
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  Opacity(
+                    opacity: 0.0,
+                    child: SvgPicture.asset(
+                      Assets.icon.svg.dotIndicator,
+                      fit: BoxFit.cover,
+                      colorFilter: const ColorFilter.mode(
+                          AppColors.neutralBlack, BlendMode.hardLight),
+                      width: 7,
+                      height: 7,
+                    ),
+                  ),
+                ],
+              ),
+              activeIcon: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(Sizes.lg),
+                        border: Border.all(
+                            width: 1, color: AppColors.backgroundLight)),
+                    child: ClipOval(
+                      child: avatar.isEmpty
+                          ? Assets.app.defaultAvatar
+                              .image(width: 20, height: 20, fit: BoxFit.cover)
+                          : FancyShimmerImage(
+                              boxFit: BoxFit.cover,
+                              boxDecoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 1,
+                                      color: AppColors.backgroundLight)),
+                              width: 20,
+                              height: 20,
+                              errorWidget: errorImgplaceholder(),
+                              imageUrl: avatar,
+                            ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  SvgPicture.asset(
+                    Assets.icon.svg.dotIndicator,
+                    fit: BoxFit.cover,
+                    colorFilter: const ColorFilter.mode(
+                        AppColors.backgroundLight, BlendMode.srcIn),
+                    width: 7,
+                    height: 7,
+                  ),
+                ],
+              ),
+              label: '',
+            );
+          }
         }
         return e;
       },

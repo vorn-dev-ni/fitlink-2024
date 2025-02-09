@@ -121,9 +121,9 @@ class AuthLoginRepository extends FirebaseAuthRepository {
 
   @override
   Future logoutUser() async {
+    await firebaseAuthService.signOut();
     await googleService.logout();
     await facebookService.logoutFacebook();
-    await firebaseAuthService.signOut();
   }
 
   @override

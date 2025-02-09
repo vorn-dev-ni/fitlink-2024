@@ -8,10 +8,10 @@ class ProfileEditValidation {
     }
 
     if (value.length < minLength) {
-      return 'Your first name must be less then $minLength characters';
+      return 'Your first name must be more then ${minLength - 1} characters';
     }
     if (value.length > maxLength - 1) {
-      return 'Your first name must be more then ${maxLength - 1} characters';
+      return 'Your first name must be less then ${maxLength} characters';
     }
     return null;
   }
@@ -22,10 +22,10 @@ class ProfileEditValidation {
     }
 
     if (value.length < minLength) {
-      return 'Your last name must be less then $minLength characters';
+      return 'Your last name must be more then ${minLength - 1} characters';
     }
     if (value.length > maxLength - 1) {
-      return 'Your last name must be more then ${maxLength - 1} characters';
+      return 'Your last name must be less then ${maxLength} characters';
     }
     return null;
   }
@@ -36,10 +36,10 @@ class ProfileEditValidation {
     }
 
     if (value.length < minLength) {
-      return 'Your bio must be less then $minLength characters';
+      return 'Your bio must be more then ${minLength - 1} characters';
     }
     if (value.length > maxLength - 1) {
-      return 'Your bio must be more then ${maxLength - 1} characters';
+      return 'Your bio must be less then ${maxLength} characters';
     }
     return null;
   }

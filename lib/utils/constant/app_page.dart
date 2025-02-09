@@ -38,6 +38,7 @@ class AppPage {
   static const eventDetail = 'EventDetail';
   static const eventCreate = 'EventCreate';
   static const eventRequestGymTrainer = 'EventRequest';
+  static const eventSuccess = 'FormSuccess';
 
   //Utils
 

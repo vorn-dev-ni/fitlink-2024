@@ -7,7 +7,7 @@ part of 'profile_user_controller.dart';
 // **************************************************************************
 
 String _$profileUserControllerHash() =>
-    r'234d397bf9b6bdb1ca1dd31269938caefcc97e57';
+    r'e0486a88ff99d3164783ef8c56c9c816d4e44e7f';
 
 /// See also [ProfileUserController].
 @ProviderFor(ProfileUserController)

@@ -282,15 +282,22 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                             context: context,
                                             builder: (context) =>
                                                 AppALertDialog(
+                                                    bgColor:
+                                                        Color.fromRGBO(0, 0, 0, 1)
+                                                            .withOpacity(0.4),
                                                     onConfirm: () {},
                                                     negativeButton: SizedBox(
                                                         width: 100.w,
                                                         child: FilledButton(
-                                                            style: FilledButton
-                                                                .styleFrom(
-                                                                    backgroundColor:
-                                                                        AppColors
-                                                                            .neutralBlack),
+                                                            style: FilledButton.styleFrom(
+                                                                backgroundColor:
+                                                                    const Color.fromARGB(
+                                                                            255,
+                                                                            241,
+                                                                            228,
+                                                                            228)
+                                                                        .withOpacity(
+                                                                            0.5)),
                                                             onPressed: () {
                                                               HelpersUtils
                                                                       .navigatorState(
@@ -302,11 +309,10 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                                     positivebutton: SizedBox(
                                                         width: 100.w,
                                                         child: FilledButton(
-                                                            style: FilledButton
-                                                                .styleFrom(
-                                                                    backgroundColor:
-                                                                        AppColors
-                                                                            .errorColor),
+                                                            style: FilledButton.styleFrom(
+                                                                backgroundColor: AppColors
+                                                                    .errorColor
+                                                                    .withOpacity(0.5)),
                                                             onPressed: () {
                                                               HelpersUtils
                                                                       .navigatorState(
@@ -322,8 +328,11 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                                                   .setSystemUIOverlayStyle(
                                                                       const SystemUiOverlayStyle(
                                                                 statusBarColor:
-                                                                    Colors
-                                                                        .transparent,
+                                                                    Color.fromARGB(
+                                                                        0,
+                                                                        169,
+                                                                        166,
+                                                                        166),
                                                                 statusBarIconBrightness:
                                                                     Brightness
                                                                         .dark,
@@ -333,11 +342,9 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                                               ));
                                                               widget.onLogout();
                                                             },
-                                                            child: const Text(
-                                                                'Confirm'))),
+                                                            child: const Text('Confirm'))),
                                                     title: 'Are you sure?',
-                                                    desc:
-                                                        "do you want to logout from this account?"));
+                                                    desc: "do you want to logout from this account and no logger has access?"));
                                       },
                                       child: const Text(
                                         'Log Out',

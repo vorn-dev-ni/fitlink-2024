@@ -139,29 +139,4 @@ class _HomeTabState extends ConsumerState<HomeTab>
       ),
     );
   }
-
-  Future syncUser() async {
-    try {
-      AuthModel? authModel = await firestoreService
-          .getEmail(FirebaseAuth.instance.currentUser!.uid);
-
-      debugPrint("Tab ?>>> ${authModel}");
-
-      ref.invalidate(navbarControllerProvider);
-
-      ref
-          .read(navbarControllerProvider.notifier)
-          .updateProfileTab(authModel.avatar ?? "");
-      ref.invalidate(profileUserControllerProvider);
-    } catch (e) {
-      if (mounted) {
-        HelpersUtils.showErrorSnackbar(
-            duration: 2000,
-            context,
-            'Oop!',
-            e.toString(),
-            StatusSnackbar.failed);
-      }
-    }
-  }
 }

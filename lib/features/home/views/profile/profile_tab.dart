@@ -167,17 +167,18 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
 
   void handleLogout() async {
     if (mounted) {
+      ref.invalidate(navbarControllerProvider);
+      ref.invalidate(navigationStateProvider);
+      ref.invalidate(registerControllerProvider);
+      ref.invalidate(loginControllerProvider);
+      ref.invalidate(profileUserControllerProvider);
+      LocalStorageUtils().setKeyString('email', '');
       Fluttertoast.showToast(
           msg: 'See you soon love 😔 !!!',
           timeInSecForIosWeb: 5,
           toastLength: Toast.LENGTH_LONG);
     }
-    ref.invalidate(navbarControllerProvider);
-    ref.invalidate(navigationStateProvider);
-    ref.invalidate(registerControllerProvider);
-    ref.invalidate(loginControllerProvider);
-    ref.invalidate(profileUserControllerProvider);
-    LocalStorageUtils().setKeyString('email', '');
+
     await authController.logout();
   }
 }

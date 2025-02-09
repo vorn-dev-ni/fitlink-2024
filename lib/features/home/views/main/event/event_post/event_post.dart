@@ -745,6 +745,9 @@ class _EventPostingState extends ConsumerState<EventPosting> {
           uploadImage = null;
           temPath = null;
           ref.invalidate(eventFormControllerProvider);
+          if (mounted) {
+            HelpersUtils.navigatorState(context).pop();
+          }
 
           Fluttertoast.showToast(
               msg: 'Successfully created the event !!!',

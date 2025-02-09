@@ -10,6 +10,7 @@ import 'package:demo/features/home/my_home.dart';
 import 'package:demo/features/home/views/main/event/event_detail/event_detail.dart';
 import 'package:demo/features/home/views/main/event/event_post/event_post.dart';
 import 'package:demo/features/home/views/main/event/event_submission/event_form_submit.dart';
+import 'package:demo/features/home/views/main/event/event_submission/event_success.dart';
 import 'package:demo/features/home/views/preview/preview_image.dart';
 import 'package:demo/features/home/views/profile/edit_profile/edit_profile.dart';
 import 'package:demo/features/on_boarding/on_boarding.dart';
@@ -21,6 +22,9 @@ class AppRoutes {
   AppRoutes._();
 
   static final List<RoutesApp> mainStacks = [
+    RoutesApp(
+        routeName: AppPage.eventSuccess,
+        builder: (context) => const EventSubmissSuccess()),
     RoutesApp(
         routeName: AppPage.editProfile,
         builder: (context) => const EditProfile()),

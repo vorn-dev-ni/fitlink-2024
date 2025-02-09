@@ -1,6 +1,4 @@
-import 'package:demo/common/widget/backdrop_loading.dart';
 import 'package:demo/common/widget/button.dart';
-import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/features/authentication/controller/auth_controller.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
@@ -10,18 +8,18 @@ import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 
-class ForgetPasswordSuccess extends ConsumerStatefulWidget {
-  const ForgetPasswordSuccess({super.key});
+class EventSubmissSuccess extends ConsumerStatefulWidget {
+  const EventSubmissSuccess({super.key});
 
   @override
-  ConsumerState<ForgetPasswordSuccess> createState() =>
-      _ForgetPasswordSuccessState();
+  ConsumerState<EventSubmissSuccess> createState() =>
+      _EmailVerifyConfimrationState();
 }
 
-class _ForgetPasswordSuccessState extends ConsumerState<ForgetPasswordSuccess> {
+class _EmailVerifyConfimrationState extends ConsumerState<EventSubmissSuccess> {
   late AuthController authController;
+
   @override
   void initState() {
     authController = AuthController(ref: ref);
@@ -30,14 +28,11 @@ class _ForgetPasswordSuccessState extends ConsumerState<ForgetPasswordSuccess> {
 
   @override
   Widget build(BuildContext context) {
-    final appLoading = ref.watch(appLoadingStateProvider);
     return Stack(
       children: [
         Scaffold(
           body: renderBody(),
         ),
-        if (appLoading == true)
-          backDropLoading(backgroundColor: const Color.fromARGB(255, 0, 0, 0)),
       ],
     );
   }
@@ -52,21 +47,21 @@ class _ForgetPasswordSuccessState extends ConsumerState<ForgetPasswordSuccess> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(
+              height: Sizes.xxxl,
+            ),
+            Assets.app.catGym.image(width: 250, height: 250, fit: BoxFit.cover),
+            const SizedBox(
               height: Sizes.lg,
             ),
-            SvgPicture.asset(
-              Assets.icon.svg.check,
-              width: 200,
-              height: 200,
-              colorFilter: const ColorFilter.mode(
-                  AppColors.secondaryColor, BlendMode.srcIn),
-            ),
             Text(
-              'Success',
+              'Thanks you',
               style: AppTextTheme.lightTextTheme.headlineLarge,
             ),
+            const SizedBox(
+              height: Sizes.sm,
+            ),
             Text(
-              'We have sent an email validation for your password to reset, Please check your email to reset your password',
+              'Your request has been submitted, we will contact you back in 1-2 business days!!!',
               textAlign: TextAlign.center,
               style: AppTextTheme.lightTextTheme.bodyMedium
                   ?.copyWith(color: AppColors.neutralDark),
@@ -75,10 +70,12 @@ class _ForgetPasswordSuccessState extends ConsumerState<ForgetPasswordSuccess> {
             ButtonApp(
                 height: 18,
                 splashColor: const Color.fromARGB(255, 207, 225, 255),
-                label: "Back to login",
+                label: "Back to home",
                 onPressed: () {
-                  HelpersUtils.navigatorState(context)
-                      .popUntil((route) => route.settings.name == AppPage.auth);
+                  HelpersUtils.navigatorState(context).pushNamedAndRemoveUntil(
+                    AppPage.home,
+                    (route) => false,
+                  );
                 },
                 radius: 0,
                 textStyle: AppTextTheme.lightTextTheme.bodyMedium?.copyWith(

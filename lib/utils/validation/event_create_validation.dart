@@ -7,10 +7,10 @@ class EventCreateValidation {
     }
 
     if (value.length < minLength) {
-      return 'Your title must be less then $minLength characters';
+      return 'Your title must be more then $minLength characters';
     }
     if (value.length > maxLength - 1) {
-      return 'Your title must be more then ${maxLength - 1} characters';
+      return 'Your title must be less then ${maxLength} characters';
     }
     return null;
   }
@@ -18,14 +18,14 @@ class EventCreateValidation {
   static String? validateEstablishment(
       String? value, int maxLength, int minLength) {
     if (value == "" || value == null) {
-      return 'Your establishment name must not be empty';
+      return 'Your place name must not be empty';
     }
 
     if (value.length < minLength) {
-      return 'Your establishment name must be less then $minLength characters';
+      return 'Your place name must be more then $minLength characters';
     }
     if (value.length > maxLength - 1) {
-      return 'Your establishment name must be more then ${maxLength - 1} characters';
+      return 'Your place name must be less then ${maxLength} characters';
     }
     return null;
   }
@@ -36,10 +36,10 @@ class EventCreateValidation {
     }
 
     if (value.length < minLength) {
-      return 'Your description must be less then $minLength characters';
+      return 'Your description must be more then $minLength characters';
     }
     if (value.length > maxLength - 1) {
-      return 'Your description must be more then ${maxLength - 1} characters';
+      return 'Your description must be less then ${maxLength} characters';
     }
     return null;
   }

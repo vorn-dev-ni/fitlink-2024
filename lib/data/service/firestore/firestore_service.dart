@@ -101,7 +101,7 @@ class FirestoreService {
           String avatar = data['avatar'] ?? "";
           String role = data['role'] ?? "";
           String bio = data['bio'] ?? "";
-          String cover_image = snapshot.get('cover_feature') ?? '';
+          String cover_image = data['cover_feature'] ?? '';
 
           return AuthModel(
               fullname: fullname,

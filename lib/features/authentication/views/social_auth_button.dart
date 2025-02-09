@@ -93,7 +93,6 @@ class _SocialAuthButtonState extends ConsumerState<SocialAuthButton> {
         ref.read(appLoadingStateProvider.notifier).setState(false);
       }
       if (mounted) {
-        ref.invalidate(navbarControllerProvider);
         ref.invalidate(profileUserControllerProvider);
       }
     } catch (e) {
@@ -127,7 +126,6 @@ class _SocialAuthButtonState extends ConsumerState<SocialAuthButton> {
         ref.read(appLoadingStateProvider.notifier).setState(false);
       }
       if (mounted) {
-        ref.invalidate(navbarControllerProvider);
         ref.invalidate(profileUserControllerProvider);
       }
     } catch (e) {

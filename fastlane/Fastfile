@@ -162,7 +162,7 @@ platform :android do
       gradle_file_path: "./android/app/build.gradle",
     )
 
-    put("Versoon code is #{version_code}")
+    put("Version code code is #{version_code}")
     
     # Increment version code
     increment_version_code(  gradle_file_path: "./android/app/build.gradle"
@@ -187,21 +187,22 @@ end
      # Increment versionName by a patch (1.0.0 → 1.0.1)
     increment_version_name(
       gradle_file_path: "./android/app/build.gradle",
-      bump_type: "patch" # Options: "patch" (1.0.0 → 1.0.1), "minor" (1.0.0 → 1.1.0), "major" (1.0.0 → 2.0.0)
+      bump_type: "patch" # Options: "patch", "minor", "major"
     )
-    version_name = get_version_name(
-      gradle_file_path: "./android/app/build.gradle",
-      ext_constant_name:"versionName"
-    )
-    
+
+    # Increment version code
     increment_version_code(
       gradle_file_path: "./android/app/build.gradle",
     )
+
+    # Retrieve updated version values
+    version_name = get_version_name(
+      gradle_file_path: "./android/app/build.gradle"
+    )
     version_code = get_version_code(
       gradle_file_path: "./android/app/build.gradle"
-    
     )
-    
+
     
    firebase_app_distribution(
     app: "1:77080916809:android:ebe1398ec028ced65b2098",  # Your Firebase App ID
@@ -212,16 +213,16 @@ end
 📌 **Version:** #{version_name}  
 
 🚀 New Features & Updates:
-🛠 **Bug Fixes:**  
-- Login / Register valiation feature allow user to see
-- Password user now can be number / character up to 12 characters
-- Fix Long issues profile update loading forever
-- Fix Kithya Google login
-- Fix meta developer issue cannot login
+
+- **Edit Profile** → Pop user out & show toast: Profile updated!
+- **Create Event** → Pop user out & show toast: Event created!
+- **Create Event Request** → Pop user out & show toast: Request sent!
+- **Email Verification Text** → Verify your email to activate your FitLink Gym account:
+- **Password Reset Email Text** → Reset your FitLink Gym password here:
+
 ⚠ **Known Issues:**  
 - Facebook During Develop mode wont give you your profile name, So it will be annoymous user Android / IOS
 - OTP functionality is **not working** in the Android beta version (only available in production mode). iOS version is unaffected.  
-
 🧪 **Enjoy testing and feel free to report any issues!**",
 
 apk_path: "/Users/macbook/Documents/flutter/fitlink-2024/build/app/outputs/flutter-apk/app-staging-release.apk"
@@ -233,12 +234,13 @@ deploy_message = "New build Android is available on Firebase App Distribution!!
   • Version: #{version_name}
   
 🚀 New Features & Updates:
-🛠 **Bug Fixes:**  
-- Login / Register valiation feature allow user to see
-- Password user now can be number / character up to 12 characters
-- Fix Long issues profile update loading forever
-- Fix Kithya Google login
-- Fix meta developer issue cannot login
+
+- **Edit Profile** → Pop user out & show toast: Profile updated!
+- **Create Event** → Pop user out & show toast: Event created!
+- **Create Event Request** → Pop user out & show toast: Request sent!
+- **Email Verification Text** → Verify your email to activate your FitLink Gym account:
+- **Password Reset Email Text** → Reset your FitLink Gym password here:
+
 ⚠ **Known Issues:**  
 - Facebook During Develop mode wont give you your profile name, So it will be annoymous user Android / IOS
 - OTP functionality is **not working** in the Android beta version (only available in production mode). iOS version is unaffected.  

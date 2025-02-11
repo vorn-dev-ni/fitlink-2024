@@ -40,6 +40,12 @@ class AppPage {
   static const eventRequestGymTrainer = 'EventRequest';
   static const eventSuccess = 'FormSuccess';
 
+  //WorkoutTab
+  static const workout = 'WorkoutMain';
+  static const excercise = 'ExcerciseOverview';
+  static const excerciseDetail = 'ExcerciseDetail';
+  static const excerciseActivitiesForm = 'ActivitiesForm';
+
   //Utils
 
   static const previewImage = 'PreviewImage';

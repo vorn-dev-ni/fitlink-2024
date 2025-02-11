@@ -16,7 +16,7 @@ import 'package:demo/features/home/views/main/event/event_post/event_date_picker
 import 'package:demo/features/home/views/main/event/event_post/event_label.dart';
 import 'package:demo/features/home/views/main/event/event_post/event_select_map.dart';
 import 'package:demo/features/home/views/main/event/event_post/event_time_picker.dart';
-import 'package:demo/features/home/views/map_display.dart';
+import 'package:demo/features/home/widget/map_display.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';

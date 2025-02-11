@@ -7,11 +7,15 @@ import 'package:demo/features/authentication/views/login/email_verify.dart';
 import 'package:demo/features/authentication/views/login/phone_verify.dart';
 import 'package:demo/features/authentication/views/register/register.dart';
 import 'package:demo/features/home/my_home.dart';
+import 'package:demo/features/home/views/daily_workout/main_workout.dart';
+import 'package:demo/features/home/views/daily_workout/views/excercise_activities_form.dart';
+import 'package:demo/features/home/views/daily_workout/views/excercise_detail.dart';
+import 'package:demo/features/home/views/daily_workout/views/excercise_overview.dart';
 import 'package:demo/features/home/views/main/event/event_detail/event_detail.dart';
 import 'package:demo/features/home/views/main/event/event_post/event_post.dart';
 import 'package:demo/features/home/views/main/event/event_submission/event_form_submit.dart';
 import 'package:demo/features/home/views/main/event/event_submission/event_success.dart';
-import 'package:demo/features/home/views/preview/preview_image.dart';
+import 'package:demo/features/home/views/profile/preview/preview_image.dart';
 import 'package:demo/features/home/views/profile/edit_profile/edit_profile.dart';
 import 'package:demo/features/on_boarding/on_boarding.dart';
 import 'package:demo/features/other/no_internet.dart';
@@ -22,6 +26,18 @@ class AppRoutes {
   AppRoutes._();
 
   static final List<RoutesApp> mainStacks = [
+    RoutesApp(
+        routeName: AppPage.excerciseActivitiesForm,
+        builder: (context) => ExcerciseActivitiesForm()),
+    RoutesApp(
+        routeName: AppPage.excerciseDetail,
+        builder: (context) => ExcerciseDetail()),
+    RoutesApp(
+        routeName: AppPage.excercise,
+        builder: (context) => ExcerciseOverviewScreen()),
+    RoutesApp(
+        routeName: AppPage.workout,
+        builder: (context) => const MainWorkoutScreen()),
     RoutesApp(
         routeName: AppPage.eventSuccess,
         builder: (context) => const EventSubmissSuccess()),

@@ -37,6 +37,10 @@ class $AssetsAppGen {
   AssetGenImage get noInternetCat =>
       const AssetGenImage('assets/app/no_internet_cat.jpg');
 
+  /// File path: assets/app/workout_appbar_bg.png
+  AssetGenImage get workoutAppbarBg =>
+      const AssetGenImage('assets/app/workout_appbar_bg.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
         artOne,
@@ -45,7 +49,8 @@ class $AssetsAppGen {
         defaultAvatar,
         gymBackground,
         noImgAvailable,
-        noInternetCat
+        noInternetCat,
+        workoutAppbarBg
       ];
 }
 

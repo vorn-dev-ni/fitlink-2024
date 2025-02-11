@@ -99,9 +99,9 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                 ),
                 margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
                 child: const IconButton(
-                    padding: const EdgeInsets.all(0),
+                    padding: EdgeInsets.all(0),
                     onPressed: null,
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.more_vert,
                       size: Sizes.xxl,
                       color: AppColors.backgroundLight,

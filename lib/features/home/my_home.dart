@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:demo/features/home/controller/navbar_controller.dart';
 import 'package:demo/core/riverpod/navigation_state.dart';
 import 'package:demo/features/home/views/chat/chat_tab.dart';
+import 'package:demo/features/home/views/daily_workout/main_workout.dart';
 import 'package:demo/features/home/views/main/home_tab.dart';
 import 'package:demo/features/home/views/profile/profile_tab.dart';
 import 'package:demo/features/home/views/upload/upload_tab.dart';
@@ -16,9 +17,7 @@ List<Widget> tabScreens = const [
   HomeTab(),
   ChatTab(),
   UploadTab(),
-  Center(
-    child: Text('Coming soon'),
-  ),
+  MainWorkoutScreen(),
   ProfileTab()
 ];
 

@@ -44,6 +44,7 @@ class AppBarCustom extends ConsumerWidget implements PreferredSizeWidget {
       // leadingWidth: 40,
       toolbarHeight: 80,
       leading: trailing ?? trailing,
+
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 0.0),

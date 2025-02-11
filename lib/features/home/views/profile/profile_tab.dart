@@ -10,7 +10,7 @@ import 'package:demo/features/home/views/profile/favorites/favorite_profile.dart
 import 'package:demo/features/home/views/profile/post/post_profile.dart';
 import 'package:demo/features/home/views/profile/profile_header.dart';
 import 'package:demo/features/home/views/profile/video/video_profile.dart';
-import 'package:demo/features/home/views/workout/workout_profile.dart';
+import 'package:demo/features/home/views/profile/workout/workout_profile.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';

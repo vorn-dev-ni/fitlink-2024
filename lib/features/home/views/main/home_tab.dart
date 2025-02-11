@@ -60,10 +60,6 @@ class _HomeTabState extends ConsumerState<HomeTab>
         FirestoreService(firebaseAuthService: FirebaseAuthService());
     _tabController = TabController(length: _screens.length, vsync: this);
 
-    // if (FirebaseAuth.instance.currentUser != null) {
-    //   syncUser();
-    // }
-
     super.initState();
   }
 
@@ -93,7 +89,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
               indicatorColor: Colors.transparent,
               indicatorSize: TabBarIndicatorSize.label,
               isScrollable: true,
-              tabAlignment: TabAlignment.start,
+              tabAlignment: TabAlignment.center,
               labelStyle: AppTextTheme.lightTextTheme.labelLarge,
               overlayColor:
                   const WidgetStatePropertyAll(AppColors.backgroundLight),

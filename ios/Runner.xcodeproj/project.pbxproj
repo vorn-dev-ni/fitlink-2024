@@ -63,8 +63,6 @@
 		FA0B97F52CD1310B003A99B7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FA0B97F72CD1310B003A99B7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FA0B97F92CD1310B003A99B7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		FA2C094F2D28D8B600D33242 /* RunnerDebug-dev.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RunnerDebug-dev.entitlements"; sourceTree = "<group>"; };
-		FAC868E12D05F62400F520E6 /* RunnerRelease-dev.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RunnerRelease-dev.entitlements"; sourceTree = "<group>"; };
 		FAE3448C2CD3C90300213A4B /* LaunchScreenProd.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreenProd.storyboard; sourceTree = "<group>"; };
 		FAE3448D2CD3C90300213A4B /* LaunchScreenStaging.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreenStaging.storyboard; sourceTree = "<group>"; };
 		FAE3448E2CD3C90300213A4B /* LaunchScreenDev.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreenDev.storyboard; sourceTree = "<group>"; };
@@ -134,8 +132,6 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
-				FA2C094F2D28D8B600D33242 /* RunnerDebug-dev.entitlements */,
-				FAC868E12D05F62400F520E6 /* RunnerRelease-dev.entitlements */,
 				FAE3448E2CD3C90300213A4B /* LaunchScreenDev.storyboard */,
 				FAE3448C2CD3C90300213A4B /* LaunchScreenProd.storyboard */,
 				FAE3448D2CD3C90300213A4B /* LaunchScreenStaging.storyboard */,
@@ -513,7 +509,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-prod";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				CODE_SIGN_ENTITLEMENTS = "";
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = XVCWBGAFD7;
 				ENABLE_BITCODE = NO;
 				GOOGLE_CLIENT = "com.googleusercontent.apps.77080916809-ghqlqnre1bo9iutsc4mavhptk1h4crk1";
@@ -525,10 +522,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.2;
 				NEW_SETTING = "";
 				NEW_SETTING1 = "";
 				NEW_SETTING2 = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.fitlink.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fitlink.app.prod;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -660,7 +658,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-prod";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				CODE_SIGN_ENTITLEMENTS = "";
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = XVCWBGAFD7;
 				ENABLE_BITCODE = NO;
 				GOOGLE_CLIENT = "com.googleusercontent.apps.77080916809-ghqlqnre1bo9iutsc4mavhptk1h4crk1";
@@ -672,10 +671,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.2;
 				NEW_SETTING = "";
 				NEW_SETTING1 = "";
 				NEW_SETTING2 = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.fitlink.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fitlink.app.prod;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -692,7 +692,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-prod";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				CODE_SIGN_ENTITLEMENTS = "";
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = XVCWBGAFD7;
 				ENABLE_BITCODE = NO;
 				GOOGLE_CLIENT = "com.googleusercontent.apps.77080916809-ghqlqnre1bo9iutsc4mavhptk1h4crk1";
@@ -704,10 +705,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.2;
 				NEW_SETTING = "";
 				NEW_SETTING1 = "";
 				NEW_SETTING2 = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.fitlink.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fitlink.app.prod;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -782,8 +784,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-dev";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = "Runner/RunnerDebug-dev.entitlements";
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				CODE_SIGN_ENTITLEMENTS = "";
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = XVCWBGAFD7;
 				ENABLE_BITCODE = NO;
 				GOOGLE_CLIENT = "com.googleusercontent.apps.77080916809-ghqlqnre1bo9iutsc4mavhptk1h4crk1";
@@ -795,6 +797,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.2;
 				NEW_SETTING = "";
 				NEW_SETTING1 = "";
 				NEW_SETTING2 = "";
@@ -871,8 +874,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-dev";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = "Runner/RunnerRelease-dev.entitlements";
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				CODE_SIGN_ENTITLEMENTS = "";
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = XVCWBGAFD7;
 				ENABLE_BITCODE = NO;
 				GOOGLE_CLIENT = "com.googleusercontent.apps.77080916809-ghqlqnre1bo9iutsc4mavhptk1h4crk1";
@@ -884,6 +887,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.2;
 				NEW_SETTING = "";
 				NEW_SETTING1 = "";
 				NEW_SETTING2 = "";
@@ -957,7 +961,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-dev";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				CODE_SIGN_ENTITLEMENTS = "";
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = XVCWBGAFD7;
 				ENABLE_BITCODE = NO;
 				GOOGLE_CLIENT = "com.googleusercontent.apps.77080916809-ghqlqnre1bo9iutsc4mavhptk1h4crk1";
@@ -969,6 +974,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.2;
 				NEW_SETTING = "";
 				NEW_SETTING1 = "";
 				NEW_SETTING2 = "";
@@ -1047,7 +1053,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-staging";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				CODE_SIGN_ENTITLEMENTS = "";
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = XVCWBGAFD7;
 				ENABLE_BITCODE = NO;
 				GOOGLE_CLIENT = "com.googleusercontent.apps.77080916809-sk9u3ei133fcvm8n2r8l4jjs4uhgpp74";
@@ -1059,6 +1066,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.2;
 				NEW_SETTING = "";
 				NEW_SETTING1 = "";
 				NEW_SETTING2 = "";
@@ -1135,7 +1143,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-staging";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				CODE_SIGN_ENTITLEMENTS = "";
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = XVCWBGAFD7;
 				ENABLE_BITCODE = NO;
 				GOOGLE_CLIENT = "com.googleusercontent.apps.77080916809-sk9u3ei133fcvm8n2r8l4jjs4uhgpp74";
@@ -1147,6 +1156,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.2;
 				NEW_SETTING = "";
 				NEW_SETTING1 = "";
 				NEW_SETTING2 = "";
@@ -1220,7 +1230,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-staging";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				CODE_SIGN_ENTITLEMENTS = "";
+				"CODE_SIGN_ENTITLEMENTS[sdk=*]" = "";
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = XVCWBGAFD7;
 				ENABLE_BITCODE = NO;
 				GOOGLE_CLIENT = "com.googleusercontent.apps.77080916809-sk9u3ei133fcvm8n2r8l4jjs4uhgpp74";
@@ -1232,6 +1244,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.2;
 				NEW_SETTING = "";
 				NEW_SETTING1 = "";
 				NEW_SETTING2 = "";
@@ -1260,7 +1273,7 @@
 				FA0A04F32CD075AB009A9E42 /* Profile-dev */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Release-staging";
 		};
 		97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */ = {
 			isa = XCConfigurationList;
@@ -1276,7 +1289,7 @@
 				FA0A04F42CD075AB009A9E42 /* Profile-dev */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Release-staging";
 		};
 /* End XCConfigurationList section */
 	};

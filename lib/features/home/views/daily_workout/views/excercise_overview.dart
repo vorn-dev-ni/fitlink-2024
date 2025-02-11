@@ -4,6 +4,7 @@ import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
+import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
@@ -46,6 +47,8 @@ class _SliverAppBarExampleState extends State<ExcerciseOverviewScreen> {
         slivers: [
           SliverAppBar(
             expandedHeight: 150.0,
+            pinned: true,
+            stretch: true,
             foregroundColor: AppColors.backgroundLight,
             backgroundColor: Colors.black,
             leading: Padding(
@@ -61,11 +64,11 @@ class _SliverAppBarExampleState extends State<ExcerciseOverviewScreen> {
               ),
             ),
             floating: false,
-            pinned: true,
             centerTitle: false,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: false,
               collapseMode: CollapseMode.parallax,
+              stretchModes: const [StretchMode.zoomBackground],
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -97,15 +100,16 @@ class _SliverAppBarExampleState extends State<ExcerciseOverviewScreen> {
               ),
               background: Stack(
                 children: [
-                  Image.network(
-                    width: 100.w,
-                    "https://i0.wp.com/www.muscleandfitness.com/wp-content/uploads/2019/02/1109-Dumbbell-Bench-Press-GettyImages-697565973.jpg?quality=86&strip=all",
-                    fit: BoxFit.cover,
-                  ),
                   Positioned.fill(
-                      child: Container(
-                    color: AppColors.backgroundDark.withOpacity(0.45),
-                  )),
+                    child: FancyShimmerImage(
+                      imageUrl:
+                          'https://cdn.statically.io/gh/Anime-Sama/IMG/img/contenu/dumbbell-nan-kilo-moteru.jpg',
+                      boxFit: BoxFit.cover,
+                    ),
+                  ),
+                  Container(
+                    color: Colors.black.withOpacity(0.5),
+                  ),
                 ],
               ),
             ),

@@ -35,6 +35,10 @@ class _WorkoutTabViewState extends State<WorkoutTabView>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(
+          height: Sizes.md,
+        ),
+
         Text(
           'Workout Levels',
           style: AppTextTheme.lightTextTheme.titleLarge
@@ -57,7 +61,7 @@ class _WorkoutTabViewState extends State<WorkoutTabView>
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 100),
                   padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                      const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
                   decoration: BoxDecoration(
                       color: Colors.transparent,
                       border: Border(
@@ -78,9 +82,6 @@ class _WorkoutTabViewState extends State<WorkoutTabView>
               );
             }),
           ),
-        ),
-        const SizedBox(
-          height: Sizes.lg,
         ),
 
         // TabBar without AppBar

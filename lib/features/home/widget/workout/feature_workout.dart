@@ -123,7 +123,12 @@ class FeatureWorkout extends StatelessWidget {
                                                     foregroundColor: AppColors
                                                         .secondaryColor),
                                                 icon: const Icon(Icons.alarm),
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  HelpersUtils.navigatorState(
+                                                          context)
+                                                      .pushNamed(
+                                                          AppPage.excercise);
+                                                },
                                                 label: const Text('35min')),
                                             const SizedBox(
                                               width: Sizes.sm,

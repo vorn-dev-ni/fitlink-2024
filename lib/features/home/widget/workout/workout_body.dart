@@ -17,15 +17,15 @@ class WorkoutTabBuild extends StatelessWidget {
     return ListView.builder(
       itemCount: 10, // Example count
       physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(vertical: Sizes.lg),
       shrinkWrap: true,
       // padding: const EdgeInsets.all(Sizes.md),
       itemBuilder: (context, index) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: Sizes.md),
+          padding: const EdgeInsets.only(bottom: Sizes.md, top: 0),
           child: InkWell(
             onTap: () {
-              HelpersUtils.navigatorState(context)
-                  .pushNamed(AppPage.excerciseDetail);
+              HelpersUtils.navigatorState(context).pushNamed(AppPage.excercise);
             },
             child: Stack(
               children: [
@@ -49,7 +49,6 @@ class WorkoutTabBuild extends StatelessWidget {
                   ),
                 )),
                 Container(
-                  // height: 300,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(Sizes.lg),
                     color: AppColors.backgroundDark.withOpacity(0.4),

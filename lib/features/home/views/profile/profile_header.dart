@@ -109,7 +109,7 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
               ),
             )
           ],
-          backgroundColor: AppColors.backgroundDark,
+          backgroundColor: Colors.transparent,
           flexibleSpace: Skeletonizer(
             enabled: showLoading,
             child: FlexibleSpaceBar(

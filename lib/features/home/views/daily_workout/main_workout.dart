@@ -22,167 +22,186 @@ class _MainWorkoutScreenState extends State<MainWorkoutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 7.5.h,
-        actions: [
-          Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.backgroundDark.withOpacity(0.4),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 7.5.h,
+            pinned: true,
+            centerTitle: false,
+            stretch: true,
+            flexibleSpace: FlexibleSpaceBar(
+              stretchModes: const [StretchMode.zoomBackground],
+              titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Assets.app.workoutAppbarBg.image(
+                      width: 100,
+                      height: 10,
+                      fit: BoxFit.cover,
+                      alignment: Alignment.center),
+                  Container(color: Colors.black.withOpacity(0.5)),
+                ],
+              ),
             ),
-            padding: const EdgeInsets.all(0),
-            margin: const EdgeInsets.only(right: Sizes.lg),
-            child: IconButton(
-                padding: const EdgeInsets.all(12),
-                onPressed: () {
-                  HelpersUtils.navigatorState(context)
-                      .pushNamed(AppPage.excerciseActivitiesForm);
-                },
-                icon: const Icon(
-                  Icons.add,
-                  size: Sizes.xxl,
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leadingWidth: 200,
+            leading: Padding(
+              padding: const EdgeInsets.all(Sizes.lg),
+              child: Text(
+                "Start Your Workout",
+                style: AppTextTheme.lightTextTheme.bodyMedium?.copyWith(
                   color: AppColors.backgroundLight,
-                )),
-          ),
-        ],
-        flexibleSpace: Stack(
-          fit: StackFit.expand,
-          children: [
-            Assets.app.workoutAppbarBg.image(fit: BoxFit.cover),
-            Container(
-              color: Colors.black.withOpacity(0.5),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
-          ],
-        ),
-        title: Text(
-          "Start Your Workout",
-          style: AppTextTheme.lightTextTheme.bodyLarge?.copyWith(
-              color: AppColors.backgroundLight,
-              fontWeight: FontWeight.w500), // Ensure text is visible
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(Sizes.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                EasyTheme(
-                  data: EasyTheme.of(context).copyWithState(
-                    selectedDayTheme: const DayThemeData(
-                      backgroundColor: AppColors.secondaryColor,
-                      foregroundColor: AppColors.secondaryColor,
-                    ),
-                    selectedCurrentDayTheme: const DayThemeData(
-                        backgroundColor: Colors.transparent,
-                        foregroundColor: AppColors.secondaryColor,
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(Sizes.lg))),
-                        border: BorderSide(style: BorderStyle.none)),
-                    unselectedDayTheme: const DayThemeData(
-                        backgroundColor: Colors.transparent,
-                        foregroundColor: Color.fromARGB(255, 0, 0, 0)),
-                    disabledDayTheme: DayThemeData(
-                      backgroundColor: Colors.grey.shade500,
-                    ),
+            actions: [
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.backgroundDark.withOpacity(0.4),
+                ),
+                padding: const EdgeInsets.all(0),
+                margin: const EdgeInsets.only(right: Sizes.lg),
+                child: IconButton(
+                  padding: const EdgeInsets.all(12),
+                  onPressed: () {
+                    HelpersUtils.navigatorState(context)
+                        .pushNamed(AppPage.excerciseActivitiesForm);
+                  },
+                  icon: const Icon(
+                    Icons.add,
+                    size: Sizes.xxl,
+                    color: AppColors.backgroundLight,
                   ),
-                  child: EasyDateTimeLinePicker.itemBuilder(
-                    focusedDate: DateTime.now(),
+                ),
+              ),
+            ],
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: Sizes.lg, vertical: Sizes.xl),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  EasyTheme(
+                    data: EasyTheme.of(context).copyWithState(
+                      selectedDayTheme: const DayThemeData(
+                        backgroundColor: AppColors.secondaryColor,
+                        foregroundColor: AppColors.secondaryColor,
+                      ),
+                      selectedCurrentDayTheme: const DayThemeData(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: AppColors.secondaryColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(Sizes.lg))),
+                          border: BorderSide(style: BorderStyle.none)),
+                      unselectedDayTheme: const DayThemeData(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: Color.fromARGB(255, 0, 0, 0)),
+                      disabledDayTheme: DayThemeData(
+                        backgroundColor: Colors.grey.shade500,
+                      ),
+                    ),
+                    child: EasyDateTimeLinePicker.itemBuilder(
+                      focusedDate: DateTime.now(),
 
-                    monthYearPickerOptions: const MonthYearPickerOptions(),
+                      monthYearPickerOptions: const MonthYearPickerOptions(),
 
-                    itemBuilder: (context, date, isSelected, isDisabled,
-                        isToday, onTap) {
-                      return InkResponse(
-                        overlayColor: WidgetStatePropertyAll(
-                            AppColors.primaryColor.withOpacity(0.1)),
-                        onTap: onTap,
-                        child: Column(
-                          children: [
-                            const SizedBox(
-                              height: Sizes.md,
-                            ),
-                            Text(
-                              DateFormat.E().format(date),
-                              style: AppTextTheme.lightTextTheme.bodyLarge
-                                  ?.copyWith(
-                                      fontWeight: isSelected
-                                          ? FontWeight.w500
-                                          : FontWeight.w300),
-                            ),
-                            const SizedBox(
-                              height: Sizes.xs,
-                            ),
-                            CircleAvatar(
-                              backgroundColor: isSelected
-                                  ? AppColors.secondaryColor
-                                  : Colors.transparent,
-                              child: Text(
-                                date.day.toString(),
-                                style: TextStyle(
-                                    color: !isSelected
-                                        ? AppColors.backgroundDark
-                                        : AppColors.backgroundLight),
+                      itemBuilder: (context, date, isSelected, isDisabled,
+                          isToday, onTap) {
+                        return InkResponse(
+                          overlayColor: WidgetStatePropertyAll(
+                              AppColors.primaryColor.withOpacity(0.1)),
+                          onTap: onTap,
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: Sizes.md,
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    itemExtent: 64.0,
-
-                    selectionMode: const SelectionMode.autoCenter(),
-                    // timelineOptions: TimelineOptions(height: 50),
-                    currentDate: DateTime.now(),
-                    headerOptions: HeaderOptions(
-                      headerType: HeaderType.picker,
-                      headerBuilder: (context, date, onTap) {
-                        return InkWell(
-                            onTap: onTap,
-                            splashFactory: NoSplash.splashFactory,
-                            overlayColor: const WidgetStatePropertyAll(
-                                Colors.transparent),
-                            child: Row(
-                              children: [
-                                Text(
-                                  DateFormat.yMMMM().format(date),
-                                  style: AppTextTheme.lightTextTheme.titleLarge
-                                      ?.copyWith(
-                                          color: AppColors.secondaryColor),
+                              Text(
+                                DateFormat.E().format(date),
+                                style: AppTextTheme.lightTextTheme.bodyLarge
+                                    ?.copyWith(
+                                        fontWeight: isSelected
+                                            ? FontWeight.w500
+                                            : FontWeight.w300),
+                              ),
+                              const SizedBox(
+                                height: Sizes.xs,
+                              ),
+                              CircleAvatar(
+                                backgroundColor: isSelected
+                                    ? AppColors.secondaryColor
+                                    : Colors.transparent,
+                                child: Text(
+                                  date.day.toString(),
+                                  style: TextStyle(
+                                      color: !isSelected
+                                          ? AppColors.backgroundDark
+                                          : AppColors.backgroundLight),
                                 ),
-                                const Icon(
-                                  Icons.arrow_drop_down,
-                                  color: AppColors.secondaryColor,
-                                )
-                              ],
-                            ));
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      itemExtent: 64.0,
+
+                      selectionMode: const SelectionMode.autoCenter(),
+                      // timelineOptions: TimelineOptions(height: 50),
+                      currentDate: DateTime.now(),
+                      headerOptions: HeaderOptions(
+                        headerType: HeaderType.picker,
+                        headerBuilder: (context, date, onTap) {
+                          return InkWell(
+                              onTap: onTap,
+                              splashFactory: NoSplash.splashFactory,
+                              overlayColor: const WidgetStatePropertyAll(
+                                  Colors.transparent),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    DateFormat.yMMMM().format(date),
+                                    style: AppTextTheme
+                                        .lightTextTheme.titleLarge
+                                        ?.copyWith(
+                                            color: AppColors.secondaryColor),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_drop_down,
+                                    color: AppColors.secondaryColor,
+                                  )
+                                ],
+                              ));
+                        },
+                      ),
+                      timelineOptions: const TimelineOptions(
+                          height: 100, padding: EdgeInsets.all(0)),
+                      firstDate: DateTime(2024, 3, 18),
+                      lastDate: DateTime(2050, 3, 18),
+                      onDateChange: (date) {
+                        // Handle the selected date.
                       },
                     ),
-                    timelineOptions: const TimelineOptions(
-                        height: 100, padding: EdgeInsets.all(0)),
-                    firstDate: DateTime(2024, 3, 18),
-                    lastDate: DateTime(2050, 3, 18),
-                    onDateChange: (date) {
-                      // Handle the selected date.
-                    },
                   ),
-                ),
-                const SizedBox(
-                  height: Sizes.xs,
-                ),
-                const FeatureWorkout(),
-                const SizedBox(
-                  height: Sizes.md,
-                ),
-                WorkoutTabView(),
-              ],
+                  const SizedBox(
+                    height: Sizes.xs,
+                  ),
+                  const FeatureWorkout(),
+                  const SizedBox(
+                    height: Sizes.md,
+                  ),
+                  WorkoutTabView(),
+                ],
+              ),
             ),
-          ),
-        ),
+          )
+        ],
       ),
     );
   }

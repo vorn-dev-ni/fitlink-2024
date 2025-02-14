@@ -138,7 +138,6 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   Future syncUser(String uid) async {
     try {
-      debugPrint("SYNC USER ${uid}");
       AuthModel? authModel = await firestoreService.getEmail(uid);
       debugPrint("SYNC vatar ${authModel.avatar}");
 

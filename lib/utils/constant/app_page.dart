@@ -1,3 +1,5 @@
+import 'package:demo/features/home/views/upload/upload_tab.dart';
+
 class AppPage {
   AppPage._();
   // ignore: constant_identifier_names
@@ -45,6 +47,7 @@ class AppPage {
   static const excercise = 'ExcerciseOverview';
   static const excerciseDetail = 'ExcerciseDetail';
   static const excerciseActivitiesForm = 'ActivitiesForm';
+  static const exerciseSuccess = 'ExcerciseSuccess';
 
   //Utils
 
@@ -55,4 +58,7 @@ class AppPage {
   static const editProfile = 'EditProfile';
 
   //SUCCCESS_OTP
+
+  //Upload tab
+  static const uploadingTab = 'Upload';
 }

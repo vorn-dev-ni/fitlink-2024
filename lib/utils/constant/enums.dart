@@ -10,6 +10,8 @@ enum AppTheme { dark, light }
 
 enum NutritionFactsType { calories, fat, protein, sugar, carbohydrate }
 
+enum WorkoutType { feature, beginner, advance, intermediate }
+
 enum TimeSelection { startTime, endTime }
 
 // ignore: constant_identifier_names
@@ -44,6 +46,8 @@ extension UserRolesExtension on UserRoles {
     }
   }
 }
+
+enum Status { completed, progress }
 
 enum UploadType { camera, photo }
 

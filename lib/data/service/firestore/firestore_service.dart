@@ -80,14 +80,11 @@ class FirestoreService {
 
   Future<AuthModel> getEmail(String? uid) async {
     // final User? currentUser = FirebaseAuth.instance.currentUser;
-    debugPrint("SYNC USER ${uid}");
 
     if (uid != null) {
       try {
         DocumentSnapshot snapshot =
             await _firestore.collection('users').doc(uid).get();
-        debugPrint(
-            "The email snapshot is is  snap shot ${snapshot.data() != null ? 'tue' : 'false'}");
 
         if (snapshot.data() == null) {
           return AuthModel();

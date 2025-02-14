@@ -1,15 +1,32 @@
+import 'package:demo/features/home/views/profile/workout/workout_activities.dart';
+import 'package:demo/utils/constant/sizes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class WorkoutProfile extends StatefulWidget {
+class WorkoutProfile extends ConsumerStatefulWidget {
   const WorkoutProfile({super.key});
 
   @override
-  State<WorkoutProfile> createState() => _WorkoutProfileState();
+  ConsumerState<WorkoutProfile> createState() => _WorkoutProfileState();
 }
 
-class _WorkoutProfileState extends State<WorkoutProfile> {
+class _WorkoutProfileState extends ConsumerState<WorkoutProfile> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Workout Tab"));
+    return const SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: Sizes.lg),
+        child: Column(
+          children: [
+            WorkoutActivities(),
+          ],
+        ),
+      ),
+    );
   }
 }

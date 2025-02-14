@@ -64,60 +64,59 @@ class _HomeTabState extends ConsumerState<HomeTab>
   }
 
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        tabBarHeader(),
-        tabBarContent(),
-      ],
+    return SafeArea(
+      child: Column(
+        children: [
+          tabBarHeader(),
+          tabBarContent(),
+        ],
+      ),
     );
   }
 
   Widget tabBarHeader() {
-    return Padding(
-      padding: const EdgeInsets.only(top: Sizes.xl),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Sizes.lg),
-            child: Assets.utils.fitlinkLogo
-                .image(fit: BoxFit.contain, width: 85, height: 85),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: Sizes.xl),
+          child: Assets.utils.fitlinkLogo
+              .image(fit: BoxFit.contain, width: 70, height: 70),
+        ),
+        Expanded(
+          child: TabBar(
+            controller: _tabController,
+            indicatorColor: Colors.transparent,
+            indicatorSize: TabBarIndicatorSize.label,
+            isScrollable: true,
+            tabAlignment: TabAlignment.center,
+            labelStyle: AppTextTheme.lightTextTheme.labelLarge,
+            overlayColor:
+                const WidgetStatePropertyAll(AppColors.backgroundLight),
+            dividerColor: Colors.transparent,
+            indicatorWeight: 1,
+            labelPadding: const EdgeInsets.all(Sizes.sm),
+            labelColor: AppColors.secondaryColor,
+            unselectedLabelColor: AppColors.neutralDark,
+            tabs: const [
+              Tab(text: 'Home'),
+              Tab(text: 'Workout'),
+              Tab(text: 'Event'),
+            ],
           ),
-          Expanded(
-            child: TabBar(
-              controller: _tabController,
-              indicatorColor: Colors.transparent,
-              indicatorSize: TabBarIndicatorSize.label,
-              isScrollable: true,
-              tabAlignment: TabAlignment.center,
-              labelStyle: AppTextTheme.lightTextTheme.labelLarge,
-              overlayColor:
-                  const WidgetStatePropertyAll(AppColors.backgroundLight),
-              dividerColor: Colors.transparent,
-              indicatorWeight: 1,
-              labelPadding: const EdgeInsets.all(Sizes.sm),
-              labelColor: AppColors.secondaryColor,
-              unselectedLabelColor: AppColors.neutralDark,
-              tabs: const [
-                Tab(text: 'Home'),
-                Tab(text: 'Workout'),
-                Tab(text: 'Event'),
-              ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: Sizes.sm),
+          child: IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.search,
+              size: Sizes.iconMd,
+              color: Color.fromARGB(255, 180, 184, 190),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: Sizes.sm),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.search,
-                size: Sizes.iconMd,
-                color: Color.fromARGB(255, 180, 184, 190),
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

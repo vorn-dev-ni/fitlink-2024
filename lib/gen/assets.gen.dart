@@ -12,6 +12,9 @@ import 'package:flutter/widgets.dart';
 class $AssetsAppGen {
   const $AssetsAppGen();
 
+  /// File path: assets/app/Group 51.png
+  AssetGenImage get group51 => const AssetGenImage('assets/app/Group 51.png');
+
   /// File path: assets/app/art_one.png
   AssetGenImage get artOne => const AssetGenImage('assets/app/art_one.png');
 
@@ -43,6 +46,7 @@ class $AssetsAppGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
+        group51,
         artOne,
         artTwo,
         catGym,
@@ -51,6 +55,54 @@ class $AssetsAppGen {
         noImgAvailable,
         noInternetCat,
         workoutAppbarBg
+      ];
+}
+
+class $AssetsAudioGen {
+  const $AssetsAudioGen();
+
+  /// File path: assets/audio/bg-gym.mp3
+  String get bgGym => 'assets/audio/bg-gym.mp3';
+
+  /// File path: assets/audio/good_job.mp3
+  String get goodJob => 'assets/audio/good_job.mp3';
+
+  /// File path: assets/audio/oh_god.mp3
+  String get ohGod => 'assets/audio/oh_god.mp3';
+
+  /// File path: assets/audio/set_success.mp3
+  String get setSuccess => 'assets/audio/set_success.mp3';
+
+  /// File path: assets/audio/success_upload.mp3
+  String get successUpload => 'assets/audio/success_upload.mp3';
+
+  /// File path: assets/audio/sussy.mp3
+  String get sussy => 'assets/audio/sussy.mp3';
+
+  /// File path: assets/audio/ty.mp3
+  String get ty => 'assets/audio/ty.mp3';
+
+  /// File path: assets/audio/whistle.mp3
+  String get whistle => 'assets/audio/whistle.mp3';
+
+  /// File path: assets/audio/wow.mp3
+  String get wow => 'assets/audio/wow.mp3';
+
+  /// File path: assets/audio/yay.mp3
+  String get yay => 'assets/audio/yay.mp3';
+
+  /// List of all assets
+  List<String> get values => [
+        bgGym,
+        goodJob,
+        ohGod,
+        setSuccess,
+        successUpload,
+        sussy,
+        ty,
+        whistle,
+        wow,
+        yay
       ];
 }
 
@@ -179,6 +231,7 @@ class Assets {
   Assets._();
 
   static const $AssetsAppGen app = $AssetsAppGen();
+  static const $AssetsAudioGen audio = $AssetsAudioGen();
   static const $AssetsIconGen icon = $AssetsIconGen();
   static const $AssetsLottiesGen lotties = $AssetsLottiesGen();
   static const $AssetsSplashGen splash = $AssetsSplashGen();

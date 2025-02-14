@@ -57,6 +57,7 @@ class AppBarCustom extends ConsumerWidget implements PreferredSizeWidget {
         children: [
           Text(
             text ?? "",
+            maxLines: 1,
             textAlign: TextAlign.start,
             style: appThemeRef == AppTheme.light
                 ? AppTextTheme.lightTextTheme.headlineSmall?.copyWith(

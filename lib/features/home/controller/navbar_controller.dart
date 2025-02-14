@@ -123,10 +123,9 @@ class NavbarController extends _$NavbarController {
             SvgPicture.asset(
               Assets.icon.svg.plus,
               fit: BoxFit.cover,
-              colorFilter: const ColorFilter.mode(
-                  AppColors.backgroundLight, BlendMode.srcIn),
-              width: 25,
-              height: 25,
+              width: 30,
+              height: 30,
+              allowDrawingOutsideViewBox: true,
             ),
             const SizedBox(
               height: 4,
@@ -136,8 +135,6 @@ class NavbarController extends _$NavbarController {
               child: SvgPicture.asset(
                 Assets.icon.svg.dotIndicator,
                 fit: BoxFit.cover,
-                colorFilter: const ColorFilter.mode(
-                    AppColors.neutralBlack, BlendMode.hardLight),
                 width: 7,
                 height: 7,
               ),
@@ -149,10 +146,8 @@ class NavbarController extends _$NavbarController {
             SvgPicture.asset(
               Assets.icon.svg.plus,
               fit: BoxFit.cover,
-              colorFilter: const ColorFilter.mode(
-                  AppColors.backgroundLight, BlendMode.srcIn),
-              width: 25,
-              height: 25,
+              width: 30,
+              height: 30,
             ),
             const SizedBox(
               height: 4,
@@ -160,8 +155,6 @@ class NavbarController extends _$NavbarController {
             SvgPicture.asset(
               Assets.icon.svg.dotIndicator,
               fit: BoxFit.cover,
-              colorFilter: const ColorFilter.mode(
-                  AppColors.backgroundLight, BlendMode.srcIn),
               width: 7,
               height: 7,
             ),

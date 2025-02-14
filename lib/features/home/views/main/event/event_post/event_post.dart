@@ -36,6 +36,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class EventPosting extends ConsumerStatefulWidget {
   const EventPosting({super.key});
@@ -433,7 +434,9 @@ class _EventPostingState extends ConsumerState<EventPosting> {
           borderRadius: BorderRadius.circular(Sizes.md),
           onTap: () {
             HelpersUtils.navigatorState(context).push(MaterialPageRoute(
-              builder: (context) => const EventDatePickerCustom(),
+              builder: (context) => EventDatePickerCustom(
+                selectionMode: DateRangePickerSelectionMode.range,
+              ),
             ));
           },
           child: Container(
@@ -500,7 +503,6 @@ class _EventPostingState extends ConsumerState<EventPosting> {
                               ' Start Time',
                           style: AppTextTheme.lightTextTheme.bodyLarge
                               ?.copyWith(
-                                  // ignore: unnecessary_null_comparison
                                   color: dangeRange.timeStart != null
                                       ? AppColors.secondaryColor
                                       : AppColors.neutralColor,

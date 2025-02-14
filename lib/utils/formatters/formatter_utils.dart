@@ -11,6 +11,32 @@ class FormatterUtils {
         );
   }
 
+  static String formatExerciseDuration(int seconds) {
+    if (seconds < 60) {
+      return "$seconds sec";
+    }
+
+    int minutes = seconds ~/ 60;
+    int remainingSeconds = seconds % 60;
+
+    if (remainingSeconds == 0) {
+      return "${minutes}min";
+    }
+
+    return "${minutes}min ${remainingSeconds}sec";
+  }
+
+  static String formatToAlarmClock(int seconds) {
+    int minutes = seconds ~/ 60;
+    int remainingSeconds = seconds % 60;
+
+    // Format minutes and seconds as two digits
+    String formattedMinutes = minutes.toString().padLeft(2, '0');
+    String formattedSeconds = remainingSeconds.toString().padLeft(2, '0');
+
+    return "$formattedMinutes:$formattedSeconds";
+  }
+
   static String removeJsonString(String input) {
     // Remove backticks and unwanted "json" if present
     return input

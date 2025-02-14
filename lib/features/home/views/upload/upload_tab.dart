@@ -1,13 +1,16 @@
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
+import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/enums.dart';
+import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sizer/sizer.dart';
 
 class UploadTab extends ConsumerStatefulWidget {
   const UploadTab({super.key});
@@ -35,43 +38,59 @@ class _UploadTabState extends ConsumerState<UploadTab>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(80),
-          decoration: const BoxDecoration(color: Colors.black),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text(
-                'Posts',
-                style: AppTextTheme.lightTextTheme.bodyMedium
-                    ?.copyWith(color: AppColors.backgroundLight),
-              ),
-              Text(
-                'Videos',
-                style: AppTextTheme.lightTextTheme.bodyMedium
-                    ?.copyWith(color: AppColors.backgroundLight),
-              ),
-              GestureDetector(
-                onTap: () {
-                  HelpersUtils.navigatorState(context)
-                      .pushNamed(AppPage.eventCreate);
-                },
-                child: Text(
-                  'Events',
+    return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
+      appBar: AppBar(
+        backgroundColor: AppColors.backgroundLight,
+        foregroundColor: AppColors.backgroundDark,
+      ),
+      body: Column(
+        children: [
+          SizedBox(
+            height: 20.h,
+          ),
+          Assets.app.catGym.image(width: 250, height: 250, fit: BoxFit.cover),
+          Text(
+            'Coming Soon',
+            style: AppTextTheme.lightTextTheme.bodyLarge,
+          ),
+          const Spacer(),
+          Container(
+            alignment: Alignment.topCenter,
+            height: 15.h,
+            padding: const EdgeInsets.symmetric(
+                horizontal: Sizes.xxxl + 50, vertical: Sizes.xxxl),
+            decoration: const BoxDecoration(color: Colors.black),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Posts',
                   style: AppTextTheme.lightTextTheme.bodyMedium
                       ?.copyWith(color: AppColors.backgroundLight),
                 ),
-              ),
-            ],
+                Text(
+                  'Videos',
+                  style: AppTextTheme.lightTextTheme.bodyMedium
+                      ?.copyWith(color: AppColors.backgroundLight),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    HelpersUtils.navigatorState(context)
+                        .pushNamed(AppPage.eventCreate);
+                  },
+                  child: Text(
+                    'Events',
+                    style: AppTextTheme.lightTextTheme.bodyMedium
+                        ?.copyWith(color: AppColors.backgroundLight),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        Expanded(
-            child: Container(
-          decoration: const BoxDecoration(color: Colors.black),
-        ))
-      ],
+        ],
+      ),
     );
   }
 
@@ -88,39 +107,6 @@ class _UploadTabState extends ConsumerState<UploadTab>
       );
     }
   }
-
-  // void _handleNavigateEvent() async {
-  //   if (FirebaseAuth.instance.currentUser != null) {
-  //     final roleString = await firestoreService.checkUserRole();
-  //     final newRole = UserRolesExtension.fromValue(roleString);
-  //     if (newRole == UserRoles.NORMAL) {
-  //       if (mounted) {
-  //         showDialog(
-  //             context: context,
-  //             builder: (context) => AppALertDialog(
-  //                 onConfirm: () {},
-  //                 positivebutton: SizedBox(
-  //                     width: 100.w,
-  //                     child: FilledButton(
-  //                         style: FilledButton.styleFrom(
-  //                             backgroundColor: AppColors.errorColor),
-  //                         onPressed: () {
-  //                           HelpersUtils.navigatorState(context).pop();
-  //                           HelpersUtils.navigatorState(context)
-  //                               .pushNamed(AppPage.eventRequestGymTrainer);
-  //                         },
-  //                         child: const Text('Confirm'))),
-  //                 title: 'Notice',
-  //                 desc:
-  //                     "To proceed, please submit proof that you are a gym owner or trainer. This information is required to unlock full access to the app’s features"));
-  //       }
-  //     } else {
-  //       if (mounted) {
-  //         HelpersUtils.navigatorState(context).pushNamed(AppPage.eventCreate);
-  //       }
-  //     }
-  //   }
-  // }
 
   @override
   bool get wantKeepAlive => true;

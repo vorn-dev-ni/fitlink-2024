@@ -35,19 +35,6 @@ class EventsRepository {
     }
   }
 
-  Future<List<Event>> getAllOneTimeEvent() async {
-    try {
-      final arrayQuerySnapShots = await baseService.getAllOneTime();
-      return arrayQuerySnapShots.docs.map(
-        (data) {
-          return Event.fromJson(data.data(), data.id);
-        },
-      ).toList();
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   Future uploadCertificate(Map<String, dynamic> params) async {
     try {
       await baseService.uploadCertificate(params);

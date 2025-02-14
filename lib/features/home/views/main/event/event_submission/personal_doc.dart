@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:sizer/sizer.dart';
 import 'package:path/path.dart' as p;
 
@@ -32,13 +33,26 @@ class _PersonalDocState extends ConsumerState<PersonalDoc> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController websiteController;
   String validationWebsiteText = "";
+  late AudioPlayer playAudioUpload;
+
   List<File> _tempo_files = [];
   late StorageService storageService;
   @override
   void initState() {
     storageService = StorageService();
     bindingController();
+    bindingAudio();
     super.initState();
+  }
+
+  void bindingAudio() async {
+    playAudioUpload = AudioPlayer();
+    await playAudioUpload.setAsset(Assets.audio.uploadSound);
+    playAudioUpload.setVolume(0.8);
+  }
+
+  void playAudio() {
+    playAudioUpload.play();
   }
 
   @override
@@ -300,6 +314,7 @@ class _PersonalDocState extends ConsumerState<PersonalDoc> {
         .read(formSubmissionControllerProvider.notifier)
         .getPdfDownloadUrls();
     await ref.read(formSubmissionControllerProvider.notifier).save();
+    playAudio();
     if (mounted) {
       ref.invalidate(formSubmissionControllerProvider);
       HelpersUtils.navigatorState(context).pop();
@@ -307,13 +322,5 @@ class _PersonalDocState extends ConsumerState<PersonalDoc> {
     if (mounted) {
       HelpersUtils.navigatorState(context).pushNamed(AppPage.eventSuccess);
     }
-    // Fluttertoast.showToast(
-    //     msg: 'Thanks you, we will get to you back in 2-3 business days !!!',
-    //     toastLength: Toast.LENGTH_SHORT,
-    //     gravity: ToastGravity.BOTTOM,
-    //     timeInSecForIosWeb: 9,
-    //     backgroundColor: AppColors.successColor,
-    //     textColor: Colors.white,
-    //     fontSize: 16.0);
   }
 }

@@ -262,6 +262,9 @@ class _SliverAppBarExampleState extends ConsumerState<ExcerciseOverviewScreen> {
           date: selectedDate);
 
       if (mounted) {
+        DateTime normalizedDate =
+            DateTime(selectedDate!.year, selectedDate.month, selectedDate.day);
+        ref.invalidate(activitiesControllerProvider(normalizedDate));
         ref.read(appLoadingStateProvider.notifier).setState(false);
         HelpersUtils.navigatorState(context)
             .pushNamed(AppPage.excerciseDetail, arguments: {

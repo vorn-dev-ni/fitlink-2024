@@ -207,53 +207,58 @@ end
    firebase_app_distribution(
     app: "1:77080916809:android:ebe1398ec028ced65b2098",  # Your Firebase App ID
     testers: "Sivsovanpanhavorn@gmail.com, Sovanpanhavorn.siv@tovtrip.com,amyjohn922@gmail.com, henghuylong1@gmail.com, narakithya@gmail.com",  # Testers' email addresses
-    release_notes: "🚀 New Build Available!  
-📌 **Environment:** Staging  
-📌 **Build:** #{version_code}  
-📌 **Version:** #{version_name}  
+    release_notes: "📢 New Android Build Available on Firebase App Distribution!
+• Environment: Staging
+• Build: #{version_code}
+• Version: #{version_name}
 
 🚀 New Features & Updates:
 
-- **Edit Profile** → Pop user out & show toast: Profile updated!
-- **Create Event** → Pop user out & show toast: Event created!
-- **Create Event Request** → Pop user out & show toast: Request sent!
-- **Email Verification Text** → Verify your email to activate your FitLink Gym account:
-- **Password Reset Email Text** → Reset your FitLink Gym password here:
+Edit Profile → Pops user out & plays a sound → Shows toast: Profile updated!
+Create Event → Pops user out & plays a sound → Shows toast: Event created!
+Create Event Request → Pops user out & plays a sound → Shows toast: Request sent!
+Workout Activity Feature → Users can list and track their workout activities.
+Workouts Listing → Users can browse workouts, add exercises, track reps & sets, and customize activities.
+Exercise Tracking → Users can log workouts and track progress over time.
+Play Sound on Actions → A sound effect plays when users update their profile, create an event, submit a form, or log a workout.
+Activity Management → Users can edit & filter activities based on date.
+⚠ Known Issues:
 
-⚠ **Known Issues:**  
-- Facebook During Develop mode wont give you your profile name, So it will be annoymous user Android / IOS
-- OTP functionality is **not working** in the Android beta version (only available in production mode). iOS version is unaffected.  
-🧪 **Enjoy testing and feel free to report any issues!**",
+Facebook (Dev Mode) → Profile name will not be retrieved, so the user will appear as anonymous on Android/iOS.
+OTP Issue (Android Beta) → OTP functionality is not working in the Android beta version (only available in production mode). iOS version is unaffected.
+🧪 Enjoy testing! 🚀 Feel free to report any issues!",
 
 apk_path: "/Users/macbook/Documents/flutter/fitlink-2024/build/app/outputs/flutter-apk/app-staging-release.apk"
 
 )
-deploy_message = "New build Android is available on Firebase App Distribution!!
-  • Environment: Staging
-  • Build: #{version_code}
-  • Version: #{version_name}
-  
+deploy_message = "📢 New Android Build Available on Firebase App Distribution!
+• Environment: Staging
+• Build: #{version_code}
+• Version: #{version_name}
+
 🚀 New Features & Updates:
 
-- **Edit Profile** → Pop user out & show toast: Profile updated!
-- **Create Event** → Pop user out & show toast: Event created!
-- **Create Event Request** → Pop user out & show toast: Request sent!
-- **Email Verification Text** → Verify your email to activate your FitLink Gym account:
-- **Password Reset Email Text** → Reset your FitLink Gym password here:
+Edit Profile → Pops user out & plays a sound → Shows toast: Profile updated!
+Create Event → Pops user out & plays a sound → Shows toast: Event created!
+Create Event Request → Pops user out & plays a sound → Shows toast: Request sent!
+Workout Activity Feature → Users can list and track their workout activities.
+Workouts Listing → Users can browse workouts, add exercises, track reps & sets, and customize activities.
+Exercise Tracking → Users can log workouts and track progress over time.
+Play Sound on Actions → A sound effect plays when users update their profile, create an event, submit a form, or log a workout.
+Activity Management → Users can edit & filter activities based on date.
+⚠ Known Issues:
 
-⚠ **Known Issues:**  
-- Facebook During Develop mode wont give you your profile name, So it will be annoymous user Android / IOS
-- OTP functionality is **not working** in the Android beta version (only available in production mode). iOS version is unaffected.  
-
-🧪 **Enjoy testing and feel free to report any issues!**"
+Facebook (Dev Mode) → Profile name will not be retrieved, so the user will appear as anonymous on Android/iOS.
+OTP Issue (Android Beta) → OTP functionality is not working in the Android beta version (only available in production mode). iOS version is unaffected.
+🧪 Enjoy testing! 🚀 Feel free to report any issues!"
 
 # Move this below the assignment
 puts "CHATID: #{deploy_message}"
 
 telegram(
   text: deploy_message,
-  chat_id: ENV['CHAT_ID'], # Your Telegram group chat ID
-  token: ENV['TELE_TOKEN'] # Your bot's token
+  chat_id: ENV['CHAT_ID'], 
+  token: ENV['TELE_TOKEN'] 
 )
 
 end

@@ -122,7 +122,7 @@ class _EventDatePickerCustomState extends ConsumerState<EventDatePickerCustom> {
                   ?.copyWith(color: AppColors.secondaryColor),
               todayTextStyle: const TextStyle(color: AppColors.primaryColor),
               todayCellDecoration: const BoxDecoration(
-                color: Color.fromARGB(255, 46, 187, 247),
+                color: AppColors.backgroundDark,
                 shape: BoxShape.circle,
               ),
               disabledDatesTextStyle:
@@ -131,6 +131,7 @@ class _EventDatePickerCustomState extends ConsumerState<EventDatePickerCustom> {
             selectionMode: widget.selectionMode,
             allowViewNavigation: true,
             showNavigationArrow: true,
+            selectionColor: AppColors.secondaryColor,
             onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
               debugPrint('${args.value}');
               setState(() {

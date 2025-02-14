@@ -150,12 +150,13 @@ class _WorkoutActivitiesState extends ConsumerState<WorkoutActivities> {
         ),
         asyncValue.when(
           data: (data) {
-            return data != null && data.isEmpty
+            return data == null || data.isEmpty
                 ? emptyContent(title: 'You have no workout activities yet !!!')
                 : ListView.builder(
-                    itemCount: data!.length,
+                    itemCount: data.length,
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
+                    padding: const EdgeInsets.only(bottom: 150),
                     physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       final workout = data[index];
@@ -472,6 +473,7 @@ class _WorkoutActivitiesState extends ConsumerState<WorkoutActivities> {
       enabled: true,
       child: ListView.builder(
         itemCount: 3,
+        padding: const EdgeInsets.only(bottom: 150),
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),

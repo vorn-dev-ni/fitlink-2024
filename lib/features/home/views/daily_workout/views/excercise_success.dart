@@ -3,6 +3,7 @@ import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/features/home/controller/workouts/activities_controller.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
+import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/formatters/formatter_utils.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
@@ -66,10 +67,9 @@ class _ExcerciseSuccessState extends ConsumerState<ExcerciseSuccess> {
   void playCongratSound() async {
     try {
       await _finishSound.setAsset(Assets.audio.ty);
-      await _sussySound.setAsset(Assets.audio.sussy);
+      await _sussySound.setAsset(Assets.audio.ohGod);
       await _playSoundNextSet.setAsset(Assets.audio.yay);
-      _sussySound.setVolume(0.5);
-
+      _sussySound.setVolume(0.8);
       _playSoundNextSet.setVolume(1);
       _playSoundNextSet.play();
       _finishSound.play();
@@ -83,12 +83,13 @@ class _ExcerciseSuccessState extends ConsumerState<ExcerciseSuccess> {
       _finishSound.setVolume(1);
       _finishSound.play();
       ref.read(appLoadingStateProvider.notifier).setState(true);
-      debugPrint('workout ${workoutId} date ${date.toString()}');
       await ref
           .read(activitiesControllerProvider(null).notifier)
           .updateWorkoutCompleted(workoutId: workoutId, datetime: date);
       if (mounted) {
         ref.read(appLoadingStateProvider.notifier).setState(false);
+        HelpersUtils.navigatorState(context).pop();
+        HelpersUtils.navigatorState(context).pop();
         HelpersUtils.navigatorState(context).pop();
       }
     } catch (e) {

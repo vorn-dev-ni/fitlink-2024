@@ -51,8 +51,9 @@ class _UploadTabState extends ConsumerState<UploadTab>
           ),
           Assets.app.catGym.image(width: 250, height: 250, fit: BoxFit.cover),
           Text(
-            'Coming Soon',
-            style: AppTextTheme.lightTextTheme.bodyLarge,
+            'Coming Soon my love !!!',
+            style: AppTextTheme.lightTextTheme.bodyLarge
+                ?.copyWith(color: AppColors.secondaryColor),
           ),
           const Spacer(),
           Container(

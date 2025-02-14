@@ -121,11 +121,10 @@ class NavbarController extends _$NavbarController {
         icon: Column(
           children: [
             SvgPicture.asset(
-              Assets.icon.svg.plus,
+              Assets.icon.svg.plus20,
               fit: BoxFit.cover,
               width: 30,
               height: 30,
-              allowDrawingOutsideViewBox: true,
             ),
             const SizedBox(
               height: 4,
@@ -133,7 +132,7 @@ class NavbarController extends _$NavbarController {
             Opacity(
               opacity: 0.0,
               child: SvgPicture.asset(
-                Assets.icon.svg.dotIndicator,
+                Assets.icon.svg.plus20,
                 fit: BoxFit.cover,
                 width: 7,
                 height: 7,
@@ -271,7 +270,6 @@ class NavbarController extends _$NavbarController {
   }
 
   void updateProfileTab(String? avatar) {
-    debugPrint("Got avatar ${avatar}");
     state = state.map(
       (e) {
         if (e.tooltip == "profile") {

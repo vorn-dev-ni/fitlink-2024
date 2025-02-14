@@ -7,6 +7,7 @@ import 'package:demo/features/home/controller/activities/activity_form_controlle
 import 'package:demo/features/home/controller/workouts/activities_controller.dart';
 import 'package:demo/features/home/views/main/event/event_post/event_date_picker.dart';
 import 'package:demo/features/home/views/main/event/event_post/event_time_picker.dart';
+import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
@@ -17,6 +18,7 @@ import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:demo/utils/validation/activity_validation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:sizer/sizer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -38,9 +40,12 @@ class _ExcerciseActivitiesFormState
   String? _validationDate = '';
   String? _validationStartTime = '';
   String? _validationEndTime = '';
+  late AudioPlayer playAudioUpload;
 
   @override
   void initState() {
+    playAudioUpload = AudioPlayer();
+    bindingAudio();
     _textActivity = TextEditingController();
     _textDesc = TextEditingController();
     WidgetsBinding.instance.addPostFrameCallback(
@@ -62,6 +67,11 @@ class _ExcerciseActivitiesFormState
           ref
               .read(activityFormWorkoutControllerProvider.notifier)
               .updateTimeStart(result['startTime']);
+        }
+        if (result['date'] != "") {
+          ref
+              .read(activityFormWorkoutControllerProvider.notifier)
+              .updateDate(result['date']);
         }
       },
     );
@@ -95,7 +105,7 @@ class _ExcerciseActivitiesFormState
                   },
                   child: const Icon(Icons.arrow_back_ios),
                 ),
-                text: 'Add new activity ${docId ?? "null"}',
+                text: 'Add new activity',
                 bgColor: AppColors.backgroundLight,
                 showheader: false),
             body: SafeArea(
@@ -186,14 +196,19 @@ class _ExcerciseActivitiesFormState
           await ref
               .read(activityFormWorkoutControllerProvider.notifier)
               .updateActivity(docId);
+
           DateTime normalizedDate =
               DateTime(initDate!.year, initDate!.month, initDate!.day);
           ref.invalidate(activitiesControllerProvider(normalizedDate));
         } else {
+          DateTime normalizedDate =
+              DateTime(date!.year, date!.month, date!.day);
           await ref.read(activityFormWorkoutControllerProvider.notifier).save();
+          ref.invalidate(activitiesControllerProvider(normalizedDate));
         }
 
         if (mounted) {
+          playAudio();
           ref.read(appLoadingStateProvider.notifier).setState(false);
           ref.invalidate(activityFormWorkoutControllerProvider);
           HelpersUtils.navigatorState(context).pop();
@@ -450,5 +465,14 @@ class _ExcerciseActivitiesFormState
         ),
       ),
     );
+  }
+
+  void bindingAudio() async {
+    await playAudioUpload.setAsset(Assets.audio.uploadSound);
+    playAudioUpload.setVolume(1);
+  }
+
+  void playAudio() {
+    playAudioUpload.play();
   }
 }

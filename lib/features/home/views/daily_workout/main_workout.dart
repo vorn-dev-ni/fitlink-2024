@@ -89,7 +89,7 @@ class _MainWorkoutScreenState extends ConsumerState<MainWorkoutScreen> {
                     onPressed: () {
                       HelpersUtils.navigatorState(context).pushNamed(
                           AppPage.excerciseActivitiesForm,
-                          arguments: {'title': ''});
+                          arguments: {'title': '', 'date': selectedDate});
                     },
                     icon: const Icon(
                       Icons.add,

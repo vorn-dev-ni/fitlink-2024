@@ -8,7 +8,6 @@ import 'package:demo/common/widget/error_image_placeholder.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/features/authentication/controller/auth_controller.dart';
 import 'package:demo/features/home/controller/event/event_detail_participant.dart';
-import 'package:demo/features/home/controller/navbar_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/features/home/controller/profile/user_form_controller.dart';
 import 'package:demo/gen/assets.gen.dart';
@@ -25,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class EditProfile extends ConsumerStatefulWidget {
@@ -36,18 +36,19 @@ class EditProfile extends ConsumerStatefulWidget {
 
 class _EditProfileState extends ConsumerState<EditProfile> {
   AuthModel? currentUser;
+  late AudioPlayer playAudioUpload;
   late final AuthController authController;
   final _formkey = GlobalKey<FormState>();
   late TextEditingController textFirstName;
   File? previewImages;
   String? userAvatar;
   bool isLoading = true;
-
   late TextEditingController textLastName;
   late TextEditingController textBio;
   @override
   void initState() {
     if (mounted) {
+      playAudioUpload = AudioPlayer();
       authController = AuthController(ref: ref);
       textFirstName = TextEditingController();
       textLastName = TextEditingController();
@@ -58,6 +59,11 @@ class _EditProfileState extends ConsumerState<EditProfile> {
       });
     }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   void bindingProfileState() async {
@@ -333,18 +339,20 @@ class _EditProfileState extends ConsumerState<EditProfile> {
         ref.read(appLoadingStateProvider.notifier).setState(true);
 
         _formkey.currentState!.save();
-        await Future.delayed(const Duration(milliseconds: 500));
+        await Future.delayed(const Duration(milliseconds: 300));
         await ref
             .read(userFormControllerProvider.notifier)
             .updateUserProfile(previewImages);
+
         if (mounted) {
           HelpersUtils.navigatorState(context).pop();
           ref.read(appLoadingStateProvider.notifier).setState(false);
         }
+
         // ref.invalidate(profileUserControllerProvider);
         ref.invalidate(eventDetailParticipantProvider);
-        debugPrint("Update profile successfully !!!");
-
+        playAudioUpload.setVolume(0.8);
+        playAudioUpload.play();
         Fluttertoast.showToast(
             msg: "Update profile successfully !!!",
             toastLength: Toast.LENGTH_LONG,
@@ -370,6 +378,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
   }
 
   void bindingData() async {
+    await playAudioUpload.setAsset(Assets.audio.uploadSound);
     final asyncValues = await ref.read(profileUserControllerProvider.future);
     if (asyncValues != null) {
       ref

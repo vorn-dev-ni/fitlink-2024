@@ -64,6 +64,9 @@ class $AssetsAudioGen {
   /// File path: assets/audio/bg-gym.mp3
   String get bgGym => 'assets/audio/bg-gym.mp3';
 
+  /// File path: assets/audio/bye.mp3
+  String get bye => 'assets/audio/bye.mp3';
+
   /// File path: assets/audio/good_job.mp3
   String get goodJob => 'assets/audio/good_job.mp3';
 
@@ -82,6 +85,9 @@ class $AssetsAudioGen {
   /// File path: assets/audio/ty.mp3
   String get ty => 'assets/audio/ty.mp3';
 
+  /// File path: assets/audio/upload_sound.mp3
+  String get uploadSound => 'assets/audio/upload_sound.mp3';
+
   /// File path: assets/audio/whistle.mp3
   String get whistle => 'assets/audio/whistle.mp3';
 
@@ -94,12 +100,14 @@ class $AssetsAudioGen {
   /// List of all assets
   List<String> get values => [
         bgGym,
+        bye,
         goodJob,
         ohGod,
         setSuccess,
         successUpload,
         sussy,
         ty,
+        uploadSound,
         whistle,
         wow,
         yay
@@ -205,8 +213,14 @@ class $AssetsIconSvgGen {
   /// File path: assets/icon/svg/plus.svg
   String get plus => 'assets/icon/svg/plus.svg';
 
+  /// File path: assets/icon/svg/plus2.0.svg
+  String get plus20 => 'assets/icon/svg/plus2.0.svg';
+
   /// File path: assets/icon/svg/share.svg
   String get share => 'assets/icon/svg/share.svg';
+
+  /// File path: assets/icon/svg/tiktok.svg
+  String get tiktok => 'assets/icon/svg/tiktok.svg';
 
   /// List of all assets
   List<String> get values => [
@@ -223,7 +237,9 @@ class $AssetsIconSvgGen {
         mdiLocation,
         notFound,
         plus,
-        share
+        plus20,
+        share,
+        tiktok
       ];
 }
 

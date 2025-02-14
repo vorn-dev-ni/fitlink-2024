@@ -22,7 +22,7 @@ class ActivitiesService extends BaseActivitiesService {
   @override
   Future updateUserWorkout(Map<String, dynamic> data) async {
     try {
-      if (data['workoutId'] == "") {
+      if (data['workoutId'] == null) {
         final result = await _firestore.collection('activities').add(data);
         return result;
       }

@@ -75,16 +75,7 @@ class ActivitiesController extends _$ActivitiesController {
       return await activitiesRepository.getUserActivities(
           date: date, uid: FirebaseAuth.instance.currentUser!.uid);
     } catch (e) {
-      Fluttertoast.showToast(
-          msg: e.toString(),
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 5,
-          backgroundColor: AppColors.errorColor,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      rethrow;
     }
-
-    return null;
   }
 }

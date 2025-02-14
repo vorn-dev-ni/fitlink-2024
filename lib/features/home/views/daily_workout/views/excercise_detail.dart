@@ -112,7 +112,7 @@ class _ExcerciseDetailState extends State<ExcerciseDetail> {
       await _playBgTheme.stop();
       await _playBgTheme.seek(const Duration(seconds: 0));
       await _playBgTheme.setAsset(Assets.audio.bgGym);
-      _playBgTheme.setVolume(0.2);
+      _playBgTheme.setVolume(0.6);
       _playBgTheme.setLoopMode(LoopMode.all);
       _playBgTheme.play();
     } catch (e) {
@@ -137,7 +137,7 @@ class _ExcerciseDetailState extends State<ExcerciseDetail> {
       await _playSoundPause.stop();
       await _playSoundPause.seek(const Duration(seconds: 0));
       await _playSoundPause.setAsset(Assets.audio.ohGod);
-      _playSoundPause.setVolume(0.8);
+      _playSoundPause.setVolume(1);
       _playSoundPause.play();
     } catch (e) {
       debugPrint("Error loading audio: $e");
@@ -149,7 +149,7 @@ class _ExcerciseDetailState extends State<ExcerciseDetail> {
       await _playSoundEndRep.stop();
       await _playSoundEndRep.seek(const Duration(seconds: 0));
       await _playSoundEndRep.setAsset(Assets.audio.goodJob);
-      _playSoundEndRep.setVolume(0.8);
+      _playSoundEndRep.setVolume(1);
       _playSoundEndRep.play();
     } catch (e) {
       debugPrint("Error loading audio: $e");
@@ -161,7 +161,7 @@ class _ExcerciseDetailState extends State<ExcerciseDetail> {
       await _playSoundNextSet.stop();
       await _playSoundNextSet.seek(const Duration(seconds: 0));
       await _playSoundNextSet.setAsset(Assets.audio.wow);
-      _playSoundNextSet.setVolume(0.7);
+      _playSoundNextSet.setVolume(1);
       _playSoundNextSet.play();
     } catch (e) {
       debugPrint("Error loading audio: $e");

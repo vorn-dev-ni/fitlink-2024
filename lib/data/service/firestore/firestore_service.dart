@@ -80,14 +80,11 @@ class FirestoreService {
 
   Future<AuthModel> getEmail(String? uid) async {
     // final User? currentUser = FirebaseAuth.instance.currentUser;
-    debugPrint("SYNC USER ${uid}");
 
     if (uid != null) {
       try {
         DocumentSnapshot snapshot =
             await _firestore.collection('users').doc(uid).get();
-        debugPrint(
-            "The email snapshot is is  snap shot ${snapshot.data() != null ? 'tue' : 'false'}");
 
         if (snapshot.data() == null) {
           return AuthModel();
@@ -101,7 +98,7 @@ class FirestoreService {
           String avatar = data['avatar'] ?? "";
           String role = data['role'] ?? "";
           String bio = data['bio'] ?? "";
-          String cover_image = snapshot.get('cover_feature') ?? '';
+          String cover_image = data['cover_feature'] ?? '';
 
           return AuthModel(
               fullname: fullname,

@@ -16,7 +16,7 @@ import 'package:demo/features/home/views/main/event/event_post/event_date_picker
 import 'package:demo/features/home/views/main/event/event_post/event_label.dart';
 import 'package:demo/features/home/views/main/event/event_post/event_select_map.dart';
 import 'package:demo/features/home/views/main/event/event_post/event_time_picker.dart';
-import 'package:demo/features/home/views/map_display.dart';
+import 'package:demo/features/home/widget/map_display.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
@@ -35,7 +35,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:sizer/sizer.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class EventPosting extends ConsumerStatefulWidget {
   const EventPosting({super.key});
@@ -49,6 +51,8 @@ class _EventPostingState extends ConsumerState<EventPosting> {
   DateTime? selectTime;
   File? previewImages;
   File? uploadImage;
+  late AudioPlayer playAudioUpload;
+
   String? temPath;
   bool isUploading = false;
   bool canPop = false;
@@ -69,6 +73,8 @@ class _EventPostingState extends ConsumerState<EventPosting> {
         FirestoreService(firebaseAuthService: FirebaseAuthService());
 
     checkUserRole();
+
+    bindingAudio();
     super.initState();
   }
 
@@ -433,7 +439,9 @@ class _EventPostingState extends ConsumerState<EventPosting> {
           borderRadius: BorderRadius.circular(Sizes.md),
           onTap: () {
             HelpersUtils.navigatorState(context).push(MaterialPageRoute(
-              builder: (context) => const EventDatePickerCustom(),
+              builder: (context) => EventDatePickerCustom(
+                selectionMode: DateRangePickerSelectionMode.range,
+              ),
             ));
           },
           child: Container(
@@ -500,7 +508,6 @@ class _EventPostingState extends ConsumerState<EventPosting> {
                               ' Start Time',
                           style: AppTextTheme.lightTextTheme.bodyLarge
                               ?.copyWith(
-                                  // ignore: unnecessary_null_comparison
                                   color: dangeRange.timeStart != null
                                       ? AppColors.secondaryColor
                                       : AppColors.neutralColor,
@@ -745,7 +752,10 @@ class _EventPostingState extends ConsumerState<EventPosting> {
           uploadImage = null;
           temPath = null;
           ref.invalidate(eventFormControllerProvider);
-
+          if (mounted) {
+            HelpersUtils.navigatorState(context).pop();
+          }
+          playAudio();
           Fluttertoast.showToast(
               msg: 'Successfully created the event !!!',
               toastLength: Toast.LENGTH_SHORT,
@@ -814,5 +824,15 @@ class _EventPostingState extends ConsumerState<EventPosting> {
     HelpersUtils.navigatorState(context).push(MaterialPageRoute(
       builder: (context) => const EventSelectMap(),
     ));
+  }
+
+  void bindingAudio() async {
+    playAudioUpload = AudioPlayer();
+    await playAudioUpload.setAsset(Assets.audio.uploadSound);
+    playAudioUpload.setVolume(0.8);
+  }
+
+  void playAudio() async {
+    playAudioUpload.play();
   }
 }

@@ -18,6 +18,7 @@ import 'package:demo/utils/device/device_utils.dart';
 import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
+import 'package:demo/utils/validation/login_validation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -37,6 +38,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   late TextEditingController _textEditingControllerEmail;
   late TextEditingController _textEditingControllerPassword;
   late AuthController authController;
+  final _formRegisterKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     _textEditingControllerEmail = TextEditingController();
@@ -60,114 +63,134 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             appBar: const AppBarCustom(
                 bgColor: AppColors.backgroundLight, showheader: false),
             body: SafeArea(
-              child: SingleChildScrollView(
-                primary: false,
-                child: Padding(
-                  padding: const EdgeInsets.all(Sizes.xl),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      headerTitle(),
-                      AppInput(
-                        hintText: 'Chovy',
-                        labelText: 'First Name',
-                        controller: _textEditingControllerFirstName,
-                        maxLength: 30,
-                        onChanged: (value) {
-                          ref
-                              .read(registerControllerProvider.notifier)
-                              .updateFirstName(value.trim());
-                        },
-                      ),
-                      AppInput(
-                        hintText: 'Chovy',
-                        labelText: 'Last Name',
-                        controller: _textEditingControllerLastName,
-                        maxLength: 30,
-                        onChanged: (value) {
-                          ref
-                              .read(registerControllerProvider.notifier)
-                              .updateLastName(value.trim());
-                        },
-                      ),
-                      AppInput(
-                        hintText: 'Chovy@gmail.com',
-                        controller: _textEditingControllerEmail,
-                        labelText: 'Email',
-                        maxLength: 35,
-                        onChanged: (value) {
-                          ref
-                              .read(registerControllerProvider.notifier)
-                              .updateEmail(value.trim());
-                        },
-                      ),
-                      AppInput(
-                        hintText: 'Example123',
-                        obscureText: !showPassword,
-                        maxLength: 12,
-                        labelText: 'Password',
-                        controller: _textEditingControllerPassword,
-                        onChanged: (value) {
-                          ref
-                              .read(registerControllerProvider.notifier)
-                              .updatePassword(value.trim());
-                        },
-                        suffix: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                showPassword = !showPassword;
-                              });
-                            },
-                            icon: SvgPicture.asset(showPassword
-                                ? Assets.icon.svg.eye
-                                : Assets.icon.svg.eyeClosed)),
-                      ),
-                      forgetPasswordButton(context),
-                      Container(
-                        margin: const EdgeInsets.only(top: Sizes.xl),
-                        child: Wrap(
-                          children: [
-                            const Text('By Continue, you agree to our '),
-                            InkWell(
-                                onTap: () async {
-                                  await HelpersUtils.deepLinkLauncher(
-                                      'https://www.freeprivacypolicy.com/live/e8fcdd80-d621-4ab4-b055-93f99aa2693f');
-                                },
-                                child: const Text(
-                                  'terms and services',
-                                  style: TextStyle(
-                                      color: AppColors.secondaryColor,
-                                      fontWeight: FontWeight.w500),
-                                ))
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: Sizes.xl,
-                      ),
-                      ButtonApp(
-                          height: 18,
-                          splashColor: const Color.fromARGB(255, 207, 225, 255),
-                          label: "Sign Up",
-                          onPressed: _handleRegister,
-                          radius: 0,
-                          textStyle: AppTextTheme.lightTextTheme.bodyMedium
-                              ?.copyWith(
-                                  color: AppColors.backgroundLight,
-                                  fontWeight: FontWeight.w500) as dynamic,
-                          color: AppColors.secondaryColor,
-                          textColor: Colors.white,
-                          elevation: 0),
-                      dividerAuth(),
-                      const SocialAuthButton(),
-                      footerTextAuth(
-                          onPress: () {
-                            HelpersUtils.navigatorState(context)
-                                .pushNamed(AppPage.auth);
+              child: Form(
+                autovalidateMode: AutovalidateMode.always,
+                key: _formRegisterKey,
+                child: SingleChildScrollView(
+                  primary: false,
+                  child: Padding(
+                    padding: const EdgeInsets.all(Sizes.xl),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        headerTitle(),
+                        AppInput(
+                          hintText: 'Chovy',
+                          labelText: 'First Name',
+                          controller: _textEditingControllerFirstName,
+                          maxLength: 31,
+                          validator: (value) {
+                            return ValidationUtils.validateFirstName(
+                                value, 30, 3);
                           },
-                          text1: 'Already have an account?',
-                          text2: ' Sign in here'),
-                    ],
+                          onChanged: (value) {
+                            ref
+                                .read(registerControllerProvider.notifier)
+                                .updateFirstName(value.trim());
+                          },
+                        ),
+                        AppInput(
+                          hintText: 'Chovy',
+                          labelText: 'Last Name',
+                          controller: _textEditingControllerLastName,
+                          maxLength: 31,
+                          validator: (value) {
+                            return ValidationUtils.validatelastName(
+                                value, 30, 3);
+                          },
+                          onChanged: (value) {
+                            ref
+                                .read(registerControllerProvider.notifier)
+                                .updateLastName(value.trim());
+                          },
+                        ),
+                        AppInput(
+                          hintText: 'Chovy@gmail.com',
+                          controller: _textEditingControllerEmail,
+                          labelText: 'Email',
+                          maxLength: 36,
+                          validator: (value) {
+                            return ValidationUtils.validateEmail(value, 36, 6);
+                          },
+                          onChanged: (value) {
+                            ref
+                                .read(registerControllerProvider.notifier)
+                                .updateEmail(value.trim());
+                          },
+                        ),
+                        AppInput(
+                          hintText: 'Example123',
+                          obscureText: !showPassword,
+                          maxLength: 13,
+                          labelText: 'Password',
+                          controller: _textEditingControllerPassword,
+                          onChanged: (value) {
+                            ref
+                                .read(registerControllerProvider.notifier)
+                                .updatePassword(value.trim());
+                          },
+                          validator: (value) {
+                            return ValidationUtils.validatePassword(
+                                value, 13, 6);
+                          },
+                          suffix: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  showPassword = !showPassword;
+                                });
+                              },
+                              icon: SvgPicture.asset(showPassword
+                                  ? Assets.icon.svg.eye
+                                  : Assets.icon.svg.eyeClosed)),
+                        ),
+                        forgetPasswordButton(context),
+                        Container(
+                          margin: const EdgeInsets.only(top: Sizes.xl),
+                          child: Wrap(
+                            children: [
+                              const Text('By Continue, you agree to our '),
+                              InkWell(
+                                  onTap: () async {
+                                    await HelpersUtils.deepLinkLauncher(
+                                        'https://www.freeprivacypolicy.com/live/e8fcdd80-d621-4ab4-b055-93f99aa2693f');
+                                  },
+                                  child: const Text(
+                                    'terms and services',
+                                    style: TextStyle(
+                                        color: AppColors.secondaryColor,
+                                        fontWeight: FontWeight.w500),
+                                  ))
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: Sizes.xl,
+                        ),
+                        ButtonApp(
+                            height: 18,
+                            splashColor:
+                                const Color.fromARGB(255, 207, 225, 255),
+                            label: "Sign Up",
+                            onPressed: _handleRegister,
+                            radius: 0,
+                            textStyle: AppTextTheme.lightTextTheme.bodyMedium
+                                ?.copyWith(
+                                    color: AppColors.backgroundLight,
+                                    fontWeight: FontWeight.w500) as dynamic,
+                            color: AppColors.secondaryColor,
+                            textColor: Colors.white,
+                            elevation: 0),
+                        dividerAuth(),
+                        const SocialAuthButton(),
+                        footerTextAuth(
+                            onPress: () {
+                              HelpersUtils.navigatorState(context)
+                                  .pushNamed(AppPage.auth);
+                            },
+                            text1: 'Already have an account?',
+                            text2: ' Sign in here'),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -196,6 +219,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Future _handleRegister() async {
     try {
       DeviceUtils.hideKeyboard(context);
+      final isValid = _formRegisterKey.currentState!.validate();
+      if (!isValid) {
+        return;
+      }
+      _formRegisterKey.currentState!.save();
+
       ref.read(appLoadingStateProvider.notifier).setState(true);
       final authState = ref.read(registerControllerProvider);
       await authController.createAccount(authState);

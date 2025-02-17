@@ -12,11 +12,17 @@ import 'package:flutter/widgets.dart';
 class $AssetsAppGen {
   const $AssetsAppGen();
 
+  /// File path: assets/app/Group 51.png
+  AssetGenImage get group51 => const AssetGenImage('assets/app/Group 51.png');
+
   /// File path: assets/app/art_one.png
   AssetGenImage get artOne => const AssetGenImage('assets/app/art_one.png');
 
   /// File path: assets/app/art_two.png
   AssetGenImage get artTwo => const AssetGenImage('assets/app/art_two.png');
+
+  /// File path: assets/app/cat_gym.jpg
+  AssetGenImage get catGym => const AssetGenImage('assets/app/cat_gym.jpg');
 
   /// File path: assets/app/default_avatar.jpg
   AssetGenImage get defaultAvatar =>
@@ -34,14 +40,77 @@ class $AssetsAppGen {
   AssetGenImage get noInternetCat =>
       const AssetGenImage('assets/app/no_internet_cat.jpg');
 
+  /// File path: assets/app/workout_appbar_bg.png
+  AssetGenImage get workoutAppbarBg =>
+      const AssetGenImage('assets/app/workout_appbar_bg.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
+        group51,
         artOne,
         artTwo,
+        catGym,
         defaultAvatar,
         gymBackground,
         noImgAvailable,
-        noInternetCat
+        noInternetCat,
+        workoutAppbarBg
+      ];
+}
+
+class $AssetsAudioGen {
+  const $AssetsAudioGen();
+
+  /// File path: assets/audio/bg-gym.mp3
+  String get bgGym => 'assets/audio/bg-gym.mp3';
+
+  /// File path: assets/audio/bye.mp3
+  String get bye => 'assets/audio/bye.mp3';
+
+  /// File path: assets/audio/good_job.mp3
+  String get goodJob => 'assets/audio/good_job.mp3';
+
+  /// File path: assets/audio/oh_god.mp3
+  String get ohGod => 'assets/audio/oh_god.mp3';
+
+  /// File path: assets/audio/set_success.mp3
+  String get setSuccess => 'assets/audio/set_success.mp3';
+
+  /// File path: assets/audio/success_upload.mp3
+  String get successUpload => 'assets/audio/success_upload.mp3';
+
+  /// File path: assets/audio/sussy.mp3
+  String get sussy => 'assets/audio/sussy.mp3';
+
+  /// File path: assets/audio/ty.mp3
+  String get ty => 'assets/audio/ty.mp3';
+
+  /// File path: assets/audio/upload_sound.mp3
+  String get uploadSound => 'assets/audio/upload_sound.mp3';
+
+  /// File path: assets/audio/whistle.mp3
+  String get whistle => 'assets/audio/whistle.mp3';
+
+  /// File path: assets/audio/wow.mp3
+  String get wow => 'assets/audio/wow.mp3';
+
+  /// File path: assets/audio/yay.mp3
+  String get yay => 'assets/audio/yay.mp3';
+
+  /// List of all assets
+  List<String> get values => [
+        bgGym,
+        bye,
+        goodJob,
+        ohGod,
+        setSuccess,
+        successUpload,
+        sussy,
+        ty,
+        uploadSound,
+        whistle,
+        wow,
+        yay
       ];
 }
 
@@ -144,8 +213,14 @@ class $AssetsIconSvgGen {
   /// File path: assets/icon/svg/plus.svg
   String get plus => 'assets/icon/svg/plus.svg';
 
+  /// File path: assets/icon/svg/plus2.0.svg
+  String get plus20 => 'assets/icon/svg/plus2.0.svg';
+
   /// File path: assets/icon/svg/share.svg
   String get share => 'assets/icon/svg/share.svg';
+
+  /// File path: assets/icon/svg/tiktok.svg
+  String get tiktok => 'assets/icon/svg/tiktok.svg';
 
   /// List of all assets
   List<String> get values => [
@@ -162,7 +237,9 @@ class $AssetsIconSvgGen {
         mdiLocation,
         notFound,
         plus,
-        share
+        plus20,
+        share,
+        tiktok
       ];
 }
 
@@ -170,6 +247,7 @@ class Assets {
   Assets._();
 
   static const $AssetsAppGen app = $AssetsAppGen();
+  static const $AssetsAudioGen audio = $AssetsAudioGen();
   static const $AssetsIconGen icon = $AssetsIconGen();
   static const $AssetsLottiesGen lotties = $AssetsLottiesGen();
   static const $AssetsSplashGen splash = $AssetsSplashGen();

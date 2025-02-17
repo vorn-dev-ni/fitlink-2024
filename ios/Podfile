@@ -30,6 +30,7 @@ flutter_ios_podfile_setup
 target 'Runner' do
   use_frameworks!
   pod 'Firebase/Core' # Ensure you have the Firebase pod needed
+  pod 'FirebaseAppCheck', '~> 11.7.0'
   use_modular_headers! # Optional; keep if needed for other pods
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   

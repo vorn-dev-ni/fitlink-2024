@@ -1,4 +1,4 @@
-import 'package:demo/features/home/views/map_display.dart';
+import 'package:demo/features/home/widget/map_display.dart';
 import 'package:demo/utils/device/device_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:demo/utils/constant/app_colors.dart';

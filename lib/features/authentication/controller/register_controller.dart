@@ -35,9 +35,6 @@ class RegisterController extends _$RegisterController {
         state.password == null ||
         state.lastname == null ||
         state.firstName == null) {
-      // debugPrint(
-      //     "Check register recevived ${state.lastname} ${state.firstName}");
-
       Fluttertoast.showToast(
           msg: 'Email or password and fullname must not be empty !!!',
           toastLength: Toast.LENGTH_SHORT,
@@ -62,7 +59,7 @@ class RegisterController extends _$RegisterController {
       return false;
     }
     bool isvalid = ValidationUtils.isPasswordEmptyOrLessThen(
-            password: state.password ?? "", length: 12) &&
+            password: state.password ?? "", length: 13) &&
         ValidationUtils.isValidEmail(state.email!);
     if (!isvalid) {
       Fluttertoast.showToast(

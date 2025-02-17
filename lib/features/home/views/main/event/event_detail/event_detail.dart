@@ -58,14 +58,12 @@ class _EventDetailState extends ConsumerState<EventDetail> {
           if (event != null)
             eventHeaderSection(
                 address: event!.address,
-                endTime: FormatterUtils.getFormattedTime(
-                        event!.timeStart.toDate()) ??
-                    "",
+                endTime:
+                    FormatterUtils.getFormattedTime(event!.timeStart.toDate()),
                 establishment: event!.establishment,
                 isFree: event!.freeEntry,
                 startTime:
-                    FormatterUtils.getFormattedTime(event!.endTime.toDate()) ??
-                        "",
+                    FormatterUtils.getFormattedTime(event!.endTime.toDate()),
                 title: event!.eventTitle,
                 price: event!.price?.toString() ?? ""),
           EventDesc(desc: event!.descriptions),
@@ -101,27 +99,38 @@ class _EventDetailState extends ConsumerState<EventDetail> {
           HelpersUtils.navigatorState(context).pop();
         },
       ),
+      pinned: true,
+      stretch: true,
       backgroundColor: Colors.transparent,
       flexibleSpace: FlexibleSpaceBar(
         title: const Text(''),
-        background: GestureDetector(
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return ZoomableImage(
-                  imageUrl: event.feature,
+        collapseMode: CollapseMode.parallax,
+        stretchModes: const [
+          StretchMode.zoomBackground,
+        ],
+        background: Stack(
+          fit: StackFit.expand,
+          children: [
+            GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return ZoomableImage(
+                      imageUrl: event.feature,
+                    );
+                  },
                 );
               },
-            );
-          },
-          child: Hero(
-            tag: tag,
-            child: FancyShimmerImage(
-                imageUrl: event.feature,
-                boxFit: BoxFit.cover,
-                errorWidget: errorImgplaceholder()),
-          ),
+              child: Hero(
+                tag: tag,
+                child: FancyShimmerImage(
+                    imageUrl: event.feature,
+                    boxFit: BoxFit.cover,
+                    errorWidget: errorImgplaceholder()),
+              ),
+            ),
+          ],
         ),
       ),
     );

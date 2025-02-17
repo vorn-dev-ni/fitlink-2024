@@ -16,6 +16,7 @@ import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/device/device_utils.dart';
 import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
+import 'package:demo/utils/validation/login_validation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
@@ -33,6 +34,8 @@ class _EmailLoginTabState extends ConsumerState<EmailLoginTab> {
   late TextEditingController _textEditingControllerEmail;
   late TextEditingController _textEditingControllerPassword;
   late AuthController authController;
+  final _formGlobalKeyLogin = GlobalKey<FormState>();
+
   @override
   void initState() {
     _textEditingControllerEmail = TextEditingController();
@@ -45,68 +48,78 @@ class _EmailLoginTabState extends ConsumerState<EmailLoginTab> {
   Widget build(BuildContext context) {
     ref.watch(loginControllerProvider);
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(
-            height: Sizes.xl,
-          ),
-          AppInput(
-            hintText: 'hello@example.com',
-            labelText: 'Email Address',
-            controller: _textEditingControllerEmail,
-            maxLength: 35,
-            onChanged: (value) {
-              ref
-                  .read(loginControllerProvider.notifier)
-                  .updateEmail(value.trim());
-            },
-          ),
-          AppInput(
-            hintText: 'Example123',
-            obscureText: !showPassword,
-            controller: _textEditingControllerPassword,
-            maxLength: 12,
-            labelText: 'Password',
-            onChanged: (value) {
-              ref
-                  .read(loginControllerProvider.notifier)
-                  .updatePassword(value.trim());
-            },
-            suffix: IconButton(
-                onPressed: () {
-                  setState(() {
-                    showPassword = !showPassword;
-                  });
-                },
-                icon: SvgPicture.asset(showPassword
-                    ? Assets.icon.svg.eye
-                    : Assets.icon.svg.eyeClosed)),
-          ),
-          forgetPasswordButton(context),
-          ButtonApp(
-              height: 18,
-              splashColor: const Color.fromARGB(255, 207, 225, 255),
-              label: "Login",
-              onPressed: _handleLoginState,
-              radius: 0,
-              textStyle: AppTextTheme.lightTextTheme.bodyMedium?.copyWith(
-                  color: AppColors.backgroundLight,
-                  fontWeight: FontWeight.w500) as dynamic,
-              color: AppColors.secondaryColor,
-              textColor: Colors.white,
-              elevation: 0),
-          dividerAuth(),
-          const SocialAuthButton(),
-          footerTextAuth(
-              onPress: () {
-                HelpersUtils.navigatorState(context)
-                    .pushNamed(AppPage.register);
+      child: Form(
+        autovalidateMode: AutovalidateMode.always,
+        key: _formGlobalKeyLogin,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: Sizes.xl,
+            ),
+            AppInput(
+              hintText: 'hello@example.com',
+              labelText: 'Email Address',
+              validator: (value) {
+                return ValidationUtils.validateEmail(value, 36, 6);
               },
-              text1: 'Dont have an account?',
-              text2: ' Register here'),
-          const AppInfo(),
-        ],
+              controller: _textEditingControllerEmail,
+              maxLength: 36,
+              onChanged: (value) {
+                ref
+                    .read(loginControllerProvider.notifier)
+                    .updateEmail(value.trim());
+              },
+            ),
+            AppInput(
+              hintText: 'Example123',
+              obscureText: !showPassword,
+              validator: (value) {
+                return ValidationUtils.validatePassword(value, 13, 6);
+              },
+              controller: _textEditingControllerPassword,
+              maxLength: 13,
+              labelText: 'Password',
+              onChanged: (value) {
+                ref
+                    .read(loginControllerProvider.notifier)
+                    .updatePassword(value.trim());
+              },
+              suffix: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      showPassword = !showPassword;
+                    });
+                  },
+                  icon: SvgPicture.asset(showPassword
+                      ? Assets.icon.svg.eye
+                      : Assets.icon.svg.eyeClosed)),
+            ),
+            forgetPasswordButton(context),
+            ButtonApp(
+                height: 18,
+                splashColor: const Color.fromARGB(255, 207, 225, 255),
+                label: "Login",
+                onPressed: _handleLoginState,
+                radius: 0,
+                textStyle: AppTextTheme.lightTextTheme.bodyMedium?.copyWith(
+                    color: AppColors.backgroundLight,
+                    fontWeight: FontWeight.w500) as dynamic,
+                color: AppColors.secondaryColor,
+                textColor: Colors.white,
+                elevation: 0),
+            dividerAuth(),
+            const SocialAuthButton(),
+            footerTextAuth(
+                onPress: () {
+                  HelpersUtils.navigatorState(context)
+                      .pushNamed(AppPage.register);
+                },
+                text1: 'Dont have an account?',
+                text2: ' Register here'),
+            const AppInfo(),
+          ],
+        ),
       ),
     );
   }
@@ -114,6 +127,12 @@ class _EmailLoginTabState extends ConsumerState<EmailLoginTab> {
   Future _handleLoginState() async {
     try {
       DeviceUtils.hideKeyboard(context);
+      final isValid = _formGlobalKeyLogin.currentState!.validate();
+      if (!isValid) {
+        return;
+      }
+      _formGlobalKeyLogin.currentState!.save();
+
       ref.read(appLoadingStateProvider.notifier).setState(true);
       final authState = ref.read(loginControllerProvider);
       ScaffoldMessenger.of(context).removeCurrentSnackBar();

@@ -7,6 +7,7 @@ import 'package:demo/features/home/controller/submission/form_submission_control
 import 'package:demo/features/home/views/main/event/event_submission/submit_button.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
+import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
@@ -17,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:sizer/sizer.dart';
 import 'package:path/path.dart' as p;
 
@@ -31,13 +33,26 @@ class _PersonalDocState extends ConsumerState<PersonalDoc> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController websiteController;
   String validationWebsiteText = "";
+  late AudioPlayer playAudioUpload;
+
   List<File> _tempo_files = [];
   late StorageService storageService;
   @override
   void initState() {
     storageService = StorageService();
     bindingController();
+    bindingAudio();
     super.initState();
+  }
+
+  void bindingAudio() async {
+    playAudioUpload = AudioPlayer();
+    await playAudioUpload.setAsset(Assets.audio.uploadSound);
+    playAudioUpload.setVolume(0.8);
+  }
+
+  void playAudio() {
+    playAudioUpload.play();
   }
 
   @override
@@ -175,10 +190,14 @@ class _PersonalDocState extends ConsumerState<PersonalDoc> {
                     const SizedBox(
                       width: Sizes.xs,
                     ),
-                    Text(
-                      p.basename(file.path),
-                      maxLines: 3,
-                      style: const TextStyle(color: AppColors.secondaryColor),
+                    SizedBox(
+                      width: 50.w,
+                      child: Text(
+                        p.basename(file.path),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: AppColors.secondaryColor),
+                      ),
                     ),
                     const Spacer(),
                     IconButton(
@@ -259,6 +278,8 @@ class _PersonalDocState extends ConsumerState<PersonalDoc> {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       allowCompression: true,
+      type: FileType.custom,
+      allowedExtensions: extensions,
     );
 
     if (result != null) {
@@ -293,17 +314,13 @@ class _PersonalDocState extends ConsumerState<PersonalDoc> {
         .read(formSubmissionControllerProvider.notifier)
         .getPdfDownloadUrls();
     await ref.read(formSubmissionControllerProvider.notifier).save();
+    playAudio();
     if (mounted) {
       ref.invalidate(formSubmissionControllerProvider);
       HelpersUtils.navigatorState(context).pop();
     }
-    Fluttertoast.showToast(
-        msg: 'Thanks you, we will get to you back in 2-3 business days !!!',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 9,
-        backgroundColor: AppColors.successColor,
-        textColor: Colors.white,
-        fontSize: 16.0);
+    if (mounted) {
+      HelpersUtils.navigatorState(context).pushNamed(AppPage.eventSuccess);
+    }
   }
 }

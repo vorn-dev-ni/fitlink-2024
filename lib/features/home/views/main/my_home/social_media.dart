@@ -22,6 +22,12 @@ class _SocialMediaTabState extends State<SocialMediaTab>
   ];
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(

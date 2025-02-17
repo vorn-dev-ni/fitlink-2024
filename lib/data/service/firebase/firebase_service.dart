@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
 import 'package:demo/utils/firebase/firebase.dart';
-import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

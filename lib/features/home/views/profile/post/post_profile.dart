@@ -14,13 +14,14 @@ class _PostProfileState extends State<PostProfile> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(Sizes.lg),
-      child: Center(
-          child: ListView.builder(
-        itemCount: 50,
+      padding: const EdgeInsets.symmetric(horizontal: Sizes.lg),
+      child: ListView.builder(
+        itemCount: 10,
+        padding: const EdgeInsets.only(top: Sizes.xl, bottom: 140),
+        shrinkWrap: true,
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: Sizes.xs),
+            padding: const EdgeInsets.only(bottom: Sizes.xs),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(Sizes.lg),
               child: FancyShimmerImage(
@@ -33,7 +34,7 @@ class _PostProfileState extends State<PostProfile> {
             ),
           );
         },
-      )),
+      ),
     );
   }
 }

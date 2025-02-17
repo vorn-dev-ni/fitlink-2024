@@ -44,6 +44,7 @@ class AppBarCustom extends ConsumerWidget implements PreferredSizeWidget {
       // leadingWidth: 40,
       toolbarHeight: 80,
       leading: trailing ?? trailing,
+
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 0.0),
@@ -56,6 +57,7 @@ class AppBarCustom extends ConsumerWidget implements PreferredSizeWidget {
         children: [
           Text(
             text ?? "",
+            maxLines: 1,
             textAlign: TextAlign.start,
             style: appThemeRef == AppTheme.light
                 ? AppTextTheme.lightTextTheme.headlineSmall?.copyWith(

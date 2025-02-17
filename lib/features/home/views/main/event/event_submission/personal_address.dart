@@ -55,14 +55,14 @@ class _PersonalAddressState extends ConsumerState<PersonalAddress> {
             controller: _zipCodeController,
             keyboardType: TextInputType.number,
             labelText: 'Zip code',
-            maxLength: 10,
+            maxLength: 11,
             onSaved: (value) {
               ref
                   .read(formSubmissionControllerProvider.notifier)
                   .updateAddressInfo(zipCode: value?.trim());
             },
             validator: (value) =>
-                EventSubmitValidation.validateZipCode(value, 10, 4),
+                EventSubmitValidation.validateZipCode(value, 11, 4),
             hintText: 'Enter code',
           ),
           AppInput(

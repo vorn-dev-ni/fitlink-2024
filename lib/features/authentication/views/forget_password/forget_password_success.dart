@@ -1,4 +1,3 @@
-import 'package:demo/common/widget/app_bar_custom.dart';
 import 'package:demo/common/widget/backdrop_loading.dart';
 import 'package:demo/common/widget/button.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
@@ -6,9 +5,7 @@ import 'package:demo/features/authentication/controller/auth_controller.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
-import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
-import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +66,7 @@ class _ForgetPasswordSuccessState extends ConsumerState<ForgetPasswordSuccess> {
               style: AppTextTheme.lightTextTheme.headlineLarge,
             ),
             Text(
-              'Please check your email to reset your password',
+              'We have sent an email validation for your password to reset, Please check your email to reset your password',
               textAlign: TextAlign.center,
               style: AppTextTheme.lightTextTheme.bodyMedium
                   ?.copyWith(color: AppColors.neutralDark),

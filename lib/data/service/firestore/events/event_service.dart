@@ -87,31 +87,6 @@ class EventService extends BaseService {
   }
 
   @override
-  Future<QuerySnapshot<Map<String, dynamic>>> getAllOneTime() async {
-    try {
-      DateTime now = DateTime.now();
-      DateTime tomorrow = now.add(const Duration(days: 1));
-
-      Timestamp todayTimestamp =
-          Timestamp.fromDate(DateTime(now.year, now.month, now.day).toUtc());
-      Timestamp tomorrowTimestamp = Timestamp.fromDate(
-          DateTime(tomorrow.year, tomorrow.month, tomorrow.day).toUtc());
-
-      return await _firestore
-          .collection('events')
-          .where('preStartDate', isGreaterThanOrEqualTo: todayTimestamp)
-          .where('preStartDate', isLessThanOrEqualTo: tomorrowTimestamp)
-          .orderBy('preStartDate', descending: false)
-          .get();
-    } on FirebaseException catch (e) {
-      throw AppException(
-          title: 'Error Adding document: ', message: e.toString());
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  @override
   Future uploadCertificate(Map<String, dynamic> data) async {
     try {
       await _firestore.collection('submissions').add(data);
@@ -121,5 +96,11 @@ class EventService extends BaseService {
     } catch (e) {
       rethrow;
     }
+  }
+
+  @override
+  CollectionReference<Map<String, dynamic>> getAllOneTime() {
+    // TODO: implement getAllOneTime
+    throw UnimplementedError();
   }
 }

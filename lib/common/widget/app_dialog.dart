@@ -9,10 +9,12 @@ class AppALertDialog extends StatefulWidget {
   final Function onConfirm;
   final Widget? negativeButton;
   final Widget? positivebutton;
+  final Color? bgColor;
   const AppALertDialog(
       {super.key,
       required this.onConfirm,
       this.negativeButton,
+      this.bgColor,
       required this.title,
       this.positivebutton,
       required this.desc});
@@ -35,7 +37,7 @@ class _AppALertDialogState extends State<AppALertDialog> {
         ),
         titlePadding: const EdgeInsets.all(0),
         contentPadding: const EdgeInsets.all(16.0),
-        backgroundColor: AppColors.errorLight,
+        backgroundColor: widget.bgColor ?? AppColors.errorLight,
         title: const Padding(
           padding: EdgeInsets.only(top: 20),
           child: Icon(

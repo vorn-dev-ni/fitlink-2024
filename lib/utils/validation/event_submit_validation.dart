@@ -13,10 +13,10 @@ class EventSubmitValidation {
     }
 
     if (value.length < minLength) {
-      return 'Your zipcode must be less then $minLength characters';
+      return 'Your zipcode must be more then ${minLength - 1} characters';
     }
     if (value.length > maxLength - 1) {
-      return 'Your zipcode must be more then ${maxLength - 1} characters';
+      return 'Your zipcode must be less then ${maxLength} characters';
     }
     return null;
   }
@@ -24,7 +24,7 @@ class EventSubmitValidation {
   static String? validateLinkWebsite(
       String? value, int maxLength, int minLength) {
     if (value != "" && value!.length < minLength) {
-      return 'Your website url must be less then $minLength characters';
+      return 'Your website url must be more then ${minLength - 1} characters';
     }
     final RegExp websiteRegex = RegExp(r'^(https:\/\/|www\.)[^\s]+$');
 
@@ -42,10 +42,10 @@ class EventSubmitValidation {
     }
 
     if (value.length < minLength) {
-      return 'Your address must be less then $minLength characters';
+      return 'Your address must be more then ${minLength - 1} characters';
     }
     if (value.length > maxLength - 1) {
-      return 'Your address must be more then ${maxLength - 1} characters';
+      return 'Your address must be less then ${maxLength} characters';
     }
     return null;
   }
@@ -64,11 +64,12 @@ class EventSubmitValidation {
     }
 
     if (value.length < minLength) {
-      return 'Your full name must be less then $minLength characters';
+      return 'Your full name must be more then ${minLength - 1} characters';
     }
     if (value.length > maxLength - 1) {
-      return 'Your full name must be more then ${maxLength - 1} characters';
+      return 'Your full name must be less then ${maxLength} characters';
     }
+
     return null;
   }
 
@@ -78,10 +79,10 @@ class EventSubmitValidation {
     }
 
     if (value.length < minLength) {
-      return 'Your email address must be less then $minLength characters';
+      return 'Your email address must be more then ${minLength - 1} characters';
     }
     if (value.length > maxLength - 1) {
-      return 'Your email address must be more then ${maxLength - 1} characters';
+      return 'Your email address must be less then ${maxLength} characters';
     }
 
     if (!isValidEmail(value)) {
@@ -99,10 +100,10 @@ class EventSubmitValidation {
     }
 
     if (value.length < minLength) {
-      return 'Your phone number must be less then $minLength characters';
+      return 'Your phone number must be more then ${minLength - 1} characters';
     }
     if (value.length > maxLength - 1) {
-      return 'Your phone number must be more then ${maxLength - 1} characters';
+      return 'Your phone number must be less then ${maxLength} characters';
     }
     if (!phoneRegex.hasMatch(value)) {
       return 'Your phone number must be a valid one';

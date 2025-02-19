@@ -1,5 +1,3 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:demo/common/widget/app_loading.dart';
 import 'package:demo/common/widget/error_fallback.dart';
 import 'package:demo/common/widget/error_image_placeholder.dart';
 import 'package:demo/features/home/controller/event/event_detail_participant.dart';

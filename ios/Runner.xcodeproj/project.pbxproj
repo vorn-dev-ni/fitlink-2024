@@ -14,6 +14,7 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		CFB1A04C5D8C9B6E80CA25BE /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DCC182DCD082A8659CC4A96 /* Pods_Runner.framework */; };
+		FA61EDC32D6429260016073D /* notification.aiff in Resources */ = {isa = PBXBuildFile; fileRef = FA61EDC22D6429260016073D /* notification.aiff */; };
 		FAE3448F2CD3C90300213A4B /* LaunchScreenProd.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FAE3448C2CD3C90300213A4B /* LaunchScreenProd.storyboard */; };
 		FAE344902CD3C90300213A4B /* LaunchScreenStaging.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FAE3448D2CD3C90300213A4B /* LaunchScreenStaging.storyboard */; };
 		FAE344912CD3C90300213A4B /* LaunchScreenDev.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FAE3448E2CD3C90300213A4B /* LaunchScreenDev.storyboard */; };
@@ -63,6 +64,7 @@
 		FA0B97F52CD1310B003A99B7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FA0B97F72CD1310B003A99B7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FA0B97F92CD1310B003A99B7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		FA61EDC22D6429260016073D /* notification.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = notification.aiff; sourceTree = "<group>"; };
 		FAE3448C2CD3C90300213A4B /* LaunchScreenProd.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreenProd.storyboard; sourceTree = "<group>"; };
 		FAE3448D2CD3C90300213A4B /* LaunchScreenStaging.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreenStaging.storyboard; sourceTree = "<group>"; };
 		FAE3448E2CD3C90300213A4B /* LaunchScreenDev.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreenDev.storyboard; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
+				FA61EDC22D6429260016073D /* notification.aiff */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -271,6 +274,7 @@
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				FAE3448F2CD3C90300213A4B /* LaunchScreenProd.storyboard in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
+				FA61EDC32D6429260016073D /* notification.aiff in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 				FAE344912CD3C90300213A4B /* LaunchScreenDev.storyboard in Resources */,
 				00CBC3141C4DF2469F23CFE3 /* GoogleService-Info.plist in Resources */,

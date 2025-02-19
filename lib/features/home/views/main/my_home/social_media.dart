@@ -1,6 +1,13 @@
 import 'package:demo/common/widget/error_image_placeholder.dart';
+import 'package:demo/features/home/widget/posts/post_panel.dart';
+import 'package:demo/utils/constant/app_colors.dart';
+import 'package:demo/utils/constant/sizes.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
+import 'package:pinch_zoom_release_unzoom/pinch_zoom_release_unzoom.dart';
+import 'package:sizer/sizer.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class SocialMediaTab extends StatefulWidget {
   const SocialMediaTab({super.key});
@@ -20,16 +27,23 @@ class _SocialMediaTabState extends State<SocialMediaTab>
     "https://images.unsplash.com/photo-1596079306903-9164c205f400?q=80&w=3571&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "https://plus.unsplash.com/premium_photo-1665673313231-b3cef27c80dd?q=80&w=3570&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   ];
+  ScrollController controller = ScrollController();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
+  bool blockScroll = false;
+  bool hasClickTap = false;
+  bool isAnimating = false;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      controller: controller,
+      physics: blockScroll
+          ? const NeverScrollableScrollPhysics()
+          : const ScrollPhysics(),
       child: Column(
         children: [
           ListView.builder(
@@ -38,13 +52,7 @@ class _SocialMediaTabState extends State<SocialMediaTab>
             itemCount: blogImageUrls.length,
             itemBuilder: (context, index) {
               final img = blogImageUrls[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: FancyShimmerImage(
-                  errorWidget: errorImgplaceholder(),
-                  imageUrl: img,
-                ),
-              );
+              return renderItem(img);
             },
           ),
         ],
@@ -52,7 +60,20 @@ class _SocialMediaTabState extends State<SocialMediaTab>
     );
   }
 
+  Widget renderItem(String img) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: Sizes.xs),
+      child: PostPanel(
+        url: img,
+        twoFingersOn: () => setState(() => blockScroll = true),
+        twoFingersOff: () => Future.delayed(
+          PinchZoomReleaseUnzoomWidget.defaultResetDuration,
+          () => setState(() => blockScroll = false),
+        ),
+      ),
+    );
+  }
+
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }

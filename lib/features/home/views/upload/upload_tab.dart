@@ -39,6 +39,7 @@ class _UploadTabState extends ConsumerState<UploadTab>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
         backgroundColor: AppColors.backgroundLight,
@@ -66,10 +67,16 @@ class _UploadTabState extends ConsumerState<UploadTab>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Posts',
-                  style: AppTextTheme.lightTextTheme.bodyMedium
-                      ?.copyWith(color: AppColors.backgroundLight),
+                GestureDetector(
+                  onTap: () {
+                    HelpersUtils.navigatorState(context)
+                        .pushNamed(AppPage.createPost);
+                  },
+                  child: Text(
+                    'Posts',
+                    style: AppTextTheme.lightTextTheme.bodyMedium
+                        ?.copyWith(color: AppColors.backgroundLight),
+                  ),
                 ),
                 Text(
                   'Videos',

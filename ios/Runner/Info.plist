@@ -59,7 +59,7 @@
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
-		<false/>
+		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>facebook.com</key>
@@ -83,6 +83,10 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSLocalNetworkUsageDescription</key>
+<string>This app requires access to local notifications.</string>
+<key>NSUserNotificationUsageDescription</key>
+<string>App needs permission to show notifications.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -99,8 +103,12 @@
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>location</string>
+		  <string>location</string>
+		  <string>fetch</string>
+          <string>remote-notification</string>
 	</array>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+<false/>
 	<key>UILaunchStoryboardName</key>
 	<string>$(LAUNCH_SCREEN_STORYBOARD)</string>
 	<key>UIMainStoryboardFile</key>

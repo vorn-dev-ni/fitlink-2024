@@ -57,8 +57,14 @@ class AppPage {
 
   static const editProfile = 'EditProfile';
 
-  //SUCCCESS_OTP
+  //Notification
+  static const notificationListing = 'NotificationMain';
 
   //Upload tab
   static const uploadingTab = 'Upload';
+
+  //Post
+  static const createPost = 'PostCreate';
+  static const feelingListing = 'FeelingListing';
+  static const commentListings = 'Comments';
 }

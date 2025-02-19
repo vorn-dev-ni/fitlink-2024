@@ -35,7 +35,6 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
   @override
   Widget build(BuildContext context) {
     final asyncUser = ref.watch(profileUserControllerProvider);
-
     return asyncUser.when(
       error: (error, stackTrace) {
         return emptyContent(title: error.toString());
@@ -63,7 +62,10 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                 margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
                 child: IconButton(
                     padding: const EdgeInsets.all(0),
-                    onPressed: () {},
+                    onPressed: () {
+                      HelpersUtils.navigatorState(context)
+                          .pushNamed(AppPage.notificationListing);
+                    },
                     icon: const Icon(
                       Icons.notifications,
                       size: Sizes.xxl,

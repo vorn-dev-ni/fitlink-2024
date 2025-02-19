@@ -311,7 +311,6 @@ class _EditProfileState extends ConsumerState<EditProfile> {
 
   void _openBottomSheet(BuildContext context) async {
     DeviceUtils.hideKeyboard(context);
-
     final result = await showModalBottomSheet(
         context: context,
         isScrollControlled: true,

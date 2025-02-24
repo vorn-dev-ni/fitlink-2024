@@ -22,7 +22,7 @@ import 'package:demo/features/home/views/main/my_home/upload_media.dart';
 import 'package:demo/features/home/views/profile/preview/preview_image.dart';
 import 'package:demo/features/home/views/profile/edit_profile/edit_profile.dart';
 import 'package:demo/features/home/views/upload/upload_tab.dart';
-import 'package:demo/features/notifications/views/controller/model/notification_main.dart';
+import 'package:demo/features/notifications/notification_main.dart';
 import 'package:demo/features/on_boarding/on_boarding.dart';
 import 'package:demo/features/other/no_internet.dart';
 import 'package:demo/utils/constant/app_page.dart';

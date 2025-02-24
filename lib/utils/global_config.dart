@@ -44,7 +44,7 @@ class GlobalConfig {
 
     await initializeFirebaseApp(DefaultFirebaseOptions.currentPlatform);
     fcmService = FcmService();
-    FirebaseMessaging.onBackgroundMessage(
+    FirebaseMessaging?.onBackgroundMessage(
       (message) async {
         debugPrint('messag eis ${message}');
       },

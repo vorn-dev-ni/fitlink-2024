@@ -269,9 +269,6 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                     const SizedBox(
                                       width: Sizes.lg,
                                     ),
-                                    const SizedBox(
-                                      width: Sizes.lg,
-                                    ),
                                     ClipRRect(
                                       clipBehavior: Clip.antiAlias,
                                       child: TextButton(
@@ -290,7 +287,8 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                                 context: context,
                                                 builder: (context) =>
                                                     AppALertDialog(
-                                                        bgColor: Color.fromRGBO(
+                                                        bgColor: const Color
+                                                                .fromRGBO(
                                                                 0, 0, 0, 1)
                                                             .withOpacity(0.4),
                                                         onConfirm: () {},
@@ -507,23 +505,6 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                 onPressed: () {},
                                 child: const Text('Edit Profile')),
                           ),
-                          const SizedBox(
-                            width: Sizes.lg,
-                          ),
-                          ClipRRect(
-                            clipBehavior: Clip.antiAlias,
-                            child: TextButton(
-                                style: TextButton.styleFrom(
-                                    backgroundColor: AppColors.primaryColor
-                                        .withOpacity(0.15),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(Sizes.lg))),
-                                onPressed: () {
-                                  ref.invalidate(profileUserControllerProvider);
-                                },
-                                child: const Text('Refresh')),
-                          )
                         ],
                       ),
                       const SizedBox(

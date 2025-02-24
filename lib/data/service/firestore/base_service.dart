@@ -25,3 +25,30 @@ abstract class BaseActivitiesService {
   Stream<QuerySnapshot<Map<String, dynamic>>> getAllRealTime();
   CollectionReference<Map<String, dynamic>> getAllOneTime();
 }
+
+abstract class BaseSocialMediaService {
+  Stream<QuerySnapshot<Map<String, dynamic>>> getAllPosts();
+  Future addCommentCount();
+  Future editPost();
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getPostById(String postId);
+  Future checkUserLike(String postId);
+  Future updateLikeCount(String docId, int currentLikes);
+  Future removeLikesCount(String docId, int currentLikes);
+}
+
+abstract class BaseCommentService {
+  Future getTotalComment(String parentId);
+  Stream<QuerySnapshot<Map<String, dynamic>>> getAllComments(
+      String parentId, int? pageSize, DocumentSnapshot? lastDocument);
+  Future addComments(String parentId, String value, int commentCount);
+  Future editComment(String parentId, String commentId, String value);
+  Future deleteComment(
+    String parentId,
+  );
+  Future checkUserLike(
+    String parentId,
+    String commentId,
+  );
+  Future updateLikeCount(String parentId, String commentId, int currentLikes);
+  Future removeLikesCount(String parentId, String commentId, int currentLikes);
+}

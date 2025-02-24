@@ -128,6 +128,9 @@ class $AssetsIconGen {
 class $AssetsLottiesGen {
   const $AssetsLottiesGen();
 
+  /// File path: assets/lotties/heart.json
+  String get heart => 'assets/lotties/heart.json';
+
   /// File path: assets/lotties/loading.json
   String get loading => 'assets/lotties/loading.json';
 
@@ -135,7 +138,7 @@ class $AssetsLottiesGen {
   String get loadingTwo => 'assets/lotties/loading_two.json';
 
   /// List of all assets
-  List<String> get values => [loading, loadingTwo];
+  List<String> get values => [heart, loading, loadingTwo];
 }
 
 class $AssetsSplashGen {

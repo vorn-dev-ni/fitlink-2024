@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 class FormatterUtils {
@@ -9,6 +10,26 @@ class FormatterUtils {
           RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
           (Match match) => '${match.group(1)},',
         );
+  }
+
+  static String formatTimestamp(Timestamp? timestamp) {
+    if (timestamp == null) {
+      return '';
+    }
+    DateTime dateTime = timestamp.toDate();
+    Duration difference = DateTime.now().difference(dateTime);
+
+    if (difference.inSeconds < 60) {
+      return "${difference.inSeconds}s ago";
+    } else if (difference.inMinutes < 60) {
+      return "${difference.inMinutes}m ago";
+    } else if (difference.inHours < 24) {
+      return "${difference.inHours}h ago";
+    } else if (difference.inDays < 7) {
+      return "${difference.inDays}d ago";
+    } else {
+      return DateFormat('MMM d, yyyy').format(dateTime);
+    }
   }
 
   static String formatExerciseDuration(int seconds) {

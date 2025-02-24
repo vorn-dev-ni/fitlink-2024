@@ -8,7 +8,6 @@ import 'package:demo/data/service/firebase/storage_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
 import 'package:demo/data/service/firestore/profiles/profile_service.dart';
 import 'package:demo/features/authentication/model/profile_request.dart';
-import 'package:demo/features/home/controller/navbar_controller.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -36,8 +35,6 @@ class ProfileUserController extends _$ProfileUserController {
   }
 
   FutureOr<AuthModel?> getData() async {
-    debugPrint(
-        "Fireabse user data is ${FirebaseAuth.instance.currentUser?.uid}");
     if (FirebaseAuth.instance.currentUser == null) {
       return AuthModel();
     } else {

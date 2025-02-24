@@ -14,19 +14,16 @@ class FirestoreService {
   FirestoreService({
     required this.firebaseAuthService,
   });
-  Stream<AuthModel?> getUserStream(String uid) {
-    debugPrint("call stream ${uid}");
+  FirebaseFirestore get firestore => _firestore;
 
+  Stream<AuthModel?> getUserStream(String uid) {
     return FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
         .snapshots()
         .map((snapshot) {
       if (snapshot.exists) {
-        debugPrint("call exist tah ${uid}");
         final data = AuthModel.fromFirestore(snapshot);
-        debugPrint("call exist tah ${data.toString()}");
-
         return data;
       } else {
         return null;
@@ -90,7 +87,6 @@ class FirestoreService {
           return AuthModel();
         }
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-        debugPrint('snap shot is ${data['email']} with id of ${uid}');
 
         if (data.isNotEmpty) {
           String email = data['email'] ?? "";

@@ -10,6 +10,7 @@ import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/local_storage/local_storage_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -71,10 +72,8 @@ class _MyHomeScreenState extends ConsumerState<MyHomeScreen> {
                 showSelectedLabels: false,
                 onTap: (index) {
                   if ([1, 2, 4].contains(index)) {
-                    final email = LocalStorageUtils().getKey('email');
-                    if (email == "" || email == null) {
-                      HelpersUtils.navigatorState(context)
-                          .pushNamed(AppPage.auth);
+                    bool isAuth = HelpersUtils.isAuthenticated(context);
+                    if (!isAuth) {
                       return;
                     }
                   }

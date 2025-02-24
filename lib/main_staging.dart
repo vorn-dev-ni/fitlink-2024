@@ -7,7 +7,10 @@ import 'package:demo/core/riverpod/connectivity_state.dart';
 import 'package:demo/data/service/firebase/firebase_remote_config.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
+import 'package:demo/features/home/controller/comment/comment_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
+import 'package:demo/features/home/controller/posts/social_post_controller.dart';
+import 'package:demo/features/home/controller/posts/user_like_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/l10n/I10n.dart';
 import 'package:demo/utils/constant/app_colors.dart';
@@ -85,7 +88,6 @@ class _MyAppState extends ConsumerState<MyApp> {
 
     streamAuthState = _firebaseAuthService.authStateChanges.listen(
       (user) async {
-        debugPrint("Top level user is ${user?.uid}");
         if (user == null &&
             LocalStorageUtils().getKey('email') != null &&
             LocalStorageUtils().getKey('email')!.isNotEmpty) {
@@ -147,10 +149,11 @@ class _MyAppState extends ConsumerState<MyApp> {
   Future syncUser(String uid) async {
     try {
       AuthModel? authModel = await firestoreService.getEmail(uid);
-      debugPrint(
-          'avatar is ${authModel.avatar} ${FirebaseAuth.instance.currentUser?.uid}');
-
       if (mounted) {
+        debugPrint("Sync user again tt hz");
+        ref.invalidate(socialPostControllerProvider);
+        ref.invalidate(userLikeControllerProvider);
+        ref.invalidate(commentControllerProvider);
         ref
             .read(navbarControllerProvider.notifier)
             .updateProfileTab(authModel.avatar ?? "");

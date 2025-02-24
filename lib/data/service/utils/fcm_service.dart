@@ -40,7 +40,6 @@ class FcmService {
 
   Future getDetailNotification(RemoteMessage? value) async {
     debugPrint("Click action is");
-    Fluttertoast.showToast(msg: 'You have click notification');
   }
 
   Future setUpPushnotification() async {

@@ -4,11 +4,9 @@ import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/screen_text.dart';
 import 'package:demo/utils/constant/sizes.dart';
-import 'package:demo/utils/constant/svg_asset.dart';
 import 'package:demo/utils/device/device_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sizer/sizer.dart';
 
 class NoInternet extends StatelessWidget {
@@ -20,6 +18,9 @@ class NoInternet extends StatelessWidget {
       canPop: false,
       child: SafeArea(
         child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: AppColors.backgroundLight,
+          ),
           backgroundColor: AppColors.backgroundLight,
           body: Padding(
             padding: const EdgeInsets.all(Sizes.lg),
@@ -27,12 +28,6 @@ class NoInternet extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // SvgPicture.asset(
-                //   Assets.icon.svg.notFound,
-                //   width: 100.w,
-                //   height: 40.h,
-                // ),
-
                 Assets.app.noInternetCat.image(
                   width: 100.w,
                   fit: BoxFit.cover,

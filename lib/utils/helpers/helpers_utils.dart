@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:demo/data/service/firebase/firebase_service.dart';
+import 'package:demo/utils/constant/app_page.dart';
+import 'package:demo/utils/local_storage/local_storage_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:location/location.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/exception/app_exception.dart';
@@ -36,6 +38,15 @@ class HelpersUtils {
     final asset = await rootBundle.load(assetPath);
     final icon = BitmapDescriptor.fromBytes(asset.buffer.asUint8List());
     return icon;
+  }
+
+  static bool isAuthenticated(BuildContext context) {
+    final email = LocalStorageUtils().getKey('email');
+    if (email == "" || email == null) {
+      HelpersUtils.navigatorState(context).pushNamed(AppPage.auth);
+      return false;
+    }
+    return true;
   }
 
   static Future<LocationData> getCurrentLocation() async {
@@ -70,7 +81,6 @@ class HelpersUtils {
     try {
       LocationData locationData = await location.getLocation();
 
-      debugPrint("Location data is ${locationData}");
       return locationData;
     } catch (e) {
       return Future.error('Failed to get location: $e');

@@ -31,6 +31,11 @@ class _EventFormSubmissionState extends ConsumerState<EventFormSubmission> {
     super.initState();
   }
 
+  bool isKeyboardVisible(BuildContext context) {
+    final padding = MediaQuery.of(context).viewInsets.bottom;
+    return padding > 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final stepIndex = ref.watch(stepHeaderControllerProvider);

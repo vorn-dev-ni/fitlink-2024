@@ -251,6 +251,9 @@ class _SliverAppBarExampleState extends ConsumerState<ExcerciseOverviewScreen> {
 
   void _handleStartWorkout(data) async {
     try {
+      if (!HelpersUtils.isAuthenticated(context)) {
+        return;
+      }
       final selectedDate = ref.read(workoutDateControllerProvider);
 
       ref.read(appLoadingStateProvider.notifier).setState(true);

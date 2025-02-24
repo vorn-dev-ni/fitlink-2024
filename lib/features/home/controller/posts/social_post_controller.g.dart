@@ -1,27 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'profile_user_controller.dart';
+part of 'social_post_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$profileUserControllerHash() =>
-    r'234d397bf9b6bdb1ca1dd31269938caefcc97e57';
+String _$socialPostControllerHash() =>
+    r'1802a8196724418e6af56067508e58bb241e33de';
 
-/// See also [ProfileUserController].
-@ProviderFor(ProfileUserController)
-final profileUserControllerProvider =
-    AsyncNotifierProvider<ProfileUserController, AuthModel?>.internal(
-  ProfileUserController.new,
-  name: r'profileUserControllerProvider',
+/// See also [SocialPostController].
+@ProviderFor(SocialPostController)
+final socialPostControllerProvider =
+    StreamNotifierProvider<SocialPostController, List<Post>?>.internal(
+  SocialPostController.new,
+  name: r'socialPostControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$profileUserControllerHash,
+      : _$socialPostControllerHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$ProfileUserController = AsyncNotifier<AuthModel?>;
+typedef _$SocialPostController = StreamNotifier<List<Post>?>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

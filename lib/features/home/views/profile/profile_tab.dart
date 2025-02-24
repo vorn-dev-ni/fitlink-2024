@@ -4,7 +4,10 @@ import 'package:demo/features/authentication/controller/auth_controller.dart';
 import 'package:demo/features/authentication/controller/login_controller.dart';
 import 'package:demo/features/authentication/controller/register_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
+import 'package:demo/features/home/controller/posts/social_post_controller.dart';
+import 'package:demo/features/home/controller/posts/user_like_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
+import 'package:demo/features/home/controller/profile/user_form_controller.dart';
 import 'package:demo/features/home/views/profile/events/event_profile.dart';
 import 'package:demo/features/home/views/profile/favorites/favorite_profile.dart';
 import 'package:demo/features/home/views/profile/post/post_profile.dart';
@@ -186,14 +189,15 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
       ref.invalidate(registerControllerProvider);
       ref.invalidate(loginControllerProvider);
       ref.invalidate(profileUserControllerProvider);
+      ref.invalidate(socialPostControllerProvider);
+      ref.invalidate(userLikeControllerProvider);
       LocalStorageUtils().setKeyString('email', '');
       Fluttertoast.showToast(
           msg: 'See you soon love 😔 !!!',
           timeInSecForIosWeb: 5,
           toastLength: Toast.LENGTH_LONG);
+      await authController.logout();
     }
-
-    await authController.logout();
   }
 
   void binding() async {

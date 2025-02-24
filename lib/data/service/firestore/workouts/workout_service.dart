@@ -54,7 +54,6 @@ class WorkoutService extends BaseService {
   @override
   CollectionReference<Map<String, dynamic>> getAllOneTime(
       {Object? collectionName}) {
-    // TODO: implement getAllOneTime
     try {
       return _firestore.collection('workouts');
     } catch (e) {

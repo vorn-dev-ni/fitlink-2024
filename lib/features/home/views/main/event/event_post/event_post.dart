@@ -52,7 +52,6 @@ class _EventPostingState extends ConsumerState<EventPosting> {
   File? previewImages;
   File? uploadImage;
   late AudioPlayer playAudioUpload;
-
   String? temPath;
   bool isUploading = false;
   bool canPop = false;
@@ -667,10 +666,7 @@ class _EventPostingState extends ConsumerState<EventPosting> {
           showDialog(
               context: context,
               builder: (context) => AppALertDialog(
-                  onConfirm: () {
-                    // HelpersUtils.navigatorState(context).pop();
-                    // HelpersUtils.navigatorState(context).pop();
-                  },
+                  onConfirm: () {},
                   positivebutton: SizedBox(
                       width: 100.w,
                       child: FilledButton(

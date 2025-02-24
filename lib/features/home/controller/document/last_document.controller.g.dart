@@ -1,27 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'profile_user_controller.dart';
+part of 'last_document.controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$profileUserControllerHash() =>
-    r'234d397bf9b6bdb1ca1dd31269938caefcc97e57';
+String _$lastDocumentNotifierHash() =>
+    r'2349043080ae3c52bdd41423e8f6f459786e27c8';
 
-/// See also [ProfileUserController].
-@ProviderFor(ProfileUserController)
-final profileUserControllerProvider =
-    AsyncNotifierProvider<ProfileUserController, AuthModel?>.internal(
-  ProfileUserController.new,
-  name: r'profileUserControllerProvider',
+/// See also [LastDocumentNotifier].
+@ProviderFor(LastDocumentNotifier)
+final lastDocumentNotifierProvider = AutoDisposeNotifierProvider<
+    LastDocumentNotifier, DocumentSnapshot?>.internal(
+  LastDocumentNotifier.new,
+  name: r'lastDocumentNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$profileUserControllerHash,
+      : _$lastDocumentNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$ProfileUserController = AsyncNotifier<AuthModel?>;
+typedef _$LastDocumentNotifier = AutoDisposeNotifier<DocumentSnapshot?>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

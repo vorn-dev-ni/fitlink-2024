@@ -36,7 +36,10 @@ class _MainWorkoutScreenState extends ConsumerState<MainWorkoutScreen> {
     final selectedDate = ref.watch(workoutDateControllerProvider);
     return Scaffold(
       body: RefreshIndicator(
+        backgroundColor: AppColors.backgroundLight,
         onRefresh: () async {
+          await Future.delayed(const Duration(seconds: 1));
+
           ref.invalidate(workoutControllerProvider);
           ref.invalidate(excercisesControllerProvider);
           // ref.refresh(workoutControllerProvider(WorkoutType.feature).future);
@@ -87,6 +90,9 @@ class _MainWorkoutScreenState extends ConsumerState<MainWorkoutScreen> {
                   child: IconButton(
                     padding: const EdgeInsets.all(12),
                     onPressed: () {
+                      if (!HelpersUtils.isAuthenticated(context)) {
+                        return;
+                      }
                       HelpersUtils.navigatorState(context).pushNamed(
                           AppPage.excerciseActivitiesForm,
                           arguments: {'title': '', 'date': selectedDate});

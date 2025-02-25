@@ -59,6 +59,7 @@ class Post {
 }
 
 class UserData {
+  String? id;
   String? avatar;
   String? coverFeature;
   String? provider;
@@ -72,6 +73,7 @@ class UserData {
   UserData(
       {this.avatar,
       this.coverFeature,
+      this.id,
       this.provider,
       this.bio,
       this.role,
@@ -85,6 +87,7 @@ class UserData {
     coverFeature = json['coverFeature'];
     provider = json['provider'];
     bio = json['bio'];
+    id = json['id'];
     role = json['role'];
     fullName = json['fullName'];
     email = json['email'];

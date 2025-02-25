@@ -75,7 +75,7 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('gymmiumiu19'),
+                    const Text('User name example'),
                     Text(
                       'Workout Tag',
                       style: AppTextTheme.lightTextTheme.bodySmall
@@ -160,7 +160,8 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                 color: AppColors.secondaryColor,
               ),
             ),
-          if (widget.type == ProfileType.comment)
+          if (widget.type == ProfileType.comment &&
+              widget.comment?.isLoading == false)
             LikeButton(
               isLiked: hasLiked ?? false,
               countPostion: CountPostion.bottom,

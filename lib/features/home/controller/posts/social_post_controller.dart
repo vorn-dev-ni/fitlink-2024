@@ -1,10 +1,7 @@
 import 'package:demo/data/repository/firebase/post_social_repo.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/posts/social_post_service.dart';
-import 'package:demo/features/home/controller/posts/user_like_controller.dart';
 import 'package:demo/features/home/model/post.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'social_post_controller.g.dart';
 
@@ -13,7 +10,6 @@ class SocialPostController extends _$SocialPostController {
   late PostSocialRepo postSocialRepo;
   @override
   Stream<List<Post>?> build() {
-    debugPrint("call api again");
     postSocialRepo = PostSocialRepo(
         baseSocialMediaService:
             SocialPostService(firebaseAuthService: FirebaseAuthService()));
@@ -26,7 +22,6 @@ class SocialPostController extends _$SocialPostController {
       await for (var posts in stream) {
         yield posts;
       }
-      // yield stream;
     } catch (e) {
       rethrow;
     }

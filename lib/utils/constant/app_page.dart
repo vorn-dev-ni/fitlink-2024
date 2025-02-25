@@ -66,5 +66,8 @@ class AppPage {
   //Post
   static const createPost = 'PostCreate';
   static const feelingListing = 'FeelingListing';
+
+  //Comment
+  static const commentEditing = 'CommentEditing';
   static const commentListings = 'Comments';
 }

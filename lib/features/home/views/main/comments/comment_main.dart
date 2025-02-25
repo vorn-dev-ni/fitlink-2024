@@ -1,9 +1,9 @@
-import 'package:demo/common/widget/app_loading.dart';
+import 'package:demo/common/widget/backdrop_loading.dart';
 import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/common/widget/error_image_placeholder.dart';
+import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/features/home/controller/comment/comment_controller.dart';
 import 'package:demo/features/home/controller/comment/comment_loading.dart';
-import 'package:demo/features/home/controller/comment/comment_loading_dummy.dart';
 import 'package:demo/features/home/controller/posts/single_post_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/features/home/model/post.dart';
@@ -97,18 +97,24 @@ class _CommentMainState extends ConsumerState<CommentMain> {
 
   @override
   Widget build(BuildContext context) {
+    final apploading = ref.watch(appLoadingStateProvider);
     return GestureDetector(
-      onTap: () {
-        DeviceUtils.hideKeyboard(context);
-      },
-      child: Scaffold(
-        backgroundColor: AppColors.backgroundLight,
-        appBar: renderAppBar(context),
-        resizeToAvoidBottomInset: DeviceUtils.isAndroid() ? isResize : false,
-        bottomSheet: renderBottomSheet(context),
-        body: renderBody(),
-      ),
-    );
+        onTap: () {
+          DeviceUtils.hideKeyboard(context);
+        },
+        child: Stack(
+          children: [
+            Scaffold(
+              backgroundColor: AppColors.backgroundLight,
+              appBar: renderAppBar(context),
+              resizeToAvoidBottomInset:
+                  DeviceUtils.isAndroid() ? isResize : false,
+              bottomSheet: renderBottomSheet(context),
+              body: renderBody(),
+            ),
+            if (apploading) backDropLoading()
+          ],
+        ));
   }
 
   AppBar renderAppBar(BuildContext context) {

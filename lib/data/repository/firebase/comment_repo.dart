@@ -47,6 +47,22 @@ class CommentRepo {
     }
   }
 
+  Future deleteComment(String parentId, String commentId) async {
+    try {
+      await baseCommentService.deleteComment(parentId, commentId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future editComment({String? parentId, String? docId, String? text}) async {
+    try {
+      await baseCommentService.editComment(parentId!, docId!, text!);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future removeLikeCount(
       String parentId, String docId, int currentLikes) async {
     try {
@@ -92,11 +108,16 @@ class CommentRepo {
   }
 
   Future<Map<String, dynamic>?> extractUserData(DocumentReference ref) async {
-    DocumentReference userRef = ref;
-    final result = await userRef.get();
-    if (result.exists) {
-      return result.data() as Map<String, dynamic>;
+    try {
+      final result = await ref.get();
+
+      if (result.exists) {
+        return {'id': result.id, ...result.data() as Map<String, dynamic>};
+      } else {
+        return {'error': 'Document does not exist'};
+      }
+    } catch (e) {
+      return {'error': 'An error occurred: $e'};
     }
-    return null;
   }
 }

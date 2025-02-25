@@ -124,7 +124,7 @@ class CommentService extends BaseCommentService {
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid);
       final postRef = _firestore.collection('posts').doc(parentId);
-      await postRef.update({'commentsCount': commentCount + 1});
+      await postRef.update({'commentsCount': FieldValue.increment(1)});
       await postRef.collection('comments').add(
         {
           'createdAt': Timestamp.now(),
@@ -139,15 +139,17 @@ class CommentService extends BaseCommentService {
   }
 
   @override
-  Future deleteComment(String parentId) {
-    // TODO: implement deleteComment
-    throw UnimplementedError();
-  }
-
-  @override
-  Future editComment(String parentId, String commentId, String value) {
-    // TODO: implement editComment
-    throw UnimplementedError();
+  Future editComment(String parentId, String commentId, String value) async {
+    try {
+      final ref = _firestore.collection('posts').doc(parentId);
+      await ref
+          .collection('comments')
+          .doc(commentId)
+          .update({'text': value.trim()});
+      debugPrint("Success updated comment $commentId");
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override
@@ -160,10 +162,20 @@ class CommentService extends BaseCommentService {
           .orderBy('createdAt', descending: true);
 
       final snapshot = await ref.get();
-
       return snapshot.docs.length;
     } catch (e) {
-      debugPrint('Error fetching total comments: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future deleteComment(String parentId, String commentId) async {
+    try {
+      final ref = _firestore.collection('posts').doc(parentId);
+      await ref.update({'commentsCount': FieldValue.increment(-1)});
+      await ref.collection('comments').doc(commentId).delete();
+      debugPrint("Success deleted comment $commentId");
+    } catch (e) {
       rethrow;
     }
   }

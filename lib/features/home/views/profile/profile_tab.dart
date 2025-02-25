@@ -93,6 +93,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
       length: _screens.length,
       child: Scaffold(
           // extendBodyBehindAppBar: false,
+          // backgroundColor: AppColors.backgroundDark,
           body: asyncUser.when(
         data: (data) {
           final emailExisted = data?.email;

@@ -44,6 +44,7 @@ abstract class BaseCommentService {
   Future editComment(String parentId, String commentId, String value);
   Future deleteComment(
     String parentId,
+    String commentId,
   );
   Future checkUserLike(
     String parentId,

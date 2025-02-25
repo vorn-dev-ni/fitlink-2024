@@ -3,11 +3,11 @@ import 'package:demo/data/repository/firebase/comment_repo.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/comments/comment_service.dart';
 import 'package:demo/features/home/controller/comment/comment_loading.dart';
-import 'package:demo/features/home/controller/comment/comment_loading_dummy.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/features/home/model/comment.dart';
-import 'package:demo/features/home/model/comment_loading.dart';
 import 'package:demo/features/home/model/post.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'comment_controller.g.dart';
 
@@ -40,6 +40,35 @@ class CommentController extends _$CommentController {
           parentId: postId, commentId: commentId);
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future deleteComments({String? postId, String? commentId}) async {
+    try {
+      if (postId == null || commentId == null) {
+        return false;
+      }
+
+      await commentRepo.deleteComment(postId, commentId);
+      ref.invalidateSelf();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future handleSave(
+      {required String parentId,
+      required String docId,
+      required String text}) async {
+    debugPrint('Submit action triggered!');
+
+    try {
+      await commentRepo.editComment(
+          docId: docId, parentId: parentId, text: text);
+      ref.invalidateSelf();
+    } catch (e) {
+      ref.invalidateSelf();
+      Fluttertoast.showToast(msg: e.toString());
     }
   }
 
@@ -112,11 +141,6 @@ class CommentController extends _$CommentController {
         state = AsyncData([...newData]);
       }
       ref.read(commentPagingLoadingProvider.notifier).setState(false);
-
-      // Optionally, update pagination state
-      // if (newData.isNotEmpty) {
-      //   ref.read(lastDocumentNotifierProvider.notifier).setLastDocument(newData);
-      // }
     } catch (e) {
       rethrow;
     }

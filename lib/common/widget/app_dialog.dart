@@ -9,10 +9,16 @@ class AppALertDialog extends StatefulWidget {
   final Function onConfirm;
   final Widget? negativeButton;
   final Widget? positivebutton;
+  final bool? showIcon;
+  final Color? textColor;
+  final Color? contentColor;
   final Color? bgColor;
   const AppALertDialog(
       {super.key,
+      this.showIcon = true,
       required this.onConfirm,
+      this.contentColor = AppColors.errorColor,
+      this.textColor = AppColors.errorColor,
       this.negativeButton,
       this.bgColor,
       required this.title,
@@ -38,14 +44,16 @@ class _AppALertDialogState extends State<AppALertDialog> {
         titlePadding: const EdgeInsets.all(0),
         contentPadding: const EdgeInsets.all(16.0),
         backgroundColor: widget.bgColor ?? AppColors.errorLight,
-        title: const Padding(
-          padding: EdgeInsets.only(top: 20),
-          child: Icon(
-            Icons.info_sharp,
-            size: 70.0,
-            color: AppColors.errorColor,
-          ),
-        ),
+        title: widget.showIcon == true
+            ? const Padding(
+                padding: EdgeInsets.only(top: 20),
+                child: Icon(
+                  Icons.info_sharp,
+                  size: 70.0,
+                  color: AppColors.errorColor,
+                ),
+              )
+            : null,
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
@@ -55,7 +63,7 @@ class _AppALertDialogState extends State<AppALertDialog> {
               maxLines: 1,
               textAlign: TextAlign.center,
               style: AppTextTheme.lightTextTheme.titleLarge?.copyWith(
-                  color: AppColors.errorColor, fontWeight: FontWeight.w500),
+                  color: widget.textColor, fontWeight: FontWeight.w500),
             ),
             const SizedBox(
               height: Sizes.md,
@@ -65,7 +73,7 @@ class _AppALertDialogState extends State<AppALertDialog> {
               maxLines: 3,
               textAlign: TextAlign.center,
               style: AppTextTheme.lightTextTheme.bodyMedium
-                  ?.copyWith(color: AppColors.errorColor),
+                  ?.copyWith(color: widget.contentColor),
             ),
             const SizedBox(height: 16.0),
             Row(

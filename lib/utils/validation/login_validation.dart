@@ -97,4 +97,23 @@ class ValidationUtils {
 
     return null;
   }
+
+  static String? validateCustomFieldText(
+      {String? value,
+      required int maxLength,
+      required int minLength,
+      required String fieldName}) {
+    if (value == "" || value == null) {
+      return 'Your $fieldName must not be empty';
+    }
+
+    if (value.length < minLength) {
+      return 'Your $fieldName must be more then ${minLength - 1} characters';
+    }
+    if (value.length > maxLength - 1) {
+      return 'Your $fieldName must be less then $maxLength characters';
+    }
+
+    return null;
+  }
 }

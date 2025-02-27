@@ -70,4 +70,6 @@ class AppPage {
   //Comment
   static const commentEditing = 'CommentEditing';
   static const commentListings = 'Comments';
+
+  static const NotificationPath = 'NotificationTesting';
 }

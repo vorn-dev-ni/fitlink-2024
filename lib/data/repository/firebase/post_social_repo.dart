@@ -2,14 +2,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
 import 'package:demo/features/home/model/post.dart';
-import 'package:flutter/material.dart';
 
 class PostSocialRepo {
   late BaseSocialMediaService baseSocialMediaService;
   PostSocialRepo({
     required this.baseSocialMediaService,
   });
-  Future addCommentCount() async {}
+  Future deletePost() async {}
+  Future addPost(Post post) async {
+    try {
+      return await baseSocialMediaService.addPost(post.toJson());
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future editPost() async {}
   Future<bool> checkUserLikePost(String postId) async {
     try {
@@ -89,6 +96,7 @@ class PostSocialRepo {
               "type": doc.data()['type'],
               "emoji": doc.data()['emoji'],
               "feeling": doc.data()['feeling'],
+              'formattedCreatedAt': doc.data()['createdAt'],
             });
           }
           return Post();
@@ -101,11 +109,16 @@ class PostSocialRepo {
   }
 
   Future<Map<String, dynamic>?> extractUserData(DocumentReference ref) async {
-    DocumentReference userRef = ref;
-    final result = await userRef.get();
-    if (result.exists) {
-      return result.data() as Map<String, dynamic>;
+    try {
+      final result = await ref.get();
+
+      if (result.exists) {
+        return {'id': result.id, ...result.data() as Map<String, dynamic>};
+      } else {
+        return {'error': 'Document does not exist'};
+      }
+    } catch (e) {
+      return {'error': 'An error occurred: $e'};
     }
-    return null;
   }
 }

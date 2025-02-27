@@ -336,7 +336,6 @@ class _EditProfileState extends ConsumerState<EditProfile> {
 
       if (isValid == true) {
         ref.read(appLoadingStateProvider.notifier).setState(true);
-
         _formkey.currentState!.save();
         await Future.delayed(const Duration(milliseconds: 300));
         await ref

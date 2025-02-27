@@ -24,16 +24,6 @@ class _NotificationMainState extends State<NotificationMain> {
           children: [
             Center(
               child: FilledButton.icon(
-                label: const Text('Send Notification'),
-                onPressed: () {
-                  final flavor = AppConfig.appConfig.flavor.name;
-
-                  debugPrint("Flavor is ${flavor}");
-                },
-              ),
-            ),
-            Center(
-              child: FilledButton.icon(
                 label: const Text('Send With Payload'),
                 onPressed: () async {
                   await GlobalConfig.notificationService.showNotification(

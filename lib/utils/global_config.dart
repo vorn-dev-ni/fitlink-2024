@@ -40,15 +40,12 @@ class GlobalConfig {
     ));
 
     notificationService = NotificationService();
+    await NotificationService.initialize();
+
     await dotenv.load(fileName: ".env.dev");
 
     await initializeFirebaseApp(DefaultFirebaseOptions.currentPlatform);
     fcmService = FcmService();
-    FirebaseMessaging?.onBackgroundMessage(
-      (message) async {
-        debugPrint('messag eis ${message}');
-      },
-    );
   }
 
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

@@ -47,8 +47,6 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     _screens = [
       const PostProfile(),
       const VideoProfile(),
-      const EventProfile(),
-      const FavoriteProfile(),
       const WorkoutProfile(),
     ];
     _tabBarheaders = [
@@ -60,16 +58,6 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
       Tab(
           icon: Text(
         'Videos',
-        style: AppTextTheme.lightTextTheme.labelLarge,
-      )),
-      Tab(
-          icon: Text(
-        'Events',
-        style: AppTextTheme.lightTextTheme.labelLarge,
-      )),
-      Tab(
-          icon: Text(
-        'Favorites',
         style: AppTextTheme.lightTextTheme.labelLarge,
       )),
       Tab(
@@ -116,7 +104,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                       margin: const EdgeInsets.only(top: Sizes.sm),
                       color: Colors.white,
                       child: TabBar(
-                        tabAlignment: TabAlignment.center,
+                        tabAlignment: TabAlignment.start,
                         isScrollable: true,
                         indicatorSize: TabBarIndicatorSize.label,
                         dividerColor: Colors.transparent,

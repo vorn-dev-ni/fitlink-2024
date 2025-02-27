@@ -30,6 +30,7 @@ abstract class BaseSocialMediaService {
   Stream<QuerySnapshot<Map<String, dynamic>>> getAllPosts();
   Future addCommentCount();
   Future editPost();
+  Future addPost(Map<String, dynamic> payload);
   Stream<DocumentSnapshot<Map<String, dynamic>>> getPostById(String postId);
   Future checkUserLike(String postId);
   Future updateLikeCount(String docId, int currentLikes);
@@ -52,4 +53,14 @@ abstract class BaseCommentService {
   );
   Future updateLikeCount(String parentId, String commentId, int currentLikes);
   Future removeLikesCount(String parentId, String commentId, int currentLikes);
+}
+
+abstract class NotificationBaseService {
+  Future getNotificationCurrentUser(String uid);
+  Future sendCommentNotification(
+      String senderID, String receiverID, String postID);
+  Future sendFollowingFollower(String uid, Map<String, dynamic> data);
+  Future sendLikeNotification(
+      String senderID, String receiverID, String postID);
+  Future deleteNotification(String uid, String docId);
 }

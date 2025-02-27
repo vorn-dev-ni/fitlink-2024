@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 
 class SocialPostService extends BaseSocialMediaService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -16,7 +15,10 @@ class SocialPostService extends BaseSocialMediaService {
   }
   @override
   Stream<QuerySnapshot<Map<String, dynamic>>> getAllPosts() {
-    final querySnapshot = _firestore.collection('posts').snapshots();
+    final querySnapshot = _firestore
+        .collection('posts')
+        .orderBy('createdAt', descending: true)
+        .snapshots();
     return querySnapshot;
   }
 
@@ -86,6 +88,24 @@ class SocialPostService extends BaseSocialMediaService {
   Stream<DocumentSnapshot<Map<String, dynamic>>> getPostById(String postId) {
     try {
       return _firestore.collection('posts').doc(postId).snapshots();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future addPost(Map<String, dynamic> payload) async {
+    try {
+      if (FirebaseAuth.instance.currentUser == null) {
+        return false;
+      }
+
+      final userRef = _firestore
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid);
+      payload['userId'] = userRef;
+      await _firestore.collection('posts').add(payload);
+      return false;
     } catch (e) {
       rethrow;
     }

@@ -102,7 +102,7 @@ android {
             // Minify or signing configurations
           signingConfig signingConfigs.stagingRelease
           minifyEnabled true
-          shrinkResources true
+          shrinkResources false
           proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     
         //   minifyEnabled true

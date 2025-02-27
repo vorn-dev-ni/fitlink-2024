@@ -1,5 +1,6 @@
 import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/features/home/controller/posts/social_post_controller.dart';
+import 'package:demo/features/home/controller/tab/home_scroll_controller.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/features/home/widget/posts/post_panel.dart';
 import 'package:demo/utils/constant/sizes.dart';
@@ -18,7 +19,6 @@ class SocialMediaTab extends ConsumerStatefulWidget {
 
 class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
     with AutomaticKeepAliveClientMixin<SocialMediaTab> {
-  ScrollController controller = ScrollController();
   List<String> dummyData = [
     "https://plus.unsplash.com/premium_photo-1661964304872-7b715cf38cd1?q=80&w=3570&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "https://images.unsplash.com/photo-1550399504-8953e1a6ac87?q=80&w=3729&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -39,8 +39,9 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
   @override
   Widget build(BuildContext context) {
     final asyncValues = ref.watch(socialPostControllerProvider);
+    final scrollController = ref.watch(homeScrollControllerProvider);
     return SingleChildScrollView(
-      controller: controller,
+      controller: scrollController,
       physics: blockScroll
           ? const NeverScrollableScrollPhysics()
           : const ScrollPhysics(),

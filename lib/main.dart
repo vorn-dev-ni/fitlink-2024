@@ -7,7 +7,10 @@ import 'package:demo/core/riverpod/connectivity_state.dart';
 import 'package:demo/data/service/firebase/firebase_remote_config.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
+import 'package:demo/features/home/controller/comment/comment_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
+import 'package:demo/features/home/controller/posts/social_post_controller.dart';
+import 'package:demo/features/home/controller/posts/user_like_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/l10n/I10n.dart';
 import 'package:demo/utils/constant/app_colors.dart';
@@ -22,6 +25,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sizer/sizer.dart';
@@ -29,8 +33,6 @@ import 'generated/l10n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
-  // await FlutterConfig.loadEnvVariables();
-
   AppConfig.create(flavor: Flavor.production);
   await GlobalConfig().init();
   await LocalStorageUtils().init();
@@ -70,7 +72,13 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
-
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.dark, // For iOS
+    ));
     _firebaseAuthService = FirebaseAuthService();
     firestoreService =
         FirestoreService(firebaseAuthService: _firebaseAuthService);
@@ -139,11 +147,15 @@ class _MyAppState extends ConsumerState<MyApp> {
   Future syncUser(String uid) async {
     try {
       AuthModel? authModel = await firestoreService.getEmail(uid);
-
       if (mounted) {
+        debugPrint("Sync user again tt hz");
+        ref.invalidate(socialPostControllerProvider);
+        ref.invalidate(userLikeControllerProvider);
+        ref.invalidate(commentControllerProvider);
         ref
             .read(navbarControllerProvider.notifier)
             .updateProfileTab(authModel.avatar ?? "");
+
         ref.invalidate(profileUserControllerProvider);
         ref.read(appLoadingStateProvider.notifier).setState(false);
       }

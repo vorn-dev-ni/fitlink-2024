@@ -9,8 +9,6 @@ import 'package:demo/features/other/no_internet.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
-import 'package:demo/utils/local_storage/local_storage_utils.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,20 +68,7 @@ class _MyHomeScreenState extends ConsumerState<MyHomeScreen> {
                 selectedItemColor: AppColors.secondaryColor,
                 unselectedItemColor: AppColors.neutralColor,
                 showSelectedLabels: false,
-                onTap: (index) {
-                  if ([1, 2, 4].contains(index)) {
-                    bool isAuth = HelpersUtils.isAuthenticated(context);
-                    if (!isAuth) {
-                      return;
-                    }
-                  }
-                  if (index == 2) {
-                    HelpersUtils.navigatorState(context)
-                        .pushNamed(AppPage.uploadingTab);
-                    return;
-                  }
-                  ref.read(navigationStateProvider.notifier).changeIndex(index);
-                },
+                onTap: _onTap,
                 items: navBars,
               ),
             ),
@@ -91,5 +76,19 @@ class _MyHomeScreenState extends ConsumerState<MyHomeScreen> {
         ),
       ),
     );
+  }
+
+  void _onTap(int index) {
+    if ([1, 2, 4].contains(index)) {
+      bool isAuth = HelpersUtils.isAuthenticated(context);
+      if (!isAuth) {
+        return;
+      }
+    }
+    if (index == 2) {
+      HelpersUtils.navigatorState(context).pushNamed(AppPage.uploadingTab);
+      return;
+    }
+    ref.read(navigationStateProvider.notifier).changeIndex(index);
   }
 }

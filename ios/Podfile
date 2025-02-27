@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '14.0' # or the minimum version you want to support
+platform :ios, '15.0' # or the minimum version you want to support
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -30,7 +30,7 @@ flutter_ios_podfile_setup
 target 'Runner' do
   use_frameworks!
   pod 'Firebase/Core' # Ensure you have the Firebase pod needed
-  pod 'FirebaseAppCheck', '~> 11.7.0'
+  pod 'FirebaseAppCheck', '~> 11.8.0'
   use_modular_headers! # Optional; keep if needed for other pods
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   

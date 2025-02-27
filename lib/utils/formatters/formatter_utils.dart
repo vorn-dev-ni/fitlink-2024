@@ -25,7 +25,7 @@ class FormatterUtils {
       return "${difference.inMinutes}m ago";
     } else if (difference.inHours < 24) {
       return "${difference.inHours}h ago";
-    } else if (difference.inDays < 7) {
+    } else if (difference.inDays < 10) {
       return "${difference.inDays}d ago";
     } else {
       return DateFormat('MMM d, yyyy').format(dateTime);

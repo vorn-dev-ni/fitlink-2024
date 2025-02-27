@@ -57,7 +57,6 @@ class UserFormController extends _$UserFormController {
             state.avatar!.contains('https://firebasestorage')) {
           final storageReference =
               FirebaseStorage.instance.refFromURL(state.avatar!);
-          debugPrint("File has been delete ${storageReference}");
           await storageReference.delete();
           state = state.copyWith(avatar: downloadUrl);
           debugPrint("File has been delete");

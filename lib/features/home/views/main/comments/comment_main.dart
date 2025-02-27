@@ -40,7 +40,7 @@ class _CommentMainState extends ConsumerState<CommentMain> {
   bool hasClickTap = false;
   bool isResize = false;
   bool isAnimating = false;
-  bool isLoading = false; // Track if we are loading more comments
+  bool isLoading = false;
   int currPageSizes = 10;
   late AudioPlayer playAudioUpload;
   late Post post;
@@ -118,21 +118,51 @@ class _CommentMainState extends ConsumerState<CommentMain> {
   }
 
   AppBar renderAppBar(BuildContext context) {
-    return AppBar(
-      centerTitle: false,
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      backgroundColor: Colors.white,
-      leadingWidth: 100.w,
-      leading: ProfileHeader(
-          context: context,
-          user: post.user ?? UserData(),
-          desc: post.caption,
-          post: post,
-          postId: post.postId,
-          imageUrl: post.user?.avatar ?? "",
-          type: ProfileType.header,
-          showBackButton: true),
+    final async = ref.watch(singlePostControllerProvider(post.postId!));
+
+    return async.when(
+      error: (error, stackTrace) {
+        return AppBar();
+      },
+      data: (data) {
+        return AppBar(
+          centerTitle: false,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          backgroundColor: Colors.white,
+          leadingWidth: 100.w,
+          leading: ProfileHeader(
+              context: context,
+              user: data?.user ?? UserData(),
+              desc: data?.tag,
+              post: data,
+              postId: data?.postId,
+              imageUrl: data?.user?.avatar ?? "",
+              type: ProfileType.header,
+              showBackButton: true),
+        );
+      },
+      loading: () {
+        return AppBar(
+          centerTitle: false,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          backgroundColor: Colors.white,
+          leadingWidth: 100.w,
+          leading: Skeletonizer(
+            enabled: true,
+            child: ProfileHeader(
+                context: context,
+                user: UserData(),
+                desc: 'Example tag',
+                post: Post(),
+                postId: post.postId,
+                imageUrl: "",
+                type: ProfileType.header,
+                showBackButton: true),
+          ),
+        );
+      },
     );
   }
 
@@ -193,6 +223,8 @@ class _CommentMainState extends ConsumerState<CommentMain> {
   }
 
   Widget renderPaging() {
+    final async = ref.watch(singlePostControllerProvider(post.postId!));
+
     final pagingLoading = ref.watch(commentPagingLoadingProvider);
     return Container(
         alignment: Alignment.topCenter,
@@ -210,7 +242,7 @@ class _CommentMainState extends ConsumerState<CommentMain> {
         child: Column(
           children: [
             PostPanel(
-              post: Post(),
+              post: Post(imageUrl: "exampe"),
               isComment: true,
               url: "",
               showHeader: false,
@@ -334,7 +366,7 @@ class _CommentMainState extends ConsumerState<CommentMain> {
 
     if (routes.containsKey('post')) {
       post = routes['post'];
-      debugPrint('run ${post.postId}');
+      // debugPrint('run ${post.postId}');
     } else {
       post = Post();
     }
@@ -350,26 +382,33 @@ class _CommentMainState extends ConsumerState<CommentMain> {
       _commentTextController.clear();
       _scrollController.animateTo(0,
           duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
-      await ref
-          .read(commentControllerProvider(
-            post.postId,
-          ).notifier)
-          .submitComment(
-              parentId: post.postId,
-              text: value,
-              count: post.commentsCount ?? 0);
 
-      if (mounted) {
-        playAudio();
+      final userPart = await ref
+          .read(singlePostControllerProvider(post.postId ?? "").future);
+
+      if (userPart != null) {
+        await ref
+            .read(commentControllerProvider(
+              post.postId,
+            ).notifier)
+            .submitComment(
+                parentId: post.postId,
+                text: value,
+                receiverId: userPart.user?.id ?? "",
+                count: userPart.commentsCount ?? 0);
+
+        if (mounted) {
+          playAudio();
+        }
+        Fluttertoast.showToast(
+            msg: 'Successfully Posted !!!',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 3,
+            backgroundColor: AppColors.secondaryColor,
+            textColor: Colors.white,
+            fontSize: 16.0);
       }
-      Fluttertoast.showToast(
-          msg: 'Successfully Posted !!!',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 3,
-          backgroundColor: AppColors.secondaryColor,
-          textColor: Colors.white,
-          fontSize: 16.0);
     } catch (e) {
       Fluttertoast.showToast(
           msg: e.toString(),

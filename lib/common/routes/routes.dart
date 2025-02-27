@@ -6,6 +6,7 @@ import 'package:demo/features/authentication/views/forget_password/forget_passwo
 import 'package:demo/features/authentication/views/login/email_verify.dart';
 import 'package:demo/features/authentication/views/login/phone_verify.dart';
 import 'package:demo/features/authentication/views/register/register.dart';
+import 'package:demo/features/dummy/main_dummy.dart';
 import 'package:demo/features/home/my_home.dart';
 import 'package:demo/features/home/views/daily_workout/main_workout.dart';
 import 'package:demo/features/home/views/daily_workout/views/excercise_activities_form.dart';
@@ -33,6 +34,9 @@ class AppRoutes {
   AppRoutes._();
 
   static final List<RoutesApp> mainStacks = [
+    RoutesApp(
+        routeName: AppPage.NotificationPath,
+        builder: (context) => const DummyScreenTest()),
     RoutesApp(
         routeName: AppPage.commentEditing,
         builder: (context) => const CommentEdit()),

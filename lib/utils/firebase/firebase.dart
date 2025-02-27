@@ -1,7 +1,9 @@
+import 'package:demo/data/service/utils/notification_service.dart';
 import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/flavor/config.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
 Future<void> initializeFirebaseApp(
@@ -10,6 +12,8 @@ Future<void> initializeFirebaseApp(
     await Firebase.initializeApp(
         name: AppConfig.appConfig.flavor.value,
         options: DefaultFirebaseOptions);
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
     await Future.delayed(const Duration(milliseconds: 200));
     await FirebaseAppCheck.instance.activate(
       androidProvider: AndroidProvider.playIntegrity,
@@ -60,7 +64,26 @@ AppException handleFirebaseErrorResponse(FirebaseException exception) {
 
       break;
   }
-  print('Error is ${title} ${message}');
+  debugPrint('Error is ${title} ${message}');
 
   return FirebaseCredentialException(title: title, message: message);
+}
+
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  debugPrint(
+      "---------------------On Background Message when app is killed or in background mode --------------------");
+  debugPrint("Message data: ${message.data}");
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp();
+  } // You can access message.notification, message.data, etc.
+  if (message.notification != null) {
+    debugPrint('Notification Title: ${message.notification!.title}');
+    debugPrint('Notification Body: ${message.notification!.body}');
+    String title = message.notification!.title!;
+    String body = message.notification!.body!;
+
+    await NotificationService()
+        .showNotification(id: 100, title: title, body: body);
+  }
 }

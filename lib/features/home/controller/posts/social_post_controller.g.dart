@@ -7,7 +7,7 @@ part of 'social_post_controller.dart';
 // **************************************************************************
 
 String _$socialPostControllerHash() =>
-    r'efcdb65d14fe77c010ed71451b08d856cb3e42a5';
+    r'f1939c48834afaa0f566af39838cb708e5be2701';
 
 /// See also [SocialPostController].
 @ProviderFor(SocialPostController)

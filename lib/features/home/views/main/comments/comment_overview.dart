@@ -79,8 +79,11 @@ class _CommentOverviewState extends ConsumerState<CommentOverview> {
               itemBuilder: (context, index) {
                 final comment = data[index];
                 return GestureDetector(
-                  onLongPress: () =>
-                      _onTapUserProfile(comment.user?.id, comment),
+                  onLongPress: () {
+                    if (comment.isLoading == false) {
+                      _onTapUserProfile(comment.user?.id, comment);
+                    }
+                  },
                   child: ProfileHeader(
                       post: widget.post,
                       key: ValueKey(comment.commentId),
@@ -149,107 +152,112 @@ class _CommentOverviewState extends ConsumerState<CommentOverview> {
         builder: (BuildContext context) {
           return Container(
             width: 100.w,
-            height: 13.h,
+            height: 17.h,
             padding: const EdgeInsets.all(Sizes.lg),
             color: const Color.fromARGB(255, 238, 241, 243),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                HoriButtonIcon(
-                    icon: const Icon(
-                      Icons.copy,
-                      color: AppColors.backgroundDark,
-                    ),
-                    label: 'Copy',
-                    onPress: () {
-                      closeBottomSheet();
-                      copyToClipboard(comment.text);
-                    },
-                    themeColor: AppColors.backgroundDark),
-                HoriButtonIcon(
-                    icon: const Icon(
-                      Icons.edit,
-                      color: AppColors.backgroundDark,
-                    ),
-                    label: 'Edit',
-                    onPress: () async {
-                      closeBottomSheet();
-                      final isEdit = await HelpersUtils.navigatorState(context)
-                          .pushNamed(AppPage.commentEditing, arguments: {
-                        'postId': widget.post.postId,
-                        'commentId': comment.commentId,
-                        'text': comment.text
-                      });
-                      if (isEdit == true) {
-                        playAudio();
-                      }
-                    },
-                    themeColor: AppColors.backgroundDark),
-                HoriButtonIcon(
-                    icon: const Icon(
-                      Icons.delete,
-                      color: AppColors.errorColor,
-                    ),
-                    label: 'Delete',
-                    onPress: () {
-                      closeBottomSheet();
-                      showDialog(
-                          context: context,
-                          builder: (context) => AppALertDialog(
-                              // bgColor: const Color.fromRGBO(0, 0, 0, 1)
-                              //     .withOpacity(0.4),
-                              bgColor: AppColors.backgroundLight,
-                              onConfirm: () {},
-                              showIcon: false,
-                              negativeButton: SizedBox(
-                                  width: 100.w,
-                                  child: FilledButton(
-                                      style: FilledButton.styleFrom(
-                                          foregroundColor:
-                                              AppColors.secondaryColor,
-                                          backgroundColor:
-                                              AppColors.backgroundLight),
-                                      onPressed: () {
-                                        HelpersUtils.navigatorState(context)
-                                            .pop();
-                                      },
-                                      child: Text('Cancel',
-                                          style: AppTextTheme
-                                              .lightTextTheme.bodyLarge
-                                              ?.copyWith(
-                                                  fontWeight: FontWeight.w500,
-                                                  color: AppColors
-                                                      .secondaryColor)))),
-                              positivebutton: SizedBox(
-                                  width: 100.w,
-                                  child: FilledButton(
-                                      style: FilledButton.styleFrom(
-                                          foregroundColor: AppColors.errorColor,
-                                          backgroundColor:
-                                              AppColors.backgroundLight),
-                                      onPressed: () {
-                                        HelpersUtils.navigatorState(context)
-                                            .pop();
-                                        _handleDeleting(widget.post.postId,
-                                            comment.commentId);
-                                      },
-                                      child: Text('Delete',
-                                          style: AppTextTheme
-                                              .lightTextTheme.bodyLarge
-                                              ?.copyWith(
-                                                  fontWeight: FontWeight.w500,
-                                                  color:
-                                                      AppColors.errorColor)))),
-                              title: 'Delete Comment',
-                              textColor: AppColors.backgroundDark,
-                              contentColor: AppColors.backgroundDark,
-                              desc:
-                                  "Are you sure you want to permanently remove this comment from FitLink?"));
-                    },
-                    themeColor: AppColors.backgroundDark),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.only(top: Sizes.lg),
+              child: Row(
+                // mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  HoriButtonIcon(
+                      icon: const Icon(
+                        Icons.copy,
+                        color: AppColors.backgroundDark,
+                      ),
+                      label: 'Copy',
+                      onPress: () {
+                        closeBottomSheet();
+                        copyToClipboard(comment.text);
+                      },
+                      themeColor: AppColors.backgroundDark),
+                  HoriButtonIcon(
+                      icon: const Icon(
+                        Icons.edit,
+                        color: AppColors.backgroundDark,
+                      ),
+                      label: 'Edit',
+                      onPress: () async {
+                        closeBottomSheet();
+                        final isEdit =
+                            await HelpersUtils.navigatorState(context)
+                                .pushNamed(AppPage.commentEditing, arguments: {
+                          'postId': widget.post.postId,
+                          'commentId': comment.commentId,
+                          'text': comment.text
+                        });
+                        if (isEdit == true) {
+                          playAudio();
+                        }
+                      },
+                      themeColor: AppColors.backgroundDark),
+                  HoriButtonIcon(
+                      icon: const Icon(
+                        Icons.delete,
+                        color: AppColors.errorColor,
+                      ),
+                      label: 'Delete',
+                      onPress: () {
+                        closeBottomSheet();
+                        showDialog(
+                            context: context,
+                            builder: (context) => AppALertDialog(
+                                // bgColor: const Color.fromRGBO(0, 0, 0, 1)
+                                //     .withOpacity(0.4),
+                                bgColor: AppColors.backgroundLight,
+                                onConfirm: () {},
+                                showIcon: false,
+                                negativeButton: SizedBox(
+                                    width: 100.w,
+                                    child: FilledButton(
+                                        style: FilledButton.styleFrom(
+                                            foregroundColor:
+                                                AppColors.secondaryColor,
+                                            backgroundColor:
+                                                AppColors.backgroundLight),
+                                        onPressed: () {
+                                          HelpersUtils.navigatorState(context)
+                                              .pop();
+                                        },
+                                        child: Text('Cancel',
+                                            style: AppTextTheme
+                                                .lightTextTheme.bodyLarge
+                                                ?.copyWith(
+                                                    fontWeight: FontWeight.w500,
+                                                    color: AppColors
+                                                        .secondaryColor)))),
+                                positivebutton: SizedBox(
+                                    width: 100.w,
+                                    child: FilledButton(
+                                        style: FilledButton.styleFrom(
+                                            foregroundColor:
+                                                AppColors.errorColor,
+                                            backgroundColor:
+                                                AppColors.backgroundLight),
+                                        onPressed: () {
+                                          HelpersUtils.navigatorState(context)
+                                              .pop();
+                                          _handleDeleting(widget.post.postId,
+                                              comment.commentId);
+                                        },
+                                        child: Text('Delete',
+                                            style: AppTextTheme
+                                                .lightTextTheme.bodyLarge
+                                                ?.copyWith(
+                                                    fontWeight: FontWeight.w500,
+                                                    color: AppColors
+                                                        .errorColor)))),
+                                title: 'Delete Comment',
+                                textColor: AppColors.backgroundDark,
+                                contentColor: AppColors.backgroundDark,
+                                desc:
+                                    "Are you sure you want to permanently remove this comment from FitLink?"));
+                      },
+                      themeColor: AppColors.backgroundDark),
+                ],
+              ),
             ),
           );
         },

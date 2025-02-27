@@ -125,7 +125,16 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
     return Expanded(
       child: TabBarView(
         controller: _tabController,
-        children: const [EmailLoginTab(), PhoneNumberTab()],
+        children: const [
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: EmailLoginTab(),
+            ),
+          ),
+          PhoneNumberTab()
+        ],
       ),
     );
   }

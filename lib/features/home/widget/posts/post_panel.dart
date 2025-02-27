@@ -11,7 +11,6 @@ import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
-import 'package:demo/utils/formatters/formatter_utils.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -69,7 +68,6 @@ class _PostPanelState extends ConsumerState<PostPanel>
   @override
   void didChangeDependencies() {
     checkUserLike();
-
     super.didChangeDependencies();
   }
 
@@ -91,7 +89,7 @@ class _PostPanelState extends ConsumerState<PostPanel>
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.3)
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.2)
         .chain(CurveTween(curve: Curves.easeInOut))
         .animate(_scaleController);
     checkUserLiked();
@@ -115,10 +113,11 @@ class _PostPanelState extends ConsumerState<PostPanel>
           .read(userLikeControllerProvider(widget.post.postId).notifier)
           .setLikeStatus(!isCurrentlyLiked);
       ref.read(socialPostControllerProvider.notifier).addUserLike(
-            widget.post.postId ?? "",
-            widget.post.likesCount ?? 0,
-            isCurrentlyLiked,
-          );
+          widget.post.postId ?? "",
+          widget.post.likesCount ?? 0,
+          isCurrentlyLiked,
+          parentId: widget.post.postId,
+          receiverId: widget.post.user?.id);
 
       return !isCurrentlyLiked;
     } catch (e) {
@@ -139,29 +138,28 @@ class _PostPanelState extends ConsumerState<PostPanel>
 
   Widget build(BuildContext context) {
     const animationDuration = Duration(milliseconds: 300);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.showHeader)
           ProfileHeader(
-              desc: widget.post.tag,
+              desc: widget.post.tag ?? "",
               user: widget.post.user,
               imageUrl: widget.post.user?.avatar ?? "",
               type: ProfileType.profile,
               post: widget.post,
               context: null),
-        renderImageSection(),
+        if (widget.post.imageUrl != null && widget.post.imageUrl != "")
+          renderImageSection(),
         renderSocialMedia(context, animationDuration),
-        if (widget.isComment == false)
-          Column(
-            children: [
-              postDescription(desc: widget.post.caption ?? ""),
-              const SizedBox(
-                height: Sizes.lg,
-              ),
-            ],
-          ),
+        Column(
+          children: [
+            postDescription(desc: widget.post.caption ?? ""),
+            const SizedBox(
+              height: Sizes.lg,
+            ),
+          ],
+        ),
         const Divider(
           color: AppColors.neutralColor,
         )
@@ -288,7 +286,7 @@ class _PostPanelState extends ConsumerState<PostPanel>
             child: Container(
               alignment: Alignment.centerRight,
               child: Text(
-                FormatterUtils.formatTimestamp(widget.post.createdAt),
+                '${widget.post.formattedCreatedAt}',
                 style: AppTextTheme.lightTextTheme.bodySmall?.copyWith(
                   color: const Color.fromARGB(255, 170, 173, 178),
                 ),

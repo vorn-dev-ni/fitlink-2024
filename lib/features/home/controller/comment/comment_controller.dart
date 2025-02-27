@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/repository/firebase/comment_repo.dart';
+import 'package:demo/data/repository/firebase/notification_repo.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/comments/comment_service.dart';
+import 'package:demo/data/service/firestore/notification/notification_service.dart';
 import 'package:demo/features/home/controller/comment/comment_loading.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/features/home/model/comment.dart';
 import 'package:demo/features/home/model/post.dart';
-import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'comment_controller.g.dart';
@@ -15,9 +17,12 @@ part 'comment_controller.g.dart';
 class CommentController extends _$CommentController {
   int _pageSizes = 10;
   late CommentRepo commentRepo;
-
+  late NotificationRepo notificationRepo;
   @override
   Stream<List<Comment>?> build(String? parentId) {
+    notificationRepo = NotificationRepo(
+        notificationBaseService: NotificationRemoteService(
+            firebaseAuthService: FirebaseAuthService()));
     commentRepo = CommentRepo(
       baseCommentService: CommentService(
         firebaseAuthService: FirebaseAuthService(),
@@ -60,8 +65,6 @@ class CommentController extends _$CommentController {
       {required String parentId,
       required String docId,
       required String text}) async {
-    debugPrint('Submit action triggered!');
-
     try {
       await commentRepo.editComment(
           docId: docId, parentId: parentId, text: text);
@@ -76,6 +79,7 @@ class CommentController extends _$CommentController {
     String? parentId,
     required String text,
     required int count,
+    required String receiverId,
   }) async {
     try {
       if (parentId == null) {
@@ -99,8 +103,13 @@ class CommentController extends _$CommentController {
         text: text,
         count: count,
       );
+
       state = AsyncData([...state.value ?? []]);
       ref.invalidateSelf();
+      await notificationRepo.sendCommentNotification(
+          senderID: FirebaseAuth.instance.currentUser!.uid,
+          receiverID: receiverId,
+          postId: parentId);
     } catch (e) {
       ref.invalidateSelf();
     }

@@ -90,12 +90,16 @@ class CommentRepo {
 
             bool isLiked = await checkUserCommentLiked(
                 commentId: doc.id, parentId: parentId);
+
             final obj = {
               'user': userData,
               'commentId': doc.id,
               'isLiked': isLiked,
+              'formattedCreatedAt': postData['createdAt'],
               ...postData,
             };
+            // debugPrint("obj id is ${obj}");
+
             return Comment.fromJson(obj);
           }
           return Comment(commentId: '', createdAt: Timestamp.now(), text: '');

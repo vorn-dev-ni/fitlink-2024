@@ -473,6 +473,7 @@ class _ExcerciseActivitiesFormState
   }
 
   void playAudio() {
+    playAudioUpload.seek(const Duration(seconds: 0));
     playAudioUpload.play();
   }
 }

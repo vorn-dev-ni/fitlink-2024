@@ -64,7 +64,7 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                     padding: const EdgeInsets.all(0),
                     onPressed: () {
                       HelpersUtils.navigatorState(context)
-                          .pushNamed(AppPage.notificationListing);
+                          .pushNamed(AppPage.NotificationPath);
                     },
                     icon: const Icon(
                       Icons.notifications,

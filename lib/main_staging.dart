@@ -7,6 +7,8 @@ import 'package:demo/core/riverpod/connectivity_state.dart';
 import 'package:demo/data/service/firebase/firebase_remote_config.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
+import 'package:demo/data/service/firestore/notification/notification_service.dart';
+import 'package:demo/data/service/utils/notification_service.dart';
 import 'package:demo/features/home/controller/comment/comment_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
 import 'package:demo/features/home/controller/posts/social_post_controller.dart';
@@ -16,6 +18,7 @@ import 'package:demo/l10n/I10n.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/enums.dart';
+import 'package:demo/utils/constant/global_key.dart';
 import 'package:demo/utils/flavor/config.dart';
 import 'package:demo/utils/global_config.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
@@ -63,7 +66,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   late String titleBar;
   bool showSnackbar = false;
   late StreamSubscription<dynamic> _streamSubscription;
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  late NotificationRemoteService notificationRemoteService;
   StreamSubscription<User?>? streamAuthState;
   StreamSubscription<AuthModel?>? streamUserFirestore;
 
@@ -82,6 +85,9 @@ class _MyAppState extends ConsumerState<MyApp> {
       statusBarBrightness: Brightness.dark, // For iOS
     ));
     _firebaseAuthService = FirebaseAuthService();
+    notificationRemoteService =
+        NotificationRemoteService(firebaseAuthService: _firebaseAuthService);
+    _firebaseAuthService = FirebaseAuthService();
     firestoreService =
         FirestoreService(firebaseAuthService: _firebaseAuthService);
     HelpersUtils.removeSplashScreen();
@@ -92,8 +98,8 @@ class _MyAppState extends ConsumerState<MyApp> {
             LocalStorageUtils().getKey('email') != null &&
             LocalStorageUtils().getKey('email')!.isNotEmpty) {
           FirebaseAuth.instance.signOut();
-          await user?.reload();
           LocalStorageUtils().setKeyString('email', '');
+          await user?.reload();
         }
 
         String? provider = user?.providerData[0].providerId;
@@ -149,6 +155,10 @@ class _MyAppState extends ConsumerState<MyApp> {
   Future syncUser(String uid) async {
     try {
       AuthModel? authModel = await firestoreService.getEmail(uid);
+      final fmcToken = await HelpersUtils.getDeviceToken();
+      if (fmcToken != null) {
+        notificationRemoteService.storeFcmToken(uid, fmcToken);
+      }
       if (mounted) {
         debugPrint("Sync user again tt hz");
         ref.invalidate(socialPostControllerProvider);

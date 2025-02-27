@@ -84,14 +84,6 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                   ],
                 ),
                 const Spacer(),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    CupertinoIcons.ellipsis,
-                    size: Sizes.iconMd,
-                    color: AppColors.secondaryColor,
-                  ),
-                )
               ],
             )
           : renderCommentListing(),
@@ -151,7 +143,8 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
           const SizedBox(width: Sizes.md),
           renderUserStatus(),
           const Spacer(),
-          if (widget.type == ProfileType.profile)
+          if (widget.type == ProfileType.profile &&
+              widget.post?.user?.id == FirebaseAuth.instance.currentUser?.uid)
             IconButton(
               onPressed: () {},
               icon: const Icon(
@@ -201,8 +194,7 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                       style: AppTextTheme.lightTextTheme.bodyMedium?.copyWith(),
                     ),
                     TextSpan(
-                      text: FormatterUtils.formatTimestamp(
-                          widget.comment?.createdAt),
+                      text: widget.comment?.formattedCreatedAt ?? "",
                       style: AppTextTheme.lightTextTheme.bodySmall?.copyWith(
                         color: const Color.fromARGB(255, 170, 173, 178),
                       ),
@@ -221,8 +213,7 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                       style: AppTextTheme.lightTextTheme.bodyMedium?.copyWith(),
                     ),
                     TextSpan(
-                      text: FormatterUtils.formatTimestamp(
-                          widget.comment?.createdAt),
+                      text: widget.comment?.formattedCreatedAt,
                       style: AppTextTheme.lightTextTheme.bodySmall?.copyWith(
                         color: const Color.fromARGB(255, 170, 173, 178),
                       ),

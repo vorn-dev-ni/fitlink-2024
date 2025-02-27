@@ -1,5 +1,9 @@
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
+import 'package:demo/features/home/controller/event/events_listing_controller.dart';
+import 'package:demo/features/home/controller/posts/social_post_controller.dart';
+import 'package:demo/features/home/controller/tab/event_scroll_controller.dart';
+import 'package:demo/features/home/controller/tab/home_scroll_controller.dart';
 import 'package:demo/features/home/views/main/event/event.dart';
 import 'package:demo/features/home/views/main/my_home/social_media.dart';
 import 'package:demo/features/home/views/main/work_out/workout_tab.dart';
@@ -86,6 +90,24 @@ class _HomeTabState extends ConsumerState<HomeTab>
         Expanded(
           child: TabBar(
             controller: _tabController,
+            onTap: (value) {
+              switch (value) {
+                case 0:
+                  ref.read(homeScrollControllerProvider.notifier).scrollToTop(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.bounceIn);
+                  ref.invalidate(socialPostControllerProvider);
+                  break;
+                case 2:
+                  ref.read(eventScrollControllerProvider.notifier).scrollToTop(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.bounceIn);
+                  ref.invalidate(eventsListingControllerProvider);
+                  break;
+                default:
+                  break;
+              }
+            },
             indicatorColor: Colors.transparent,
             indicatorSize: TabBarIndicatorSize.label,
             isScrollable: true,
@@ -99,7 +121,9 @@ class _HomeTabState extends ConsumerState<HomeTab>
             labelColor: AppColors.secondaryColor,
             unselectedLabelColor: AppColors.neutralDark,
             tabs: const [
-              Tab(text: 'Home'),
+              Tab(
+                text: 'Home',
+              ),
               Tab(text: 'Workout'),
               Tab(text: 'Event'),
             ],

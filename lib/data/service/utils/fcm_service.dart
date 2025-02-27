@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:demo/common/model/notification_payload,dart';
 import 'package:demo/data/service/utils/notification_service.dart';
 import 'package:demo/features/home/model/post.dart';
@@ -9,7 +7,6 @@ import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
@@ -85,7 +82,6 @@ class FcmService {
       final data = NotificationData.fromMap(value!.data);
       if (FirebaseAuth.instance.currentUser != null && data.type == 'comment' ||
           data.type == 'like') {
-        Fluttertoast.showToast(msg: 'call init message ${data.postID}');
         Future.delayed(const Duration(milliseconds: 3500), () {
           navigatorKey.currentState?.pushNamed(AppPage.commentListings,
               arguments: {'post': Post(postId: data.postID)});
@@ -106,10 +102,7 @@ class FcmService {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       String? title = message.notification?.title;
       String? body = message.notification?.body;
-      Map<String, dynamic>? data = message?.data;
-
-      debugPrint(
-          'Got a message whilst in the foreground! mesage  ${title} ${data}');
+      Map<String, dynamic>? data = message.data;
       NotificationService().setPayload(data);
       NotificationService().showNotification(id: 1, body: body, title: title);
 

@@ -20,6 +20,7 @@ import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:demo/utils/validation/profile_edit_validation.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -347,7 +348,6 @@ class _EditProfileState extends ConsumerState<EditProfile> {
           ref.read(appLoadingStateProvider.notifier).setState(false);
         }
 
-        // ref.invalidate(profileUserControllerProvider);
         ref.invalidate(eventDetailParticipantProvider);
         playAudioUpload.setVolume(0.8);
         playAudioUpload.play();

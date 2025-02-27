@@ -63,8 +63,11 @@ class SocialPostController extends _$SocialPostController {
     }
   }
 
-  Future<bool> isUserLiked(String postId) async {
+  Future<bool> isUserLiked(String? postId) async {
     try {
+      if (postId == "" || postId == null) {
+        return false;
+      }
       return await postSocialRepo.checkUserLikePost(postId);
     } catch (e) {
       rethrow;

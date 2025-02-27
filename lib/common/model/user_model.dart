@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/utils/constant/enums.dart';
 
 class AuthModel {
+  String? id;
   String? fullname;
   String? email;
   String? avatar;
@@ -11,6 +12,7 @@ class AuthModel {
   UserRoles? userRoles;
   AuthModel(
       {this.fullname,
+      this.id,
       this.email,
       this.avatar,
       this.userRoles,
@@ -22,6 +24,7 @@ class AuthModel {
     if (data == null) return AuthModel();
 
     return AuthModel(
+        id: data['id'],
         fullname: data['fullName'] as String?,
         email: data['email'] as String?,
         avatar: data['avatar'] as String?,

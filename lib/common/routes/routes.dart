@@ -23,6 +23,7 @@ import 'package:demo/features/home/views/main/my_home/feeling_list.dart';
 import 'package:demo/features/home/views/main/my_home/upload_media.dart';
 import 'package:demo/features/home/views/profile/preview/preview_image.dart';
 import 'package:demo/features/home/views/profile/edit_profile/edit_profile.dart';
+import 'package:demo/features/home/views/single_profile/views/single_profile.dart';
 import 'package:demo/features/home/views/upload/upload_tab.dart';
 import 'package:demo/features/notifications/notification_main.dart';
 import 'package:demo/features/on_boarding/on_boarding.dart';
@@ -34,6 +35,8 @@ class AppRoutes {
   AppRoutes._();
 
   static final List<RoutesApp> mainStacks = [
+    RoutesApp(
+        routeName: AppPage.viewProfile, builder: (context) => SingleProfile()),
     RoutesApp(
         routeName: AppPage.NotificationPath,
         builder: (context) => const DummyScreenTest()),

@@ -158,7 +158,7 @@ class _MyAppState extends ConsumerState<MyApp> {
             .read(navbarControllerProvider.notifier)
             .updateProfileTab(authModel.avatar ?? "");
 
-        ref.invalidate(profileUserControllerProvider);
+        // ref.invalidate(profileUserControllerProvider);
         ref.read(appLoadingStateProvider.notifier).setState(false);
       }
     } catch (e) {

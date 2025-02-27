@@ -8,6 +8,7 @@ import 'package:demo/common/widget/image_modal_viewer.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/features/home/views/single_profile/controller/single_user_controller.dart';
 import 'package:demo/features/home/views/profile/user_media.dart';
+import 'package:demo/features/home/views/single_profile/widget/follow_msg.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
@@ -17,26 +18,26 @@ import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class ProfileHeader extends ConsumerStatefulWidget {
+class SingleProfileHeader extends ConsumerStatefulWidget {
   final Function onLogout;
   String? uid;
-  ProfileHeader({super.key, required this.onLogout, required this.uid});
+  SingleProfileHeader({super.key, required this.onLogout, required this.uid});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ProfileHeaderState();
 }
 
-class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
+class _ProfileHeaderState extends ConsumerState<SingleProfileHeader> {
   @override
   Widget build(BuildContext context) {
-    final asyncUser = ref.watch(profileUserControllerProvider);
+    final asyncUser = ref.watch(singleUserControllerProvider(widget.uid ?? ""));
     return asyncUser.when(
       error: (error, stackTrace) {
         return emptyContent(title: error.toString());
@@ -50,70 +51,24 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
             currentUser?.email == null || currentUser?.email == "";
         return SliverAppBar(
           expandedHeight: 60.h,
-          actions: [
-            const SizedBox(
-              height: Sizes.lg,
-            ),
-            Skeletonizer(
-              enabled: showLoading,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.backgroundDark.withOpacity(0.4),
-                ),
-                margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
-                child: IconButton(
-                    padding: const EdgeInsets.all(0),
-                    onPressed: () {
-                      HelpersUtils.navigatorState(context)
-                          .pushNamed(AppPage.NotificationPath);
-                    },
-                    icon: const Icon(
-                      Icons.notifications,
-                      size: Sizes.xxl,
-                      color: AppColors.backgroundLight,
-                    )),
-              ),
-            ),
-            Skeletonizer(
-              enabled: showLoading,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.backgroundDark.withOpacity(0.4),
-                ),
-                margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
-                child: IconButton(
-                    padding: const EdgeInsets.all(0),
-                    onPressed: () =>
-                        _openBottomSheet(context, currentUser?.cover_feature),
-                    icon: const Icon(
-                      Icons.camera_alt_outlined,
-                      size: Sizes.xxl,
-                      color: AppColors.backgroundLight,
-                    )),
-              ),
-            ),
-            Skeletonizer(
-              enabled: showLoading,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.backgroundDark.withOpacity(0.4),
-                ),
-                margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
-                child: const IconButton(
-                    padding: EdgeInsets.all(0),
-                    onPressed: null,
-                    icon: Icon(
-                      Icons.more_vert,
-                      size: Sizes.xxl,
-                      color: AppColors.backgroundLight,
-                    )),
-              ),
-            )
-          ],
           stretch: true,
+          leadingWidth: 70,
+          leading: Container(
+            width: 50,
+            height: 50,
+            margin: const EdgeInsets.only(left: Sizes.xl),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.black.withOpacity(0.6),
+            ),
+            child: IconButton(
+              iconSize: Sizes.iconMd,
+              onPressed: () {
+                HelpersUtils.navigatorState(context).pop();
+              },
+              icon: const Icon(CupertinoIcons.back, color: Colors.white),
+            ),
+          ),
           backgroundColor: Colors.transparent,
           flexibleSpace: Skeletonizer(
             enabled: showLoading,
@@ -246,114 +201,7 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                 ),
                               ],
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    ClipRRect(
-                                      clipBehavior: Clip.antiAlias,
-                                      child: TextButton(
-                                          style: TextButton.styleFrom(
-                                              backgroundColor: AppColors
-                                                  .primaryColor
-                                                  .withOpacity(0.15),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          Sizes.lg))),
-                                          onPressed: () {
-                                            HelpersUtils.navigatorState(context)
-                                                .pushNamed(AppPage.editProfile);
-                                          },
-                                          child: const Text('Edit Profile')),
-                                    ),
-                                    const SizedBox(
-                                      width: Sizes.lg,
-                                    ),
-                                    ClipRRect(
-                                      clipBehavior: Clip.antiAlias,
-                                      child: TextButton(
-                                          style: TextButton.styleFrom(
-                                              backgroundColor: AppColors
-                                                  .errorLight
-                                                  .withOpacity(0.15),
-                                              overlayColor:
-                                                  AppColors.errorLight,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          Sizes.lg))),
-                                          onPressed: () {
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) =>
-                                                    AppALertDialog(
-                                                        bgColor: const Color
-                                                                .fromRGBO(
-                                                                0, 0, 0, 1)
-                                                            .withOpacity(0.4),
-                                                        onConfirm: () {},
-                                                        negativeButton: SizedBox(
-                                                            width: 100.w,
-                                                            child: FilledButton(
-                                                                style: FilledButton.styleFrom(backgroundColor: const Color.fromARGB(255, 241, 228, 228).withOpacity(0.5)),
-                                                                onPressed: () {
-                                                                  HelpersUtils.navigatorState(
-                                                                          context)
-                                                                      .pop();
-                                                                },
-                                                                child: const Text('Cancel'))),
-                                                        positivebutton: SizedBox(
-                                                            width: 100.w,
-                                                            child: FilledButton(
-                                                                style: FilledButton.styleFrom(backgroundColor: AppColors.errorColor.withOpacity(0.5)),
-                                                                onPressed: () {
-                                                                  HelpersUtils.navigatorState(
-                                                                          context)
-                                                                      .pop();
-                                                                  SystemChrome.setEnabledSystemUIMode(
-                                                                      SystemUiMode
-                                                                          .manual,
-                                                                      overlays:
-                                                                          SystemUiOverlay
-                                                                              .values);
-                                                                  SystemChrome
-                                                                      .setSystemUIOverlayStyle(
-                                                                          const SystemUiOverlayStyle(
-                                                                    statusBarColor:
-                                                                        Color.fromARGB(
-                                                                            0,
-                                                                            169,
-                                                                            166,
-                                                                            166),
-                                                                    statusBarIconBrightness:
-                                                                        Brightness
-                                                                            .dark,
-                                                                    statusBarBrightness:
-                                                                        Brightness
-                                                                            .dark, // For iOS
-                                                                  ));
-                                                                  widget
-                                                                      .onLogout();
-                                                                },
-                                                                child: const Text('Confirm'))),
-                                                        title: 'Are you sure?',
-                                                        desc: "do you want to logout from this account and no logger has access?"));
-                                          },
-                                          child: const Text(
-                                            'Log Out',
-                                            style: TextStyle(
-                                                color: AppColors.errorColor),
-                                          )),
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: Sizes.md,
-                                ),
-                              ],
-                            ),
+                            renderFollowMsg(),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -396,38 +244,6 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
   SliverAppBar _buildLoading(BuildContext context) {
     return SliverAppBar(
       expandedHeight: 60.h,
-      actions: [
-        Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.backgroundDark.withOpacity(0.4),
-          ),
-          margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
-          child: IconButton(
-              padding: const EdgeInsets.all(0),
-              onPressed: () {},
-              icon: const Icon(
-                Icons.notifications,
-                size: Sizes.xxl,
-                color: AppColors.backgroundLight,
-              )),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.backgroundDark.withOpacity(0.4),
-          ),
-          margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
-          child: IconButton(
-              padding: const EdgeInsets.all(0),
-              onPressed: () => _openBottomSheet(context, null),
-              icon: const Icon(
-                Icons.camera_alt_outlined,
-                size: Sizes.xxl,
-                color: AppColors.backgroundLight,
-              )),
-        )
-      ],
       backgroundColor: AppColors.backgroundDark,
       flexibleSpace: FlexibleSpaceBar(
           background: Stack(

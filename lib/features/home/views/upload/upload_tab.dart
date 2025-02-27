@@ -8,6 +8,7 @@ import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
@@ -104,7 +105,6 @@ class _UploadTabState extends ConsumerState<UploadTab>
 
   void fetchUserRole() async {
     final asyncValues = await ref.watch(profileUserControllerProvider.future);
-    debugPrint("USer role is ${asyncValues}");
     if (mounted) {
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) {

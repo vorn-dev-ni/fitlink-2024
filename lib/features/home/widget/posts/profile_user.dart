@@ -5,10 +5,11 @@ import 'package:demo/features/home/model/comment.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
+import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
-import 'package:demo/utils/formatters/formatter_utils.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
+import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -60,33 +61,36 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(Sizes.sm),
-      child: widget.type == ProfileType.post
-          ? Row(
-              children: [
-                ClipOval(
-                  child: Container(
-                    child: Assets.app.defaultAvatar
-                        .image(width: 40, height: 40, fit: BoxFit.cover),
+    return GestureDetector(
+      onTap: () => _handlePress(widget.post?.user?.id),
+      child: Padding(
+        padding: const EdgeInsets.all(Sizes.sm),
+        child: widget.type == ProfileType.post
+            ? Row(
+                children: [
+                  ClipOval(
+                    child: Container(
+                      child: Assets.app.defaultAvatar
+                          .image(width: 40, height: 40, fit: BoxFit.cover),
+                    ),
                   ),
-                ),
-                const SizedBox(width: Sizes.md),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('User name example'),
-                    Text(
-                      'Workout Tag',
-                      style: AppTextTheme.lightTextTheme.bodySmall
-                          ?.copyWith(color: AppColors.secondaryColor),
-                    )
-                  ],
-                ),
-                const Spacer(),
-              ],
-            )
-          : renderCommentListing(),
+                  const SizedBox(width: Sizes.md),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('User name example'),
+                      Text(
+                        'Workout Tag',
+                        style: AppTextTheme.lightTextTheme.bodySmall
+                            ?.copyWith(color: AppColors.secondaryColor),
+                      )
+                    ],
+                  ),
+                  const Spacer(),
+                ],
+              )
+            : renderCommentListing(),
+      ),
     );
   }
 
@@ -303,5 +307,19 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
     }
 
     return !isCurrentlyLiked;
+  }
+
+  void _handlePress(String? targetUserId) {
+    String? email = LocalStorageUtils().getKey('email');
+    if (FirebaseAuth.instance.currentUser != null &&
+        email != "" &&
+        email != null) {
+      if (FirebaseAuth.instance.currentUser?.uid != targetUserId) {
+        HelpersUtils.navigatorState(context).pushNamed(AppPage.viewProfile,
+            arguments: {'userId': targetUserId});
+      }
+    } else {
+      HelpersUtils.navigatorState(context).pushNamed(AppPage.auth);
+    }
   }
 }

@@ -114,7 +114,11 @@ class _MyAppState extends ConsumerState<MyApp> {
               streamUserFirestore = firestoreService
                   .getUserStream(user.uid)
                   .listen((userDoc) async {
-                if (userDoc != null) {
+                final isUserEmailExist = LocalStorageUtils().getKey('email');
+
+                if (userDoc != null &&
+                    isUserEmailExist != null &&
+                    isUserEmailExist != "") {
                   await syncUser(user.uid);
                 }
               });
@@ -154,22 +158,25 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   Future syncUser(String uid) async {
     try {
-      AuthModel? authModel = await firestoreService.getEmail(uid);
-      final fmcToken = await HelpersUtils.getDeviceToken();
-      if (fmcToken != null) {
-        notificationRemoteService.storeFcmToken(uid, fmcToken);
-      }
-      if (mounted) {
-        debugPrint("Sync user again tt hz");
-        ref.invalidate(socialPostControllerProvider);
-        ref.invalidate(userLikeControllerProvider);
-        ref.invalidate(commentControllerProvider);
-        ref
-            .read(navbarControllerProvider.notifier)
-            .updateProfileTab(authModel.avatar ?? "");
+      debugPrint("User is ${FirebaseAuth.instance.currentUser?.uid}");
+      if (FirebaseAuth.instance.currentUser?.uid != null) {
+        AuthModel? authModel = await firestoreService.getEmail(uid);
+        final fmcToken = await HelpersUtils.getDeviceToken();
+        if (fmcToken != null) {
+          notificationRemoteService.storeFcmToken(uid, fmcToken);
+        }
+        if (mounted) {
+          ref.invalidate(navbarControllerProvider);
+          ref
+              .read(navbarControllerProvider.notifier)
+              .updateProfileTab(authModel.avatar ?? "");
+          debugPrint("Sync user again tt hz");
 
-        ref.invalidate(profileUserControllerProvider);
-        ref.read(appLoadingStateProvider.notifier).setState(false);
+          ref.invalidate(socialPostControllerProvider);
+          ref.invalidate(commentControllerProvider);
+          ref.invalidate(profileUserControllerProvider);
+          ref.read(appLoadingStateProvider.notifier).setState(false);
+        }
       }
     } catch (e) {
       if (mounted) {

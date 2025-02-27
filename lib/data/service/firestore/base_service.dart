@@ -28,6 +28,8 @@ abstract class BaseActivitiesService {
 
 abstract class BaseSocialMediaService {
   Stream<QuerySnapshot<Map<String, dynamic>>> getAllPosts();
+  Stream<QuerySnapshot<Map<String, dynamic>>> getPostByUser(String id);
+
   Future addCommentCount();
   Future editPost();
   Future addPost(Map<String, dynamic> payload);

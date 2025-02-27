@@ -76,8 +76,6 @@ class FirestoreService {
   }
 
   Future<AuthModel> getEmail(String? uid) async {
-    // final User? currentUser = FirebaseAuth.instance.currentUser;
-
     if (uid != null) {
       try {
         DocumentSnapshot snapshot =
@@ -97,6 +95,7 @@ class FirestoreService {
           String cover_image = data['cover_feature'] ?? '';
 
           return AuthModel(
+              id: snapshot.id,
               fullname: fullname,
               email: email,
               avatar: avatar,

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class SocialPostService extends BaseSocialMediaService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -63,9 +64,9 @@ class SocialPostService extends BaseSocialMediaService {
   }
 
   @override
-  Future checkUserLike(String postId) async {
+  Future checkUserLike(String? postId) async {
     try {
-      if (FirebaseAuth.instance.currentUser == null) {
+      if (FirebaseAuth.instance.currentUser == null && postId == null) {
         return false;
       }
       final snapShot = await _firestore
@@ -109,5 +110,22 @@ class SocialPostService extends BaseSocialMediaService {
     } catch (e) {
       rethrow;
     }
+  }
+
+  @override
+  Stream<QuerySnapshot<Map<String, dynamic>>> getPostByUser(String id) {
+    if (id.isEmpty) {
+      throw ArgumentError("User ID cannot be empty");
+    }
+
+    final userDocPath = _firestore.collection('users').doc(id);
+
+    final snapshot = _firestore
+        .collection('posts')
+        .where('userId', isEqualTo: userDocPath) // Compare with stored path
+        .orderBy('createdAt', descending: true)
+        .snapshots();
+
+    return snapshot;
   }
 }

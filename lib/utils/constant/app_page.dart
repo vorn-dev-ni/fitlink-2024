@@ -54,6 +54,7 @@ class AppPage {
   static const previewImage = 'PreviewImage';
 
   //User
+  static const viewProfile = 'ViewProfile';
 
   static const editProfile = 'EditProfile';
 

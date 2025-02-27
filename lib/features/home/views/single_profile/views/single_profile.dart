@@ -1,50 +1,32 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/common/model/user_model.dart';
-import 'package:demo/common/widget/backdrop_loading.dart';
-import 'package:demo/core/riverpod/app_provider.dart';
-import 'package:demo/core/riverpod/navigation_state.dart';
 import 'package:demo/features/authentication/controller/auth_controller.dart';
-import 'package:demo/features/authentication/controller/login_controller.dart';
-import 'package:demo/features/authentication/controller/register_controller.dart';
-import 'package:demo/features/home/controller/navbar_controller.dart';
-import 'package:demo/features/home/controller/posts/social_post_controller.dart';
-import 'package:demo/features/home/controller/posts/user_like_controller.dart';
-import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/features/home/views/single_profile/controller/single_user_controller.dart';
-import 'package:demo/features/home/controller/profile/user_form_controller.dart';
-import 'package:demo/features/home/views/profile/events/event_profile.dart';
-import 'package:demo/features/home/views/profile/favorites/favorite_profile.dart';
 import 'package:demo/features/home/views/profile/post/post_profile.dart';
-import 'package:demo/features/home/views/profile/profile_header.dart';
 import 'package:demo/features/home/views/profile/video/video_profile.dart';
 import 'package:demo/features/home/views/profile/workout/workout_profile.dart';
-import 'package:demo/gen/assets.gen.dart';
+import 'package:demo/features/home/views/single_profile/widget/single_profile_header.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/device/device_utils.dart';
-import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class ProfileTab extends ConsumerStatefulWidget {
-  const ProfileTab({super.key});
+class SingleProfile extends ConsumerStatefulWidget {
+  SingleProfile({super.key});
 
   @override
-  ConsumerState<ProfileTab> createState() => _ProfileTabState();
+  ConsumerState<SingleProfile> createState() => _SingleProfileState();
 }
 
-class _ProfileTabState extends ConsumerState<ProfileTab> {
+class _SingleProfileState extends ConsumerState<SingleProfile> {
   late final AuthController authController;
   AuthModel? currentUser;
   late List<Tab> _tabBarheaders;
   late List<Widget> _screens;
-  late AudioPlayer _playsoundLogout;
-  String? uid = FirebaseAuth.instance.currentUser?.uid;
+  String? uid;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -53,8 +35,6 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
 
   @override
   void initState() {
-    _playsoundLogout = AudioPlayer();
-    binding();
     _screens = [
       PostProfile(
         userId: uid ?? "",
@@ -88,7 +68,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
 
   @override
   Widget build(BuildContext context) {
-    final asyncUser = ref.watch(profileUserControllerProvider);
+    final asyncUser = ref.watch(singleUserControllerProvider(uid ?? ""));
     return DefaultTabController(
       length: _screens.length,
       child: Scaffold(
@@ -100,11 +80,9 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
             child: NestedScrollView(
               floatHeaderSlivers: false,
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                ProfileHeader(
+                SingleProfileHeader(
                   uid: data?.id ?? "",
-                  onLogout: () async {
-                    await handleLogout();
-                  },
+                  onLogout: () async {},
                 ),
               ],
               body: Skeletonizer(
@@ -156,11 +134,9 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
           baseColor: Color.fromARGB(212, 213, 213, 213)),
       child: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          ProfileHeader(
+          SingleProfileHeader(
             uid: "example",
-            onLogout: () {
-              // handleLogout();
-            },
+            onLogout: () {},
           ),
         ],
         body: SafeArea(
@@ -190,38 +166,19 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     );
   }
 
-  Future handleLogout() async {
-    if (mounted) {
-      _playsoundLogout.play();
-
-      Fluttertoast.showToast(
-          msg: 'See you soon love 😔 !!!',
-          timeInSecForIosWeb: 3,
-          toastLength: Toast.LENGTH_SHORT);
-      LocalStorageUtils().setKeyString('email', '');
-      ref.invalidate(navbarControllerProvider);
-      ref.invalidate(singleUserControllerProvider);
-      ref.invalidate(navigationStateProvider);
-      ref.invalidate(registerControllerProvider);
-      ref.invalidate(loginControllerProvider);
-      ref.invalidate(socialPostControllerProvider);
-      ref.invalidate(userLikeControllerProvider);
-      ref.invalidate(profileUserControllerProvider);
-      await authController.logout();
-    }
-  }
-
-  void binding() async {
-    await _playsoundLogout.setAsset(Assets.audio.bye);
-    _playsoundLogout.setVolume(0.8);
-  }
-
   void bindingUser() {
     final routeParams = ModalRoute.of(context)?.settings;
     if (routeParams?.arguments?.toString() != null) {
       final data = routeParams?.arguments as Map;
       if (data.containsKey('userId')) {
         uid = data['userId'];
+        setState(() {
+          _screens = [
+            PostProfile(userId: data['userId']),
+            const VideoProfile(),
+            const WorkoutProfile(),
+          ];
+        });
       } else {
         uid = FirebaseAuth.instance.currentUser?.uid;
       }

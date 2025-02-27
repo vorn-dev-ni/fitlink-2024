@@ -2,6 +2,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
 import 'package:demo/features/home/model/post.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class PostSocialRepo {
   late BaseSocialMediaService baseSocialMediaService;
@@ -12,6 +14,50 @@ class PostSocialRepo {
   Future addPost(Post post) async {
     try {
       return await baseSocialMediaService.addPost(post.toJson());
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Stream<List<Post>?> getAllUserPost(String uid) {
+    try {
+      if (FirebaseAuth.instance.currentUser != null) {
+        return baseSocialMediaService
+            .getPostByUser(uid)
+            .asyncMap((snapshot) async {
+          List<Post> posts = await Future.wait(snapshot.docs.map((doc) async {
+            if (doc.exists) {
+              debugPrint('doc existed get all user post');
+              Map<String, dynamic> postData = doc.data();
+              DocumentReference? userRef =
+                  postData['userId'] as DocumentReference?;
+              Map<String, dynamic>? userData =
+                  userRef != null ? await extractUserData(userRef) : null;
+              bool isLiked = await checkUserLikePost(doc.id);
+              return Post.fromJson({
+                "postId": doc.id,
+                "userLiked": isLiked,
+                "likesCount": doc.data()['likesCount'],
+                "user": userData,
+                "imageUrl": doc.data()['imageUrl'],
+                "caption": doc.data()['caption'],
+                "commentsCount": doc.data()['commentsCount'],
+                "tag": doc.data()['tag'],
+                "createdAt": doc.data()['createdAt'],
+                "type": doc.data()['type'],
+                "emoji": doc.data()['emoji'],
+                "feeling": doc.data()['feeling'],
+                'formattedCreatedAt': doc.data()['createdAt'],
+              });
+            }
+
+            return Post();
+          }));
+          return posts;
+        });
+      }
+
+      return const Stream.empty();
     } catch (e) {
       rethrow;
     }

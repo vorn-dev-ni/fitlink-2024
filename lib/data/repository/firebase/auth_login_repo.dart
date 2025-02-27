@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/common/model/user_model.dart';
 import 'package:demo/data/repository/firebase_auth_repo.dart';
 import 'package:demo/data/service/firestore/notification/notification_service.dart';
@@ -128,9 +129,10 @@ class AuthLoginRepository extends FirebaseAuthRepository {
     if (firebaseAuthService.currentUser != null) {
       await notificationRemoteService
           .removeFcmToken(firebaseAuthService.currentUser!.uid);
+      await firebaseAuthService.currentUser?.reload();
     }
+
     await firebaseAuthService.signOut();
-    await firebaseAuthService.currentUser?.reload();
     await googleService.logout();
     await facebookService.logoutFacebook();
   }

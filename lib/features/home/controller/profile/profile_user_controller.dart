@@ -31,23 +31,21 @@ class ProfileUserController extends _$ProfileUserController {
     firestoreService =
         FirestoreService(firebaseAuthService: FirebaseAuthService());
 
-    return await getData();
+    return await getData(FirebaseAuth.instance.currentUser?.uid);
   }
 
-  FutureOr<AuthModel?> getData() async {
+  FutureOr<AuthModel?> getData(String? userId) async {
     if (FirebaseAuth.instance.currentUser == null) {
       return AuthModel();
     } else {
-      AuthModel? authModel = await firestoreService
-          .getEmail(FirebaseAuth.instance.currentUser!.uid);
-
+      AuthModel? authModel = await firestoreService.getEmail(userId);
       return authModel;
     }
   }
 
   Future getDownloadUrl(File imageFile) async {
     String extensionWithoutFileExtension =
-        HelpersUtils.getLastFileName(imageFile!.path);
+        HelpersUtils.getLastFileName(imageFile.path);
     final result = await storageService.uploadFile(
         file: imageFile, fileName: extensionWithoutFileExtension);
     return result!['downloadUrl'];

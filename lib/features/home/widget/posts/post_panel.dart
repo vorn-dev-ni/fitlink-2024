@@ -12,6 +12,7 @@ import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
+import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -85,6 +86,7 @@ class _PostPanelState extends ConsumerState<PostPanel>
     firestoreService =
         FirestoreService(firebaseAuthService: FirebaseAuthService());
     _lottieController = AnimationController(vsync: this);
+    checkUserLiked();
     _scaleController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
@@ -92,7 +94,7 @@ class _PostPanelState extends ConsumerState<PostPanel>
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.2)
         .chain(CurveTween(curve: Curves.easeInOut))
         .animate(_scaleController);
-    checkUserLiked();
+
     super.initState();
   }
 
@@ -313,7 +315,8 @@ class _PostPanelState extends ConsumerState<PostPanel>
   void checkUserLiked() async {
     streamAuthState = _firebaseAuthService.authStateChanges.listen(
       (user) async {
-        if (user != null && widget.post.postId != null) {
+        final email = LocalStorageUtils().getKey('email');
+        if (email != null && email != "") {
           final result = await ref
               .read(socialPostControllerProvider.notifier)
               .isUserLiked(widget.post.postId ?? "");

@@ -119,12 +119,18 @@ class CommentController extends _$CommentController {
       {required String parentId,
       required String id,
       required int likes,
+      required String receiverID,
       required bool hasLiked}) async {
     try {
       if (hasLiked) {
         await commentRepo.removeLikeCount(parentId, id, likes);
       } else {
         await commentRepo.updateLikeCount(parentId, id, likes);
+        await notificationRepo.sendCommentNotification(
+            senderID: FirebaseAuth.instance.currentUser!
+                .uid, //Us sending notification to the user that comment the post
+            receiverID: receiverID, // The user that we like the comment
+            postId: parentId);
       }
     } catch (e) {
       rethrow;

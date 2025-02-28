@@ -1,4 +1,4 @@
-import 'package:demo/common/model/notification_payload,dart';
+import 'package:demo/common/model/notification_payload.dart';
 import 'package:demo/data/service/utils/notification_service.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/utils/constant/app_page.dart';

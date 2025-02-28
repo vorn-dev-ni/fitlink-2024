@@ -18,7 +18,6 @@ import 'package:demo/utils/device/device_utils.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -224,8 +223,7 @@ class _CommentMainState extends ConsumerState<CommentMain> {
   }
 
   Widget renderPaging() {
-    final async = ref.watch(singlePostControllerProvider(post.postId!));
-
+    // final async = ref.watch(singlePostControllerProvider(post.postId!));
     final pagingLoading = ref.watch(commentPagingLoadingProvider);
     return Container(
         alignment: Alignment.topCenter,

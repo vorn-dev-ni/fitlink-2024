@@ -258,16 +258,21 @@ class _SliverAppBarExampleState extends ConsumerState<ExcerciseOverviewScreen> {
 
       ref.read(appLoadingStateProvider.notifier).setState(true);
 
-      await ref.read(activitiesControllerProvider(null).notifier).addWorkout(
-          uid: FirebaseAuth.instance.currentUser!.uid,
-          activities: null,
-          workoutId: workouts['docId'],
-          date: selectedDate);
+      await ref
+          .read(activitiesControllerProvider(
+                  null, FirebaseAuth.instance.currentUser?.uid ?? "")
+              .notifier)
+          .addWorkout(
+              uid: FirebaseAuth.instance.currentUser!.uid,
+              activities: null,
+              workoutId: workouts['docId'],
+              date: selectedDate);
 
       if (mounted) {
         DateTime normalizedDate =
             DateTime(selectedDate!.year, selectedDate.month, selectedDate.day);
-        ref.invalidate(activitiesControllerProvider(normalizedDate));
+        ref.invalidate(activitiesControllerProvider(
+            normalizedDate, FirebaseAuth.instance.currentUser?.uid ?? ""));
         ref.read(appLoadingStateProvider.notifier).setState(false);
         HelpersUtils.navigatorState(context)
             .pushNamed(AppPage.excerciseDetail, arguments: {

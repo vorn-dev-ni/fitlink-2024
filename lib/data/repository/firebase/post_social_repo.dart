@@ -3,14 +3,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
 class PostSocialRepo {
   late BaseSocialMediaService baseSocialMediaService;
   PostSocialRepo({
     required this.baseSocialMediaService,
   });
-  Future deletePost() async {}
+  Future deletePost(String postId) async {
+    try {
+      return await baseSocialMediaService.deletePost(postId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future addPost(Post post) async {
     try {
       return await baseSocialMediaService.addPost(post.toJson());
@@ -27,7 +33,6 @@ class PostSocialRepo {
             .asyncMap((snapshot) async {
           List<Post> posts = await Future.wait(snapshot.docs.map((doc) async {
             if (doc.exists) {
-              debugPrint('doc existed get all user post');
               Map<String, dynamic> postData = doc.data();
               DocumentReference? userRef =
                   postData['userId'] as DocumentReference?;
@@ -63,7 +68,18 @@ class PostSocialRepo {
     }
   }
 
-  Future editPost() async {}
+  Future editPost(Post payload) async {
+    try {
+      if (payload.postId == null) {
+        return;
+      }
+      return await baseSocialMediaService.updatePost(
+          payload.toJsonUpdated(), payload.postId!);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<bool> checkUserLikePost(String postId) async {
     try {
       return await baseSocialMediaService.checkUserLike(postId);

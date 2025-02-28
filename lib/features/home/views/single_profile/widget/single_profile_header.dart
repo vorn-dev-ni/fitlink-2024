@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:demo/common/model/transparent_container.dart';
-import 'package:demo/common/widget/app_dialog.dart';
+import 'package:demo/common/model/user_model.dart';
 import 'package:demo/common/widget/bottom_upload_sheet.dart';
 import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/common/widget/error_image_placeholder.dart';
 import 'package:demo/common/widget/image_modal_viewer.dart';
-import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
+import 'package:demo/features/home/views/single_profile/controller/media_tag_conroller.dart';
 import 'package:demo/features/home/views/single_profile/controller/single_user_controller.dart';
 import 'package:demo/features/home/views/profile/user_media.dart';
 import 'package:demo/features/home/views/single_profile/widget/follow_msg.dart';
@@ -18,6 +18,7 @@ import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -201,34 +202,33 @@ class _ProfileHeaderState extends ConsumerState<SingleProfileHeader> {
                                 ),
                               ],
                             ),
-                            renderFollowMsg(),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 95.w,
-                                  child: transparentContainer(
-                                    child: Row(
-                                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                            child: userSocialMediaTab(
-                                                floatingText: '0',
-                                                type: 'Workouts')),
-                                        Expanded(
-                                            child: userSocialMediaTab(
-                                                floatingText: '0',
-                                                type: 'Followings')),
-                                        Expanded(
-                                            child: userSocialMediaTab(
-                                                floatingText: '0',
-                                                type: 'Followers'))
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            )
+                            FollowMessageWidget(
+                                userId: widget.uid,
+                                unfollow: () async {
+                                  final thisUserId =
+                                      FirebaseAuth.instance.currentUser?.uid;
+                                  if (thisUserId != null) {
+                                    await ref
+                                        .read(singleUserControllerProvider(
+                                                currentUser?.id ?? "")
+                                            .notifier)
+                                        .unfollowingUser(
+                                            thisUserId, currentUser?.id ?? "");
+                                  }
+                                },
+                                following: () async {
+                                  final thisUserId =
+                                      FirebaseAuth.instance.currentUser?.uid;
+                                  if (thisUserId != null) {
+                                    await ref
+                                        .read(singleUserControllerProvider(
+                                                currentUser?.id ?? "")
+                                            .notifier)
+                                        .followingUser(
+                                            thisUserId, currentUser?.id ?? "");
+                                  }
+                                }),
+                            RenderMediaStatus(currentUser)
                           ],
                         ),
                       ),
@@ -241,7 +241,76 @@ class _ProfileHeaderState extends ConsumerState<SingleProfileHeader> {
     );
   }
 
-  SliverAppBar _buildLoading(BuildContext context) {
+  Widget RenderMediaStatus(AuthModel? currentUser) {
+    final async = ref.watch(mediaTagConrollerProvider(currentUser?.id ?? ""));
+    return async.when(
+      data: (data) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 95.w,
+              child: transparentContainer(
+                child: Row(
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                        child: userSocialMediaTab(
+                            floatingText: '${data?.workoutCounts ?? 0}',
+                            type: 'Workouts')),
+                    Expanded(
+                        child: userSocialMediaTab(
+                            floatingText: '${data?.followingCount ?? 0}',
+                            type: 'Followings')),
+                    Expanded(
+                        child: userSocialMediaTab(
+                            floatingText: '${data?.followerCount ?? 0}',
+                            type: 'Followers'))
+                  ],
+                ),
+              ),
+            )
+          ],
+        );
+      },
+      loading: () {
+        return Skeletonizer(
+          enabled: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 95.w,
+                child: transparentContainer(
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                          child: userSocialMediaTab(
+                              floatingText: '0', type: 'Workouts')),
+                      Expanded(
+                          child: userSocialMediaTab(
+                              floatingText: '${currentUser?.followingCount}',
+                              type: 'Followings')),
+                      Expanded(
+                          child: userSocialMediaTab(
+                              floatingText: '${currentUser?.followerCount}',
+                              type: 'Followers'))
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+      error: (error, stackTrace) {
+        return emptyContent(title: error.toString());
+      },
+    );
+  }
+
+  Widget _buildLoading(BuildContext context) {
     return SliverAppBar(
       expandedHeight: 60.h,
       backgroundColor: AppColors.backgroundDark,
@@ -391,7 +460,6 @@ class _ProfileHeaderState extends ConsumerState<SingleProfileHeader> {
   }
 
   void _openBottomSheet(BuildContext context, String? oldImage) {
-    debugPrint('Bottom sheet open ${oldImage}');
     showModalBottomSheet(
         context: context,
         backgroundColor: AppColors.backgroundLight,

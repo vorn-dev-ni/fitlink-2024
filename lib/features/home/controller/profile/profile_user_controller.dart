@@ -39,6 +39,7 @@ class ProfileUserController extends _$ProfileUserController {
       return AuthModel();
     } else {
       AuthModel? authModel = await firestoreService.getEmail(userId);
+
       return authModel;
     }
   }

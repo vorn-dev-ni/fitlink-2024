@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:demo/features/home/views/single_profile/model/media_count.dart';
 
 abstract class BaseService {
   Future delete({required String uid});
@@ -15,6 +16,10 @@ abstract class BaseService {
 abstract class BaseUserService {
   Future updateCoverImage(Map<String, dynamic> data);
   Future updateProfile(Map<String, dynamic> data);
+  Future followUser(String followedUserId);
+  Future isFollowingUser(String followedUserId);
+  Future unfollowUser(String followedUserId);
+  Future<MediaCount> getMediaCount(String userId);
 }
 
 abstract class BaseActivitiesService {
@@ -29,10 +34,14 @@ abstract class BaseActivitiesService {
 abstract class BaseSocialMediaService {
   Stream<QuerySnapshot<Map<String, dynamic>>> getAllPosts();
   Stream<QuerySnapshot<Map<String, dynamic>>> getPostByUser(String id);
-
+  Future deletePost(
+    String postId,
+  );
   Future addCommentCount();
-  Future editPost();
+  Future editPost(String postId, Map<String, dynamic> payload);
   Future addPost(Map<String, dynamic> payload);
+  Future updatePost(Map<String, dynamic> payload, String postId);
+
   Stream<DocumentSnapshot<Map<String, dynamic>>> getPostById(String postId);
   Future checkUserLike(String postId);
   Future updateLikeCount(String docId, int currentLikes);
@@ -58,10 +67,11 @@ abstract class BaseCommentService {
 }
 
 abstract class NotificationBaseService {
+  Future sendFollowingNotification(
+      String senderID, String receiverID, String userId);
   Future getNotificationCurrentUser(String uid);
   Future sendCommentNotification(
       String senderID, String receiverID, String postID);
-  Future sendFollowingFollower(String uid, Map<String, dynamic> data);
   Future sendLikeNotification(
       String senderID, String receiverID, String postID);
   Future deleteNotification(String uid, String docId);

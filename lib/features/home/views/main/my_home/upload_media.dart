@@ -11,6 +11,7 @@ import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
+import 'package:demo/utils/device/device_utils.dart';
 import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
@@ -33,10 +34,12 @@ class UploadMediaPost extends ConsumerStatefulWidget {
 
 class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
   late FocusNode focusNodeText;
+  bool isUpdate = false;
   int _selectedChipIndex = -1;
   UserData? user;
   bool showErrorBorder = false;
   File? previewImages;
+  String? avatarImageUrl;
   late AudioPlayer playAudioUpload;
   final textcaptionController = TextEditingController();
   final List<String> chipLabels = [
@@ -84,12 +87,20 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
   ];
 
   @override
+  void didChangeDependencies() {
+    bindingRoutes();
+    super.didChangeDependencies();
+  }
+
+  @override
   void initState() {
     focusNodeText = FocusNode();
     playAudioUpload = AudioPlayer();
     forceFocus();
     bindingAudio();
     bindingData();
+    bindingToField();
+
     super.initState();
   }
 
@@ -229,7 +240,7 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
                           ClipOval(
                             child: user?.avatar != ""
                                 ? FancyShimmerImage(
-                                    imageUrl: user!.avatar!,
+                                    imageUrl: user?.avatar ?? "",
                                     width: 60,
                                     height: 60,
                                     boxFit: BoxFit.cover,
@@ -260,7 +271,7 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
                         onChanged: (value) {
                           ref
                               .read(postMediaControllerProvider.notifier)
-                              .updateText(value?.trim());
+                              .updateText(value.trim());
                         },
                         maxLength: 200,
                         decoration: const InputDecoration(
@@ -287,6 +298,15 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
                           width: 100.w,
                           height: 400,
                           fit: BoxFit.cover,
+                        ),
+                      if (avatarImageUrl != null &&
+                          avatarImageUrl != "" &&
+                          previewImages == null)
+                        FancyShimmerImage(
+                          imageUrl: avatarImageUrl!,
+                          boxFit: BoxFit.cover,
+                          width: 100.w,
+                          height: 400,
                         )
                     ],
                   ),
@@ -327,6 +347,7 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
                         horizontal: Sizes.xxxl, vertical: 0),
                     backgroundColor: AppColors.secondaryColor),
                 onPressed: () {
+                  DeviceUtils.hideKeyboard(context);
                   handleSubmit(tag);
                 },
                 child: const Text('Post')),
@@ -345,7 +366,7 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        userStatus.emoji != null
+        userStatus.emoji != null && userStatus.emoji != ""
             ? RichText(
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -538,12 +559,14 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
       ref.read(appLoadingStateProvider.notifier).setState(true);
       await ref
           .read(postMediaControllerProvider.notifier)
-          .handlePost(previewImages);
+          .handlePost(previewImages, isUpdate);
 
       Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) {
           Fluttertoast.showToast(
-              msg: "Successfully Posted !!!",
+              msg: isUpdate
+                  ? 'Post has been saved !!!'
+                  : "Successfully Posted !!!",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 2,
@@ -552,8 +575,12 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
               fontSize: 16.0);
           ref.read(appLoadingStateProvider.notifier).setState(false);
           playAudio();
-          HelpersUtils.navigatorState(context).pop();
-          HelpersUtils.navigatorState(context).pop();
+          if (isUpdate == true) {
+            HelpersUtils.navigatorState(context).pop();
+          } else {
+            HelpersUtils.navigatorState(context).pop();
+            HelpersUtils.navigatorState(context).pop();
+          }
         }
       });
 
@@ -594,5 +621,39 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
             textColor: AppColors.backgroundDark,
             title: title,
             desc: desc));
+  }
+
+  void bindingToField() {
+    textcaptionController.text =
+        ref.read(postMediaControllerProvider).caption ?? "";
+    final tag = ref.read(postMediaControllerProvider).tag;
+    final index = chipLabels.indexWhere(
+      (element) => element == tag,
+    );
+    final resultImage = ref.read(postMediaControllerProvider).imageUrl;
+    if (resultImage != "") {
+      setState(() {
+        avatarImageUrl = resultImage;
+      });
+    }
+    if (index > 0) {
+      setState(() {
+        _selectedChipIndex = index;
+      });
+    }
+  }
+
+  void bindingRoutes() {
+    final modalRoutes = ModalRoute.of(context)?.settings;
+    debugPrint('modal route ${modalRoutes?.arguments}');
+    if (modalRoutes?.arguments != null) {
+      final data = modalRoutes?.arguments as Map<String, dynamic>;
+
+      if (data.containsKey('isEdit')) {
+        setState(() {
+          isUpdate = data['isEdit'];
+        });
+      }
+    }
   }
 }

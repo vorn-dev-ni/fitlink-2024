@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
+import 'package:demo/features/home/views/single_profile/model/media_count.dart';
 import 'package:flutter/material.dart';
 
 class ProfileService implements BaseUserService {
@@ -30,6 +31,120 @@ class ProfileService implements BaseUserService {
           .collection('users')
           .doc(firebaseAuthService.currentUser!.uid);
       await docId.update(data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future followUser(String followedUserId) async {
+    try {
+      final currentUserId = firebaseAuthService.currentUser!.uid;
+      await _firestore
+          .collection('users')
+          .doc(currentUserId)
+          .collection('following')
+          .doc(followedUserId)
+          .set({
+        'followedAt': FieldValue.serverTimestamp(),
+      });
+
+      await _firestore
+          .collection('users')
+          .doc(followedUserId)
+          .collection('followers')
+          .doc(currentUserId)
+          .set({
+        'followedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future unfollowUser(String followedUserId) async {
+    try {
+      final currentUserId = firebaseAuthService.currentUser?.uid;
+      if (currentUserId == null) {
+        throw Exception("User is not authenticated.");
+      }
+
+      await _firestore
+          .collection('users')
+          .doc(currentUserId)
+          .collection('following')
+          .doc(followedUserId)
+          .delete();
+
+      await _firestore
+          .collection('users')
+          .doc(followedUserId)
+          .collection('followers')
+          .doc(currentUserId)
+          .delete();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<MediaCount> getMediaCount(String userId) async {
+    try {
+      final notificationsSnapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('notifications')
+          .get();
+
+      final followersSnapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('followers')
+          .get();
+
+      final followingSnapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('following')
+          .get();
+
+      final workoutSnapshot = await _firestore
+          .collection('activities')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      final notificationsCount = notificationsSnapshot.docs.length;
+      final followersCount = followersSnapshot.docs.length;
+      final followingCount = followingSnapshot.docs.length;
+      final workoutCount = workoutSnapshot.docs.length;
+
+      return MediaCount(
+        notificaitonCount: notificationsCount,
+        followerCount: followersCount,
+        workoutCounts: workoutCount,
+        followingCount: followingCount,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> isFollowingUser(String followedUserId) async {
+    try {
+      final currentUserId = firebaseAuthService.currentUser!.uid;
+      final followingDoc = await _firestore
+          .collection('users')
+          .doc(currentUserId)
+          .collection('following')
+          .doc(followedUserId)
+          .get();
+
+      debugPrint(
+          'following user ${followedUserId} ${followingDoc.exists ? 'true' : 'false'}');
+
+      return followingDoc.exists;
     } catch (e) {
       rethrow;
     }

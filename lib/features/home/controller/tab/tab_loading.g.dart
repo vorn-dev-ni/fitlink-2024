@@ -1,27 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'social_post_controller.dart';
+part of 'tab_loading.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$socialPostControllerHash() =>
-    r'ba7c33a588850b23f22f5a3c6609e279521af356';
+String _$tabLoadingControllerHash() =>
+    r'9d2bfb53fbfef100ebfe331b27eac9bcf11a56a1';
 
-/// See also [SocialPostController].
-@ProviderFor(SocialPostController)
-final socialPostControllerProvider =
-    StreamNotifierProvider<SocialPostController, List<Post>?>.internal(
-  SocialPostController.new,
-  name: r'socialPostControllerProvider',
+/// See also [TabLoadingController].
+@ProviderFor(TabLoadingController)
+final tabLoadingControllerProvider =
+    NotifierProvider<TabLoadingController, bool>.internal(
+  TabLoadingController.new,
+  name: r'tabLoadingControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$socialPostControllerHash,
+      : _$tabLoadingControllerHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$SocialPostController = StreamNotifier<List<Post>?>;
+typedef _$TabLoadingController = Notifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

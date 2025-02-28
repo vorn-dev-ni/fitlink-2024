@@ -1,5 +1,4 @@
 import 'package:demo/common/widget/empty_content.dart';
-import 'package:demo/features/home/controller/activities/activity_form_controller.dart';
 import 'package:demo/features/home/controller/workouts/activities_controller.dart';
 import 'package:demo/model/workouts/workout_response.dart';
 import 'package:demo/utils/constant/app_colors.dart';
@@ -18,7 +17,8 @@ import 'package:sizer/sizer.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class WorkoutActivities extends ConsumerStatefulWidget {
-  const WorkoutActivities({super.key});
+  String userId;
+  WorkoutActivities({super.key, required this.userId});
 
   @override
   ConsumerState<WorkoutActivities> createState() => _WorkoutActivitiesState();
@@ -35,7 +35,8 @@ class _WorkoutActivitiesState extends ConsumerState<WorkoutActivities> {
 
   @override
   Widget build(BuildContext context) {
-    final asyncValue = ref.watch(activitiesControllerProvider(_selectedDate));
+    final asyncValue =
+        ref.watch(activitiesControllerProvider(_selectedDate, widget.userId));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

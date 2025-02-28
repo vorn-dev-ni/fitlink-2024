@@ -1,5 +1,6 @@
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
+import 'package:demo/features/home/controller/posts/post_media_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
@@ -70,6 +71,12 @@ class _UploadTabState extends ConsumerState<UploadTab>
               children: [
                 GestureDetector(
                   onTap: () {
+                    if (mounted) {
+                      // ref
+                      //     .read(postMediaControllerProvider.notifier)
+                      //     .clearState();
+                      ref.invalidate(postMediaControllerProvider);
+                    }
                     HelpersUtils.navigatorState(context)
                         .pushNamed(AppPage.createPost);
                   },

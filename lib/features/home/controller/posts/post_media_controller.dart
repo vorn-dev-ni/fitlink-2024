@@ -13,7 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'post_media_controller.g.dart';
 
-@Riverpod(keepAlive: false)
+@Riverpod(keepAlive: true)
 class PostMediaController extends _$PostMediaController {
   late PostSocialRepo postSocialRepo;
   late StorageService storageService;
@@ -25,6 +25,14 @@ class PostMediaController extends _$PostMediaController {
         baseSocialMediaService:
             SocialPostService(firebaseAuthService: FirebaseAuthService()));
     return Post(tag: null);
+  }
+
+  void clearState() {
+    state = Post();
+  }
+
+  void updateState(Post post) {
+    state = post;
   }
 
   void updateFeeling({String? feelings, String? emoji}) {
@@ -51,7 +59,7 @@ class PostMediaController extends _$PostMediaController {
     return result!['downloadUrl'];
   }
 
-  Future handlePost(File? imageFile) async {
+  Future handlePost(File? imageFile, bool isUpdate) async {
     try {
       if (state.imageUrl != "") {
         if (imageFile != null) {
@@ -81,8 +89,10 @@ class PostMediaController extends _$PostMediaController {
       if (state.feeling != null) {
         state = state.copyWith(type: 'feeling');
       }
-      debugPrint("post is ${state.toJson()}");
-      await postSocialRepo.addPost(state);
+
+      isUpdate
+          ? await postSocialRepo.editPost(state)
+          : await postSocialRepo.addPost(state);
     } catch (e) {
       Fluttertoast.showToast(
           msg: e.toString(),

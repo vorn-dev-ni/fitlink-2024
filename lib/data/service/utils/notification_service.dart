@@ -1,6 +1,4 @@
-import 'dart:convert';
-
-import 'package:demo/common/model/notification_payload,dart';
+import 'package:demo/common/model/notification_payload.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
@@ -11,7 +9,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
   static FlutterLocalNotificationsPlugin? _notificationsPlugin;
-  static Map<String, dynamic>? _payload; // Store payload for navigation
+  static Map<String, dynamic>? _payload;
 
   void setPayload(payload) {
     _payload = payload;

@@ -78,15 +78,17 @@ class FirestoreService {
   Future<AuthModel> getEmail(String? uid) async {
     if (uid != null) {
       try {
-        DocumentSnapshot snapshot =
-            await _firestore.collection('users').doc(uid).get();
-
+        final userRef = _firestore.collection('users').doc(uid);
+        DocumentSnapshot snapshot = await userRef.get();
         if (snapshot.data() == null) {
           return AuthModel();
         }
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
 
         if (data.isNotEmpty) {
+          final followerSnapshot = await userRef.collection('followers').get();
+
+          debugPrint("follow ${followerSnapshot.size}");
           String email = data['email'] ?? "";
           String fullname = data['fullName'] ?? "";
           String avatar = data['avatar'] ?? "";

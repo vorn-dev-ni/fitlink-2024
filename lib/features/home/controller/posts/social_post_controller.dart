@@ -5,6 +5,7 @@ import 'package:demo/data/service/firestore/notification/notification_service.da
 import 'package:demo/data/service/firestore/posts/social_post_service.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'social_post_controller.g.dart';
 
@@ -30,6 +31,19 @@ class SocialPostController extends _$SocialPostController {
       await for (var posts in stream) {
         yield posts;
       }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future deletePost(String postId, String? imageUrl) async {
+    try {
+      if (imageUrl != '' && imageUrl != null) {
+        final storageReference = FirebaseStorage.instance.refFromURL(imageUrl);
+        await storageReference.delete();
+      }
+
+      await postSocialRepo.deletePost(postId);
     } catch (e) {
       rethrow;
     }

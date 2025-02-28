@@ -122,8 +122,27 @@ class NotificationRemoteService extends NotificationBaseService {
   }
 
   @override
-  Future sendFollowingFollower(String uid, Map<String, dynamic> data) {
-    // TODO: implement sendFollowingFollower
-    throw UnimplementedError();
+  Future sendFollowingNotification(
+      String senderID, String receiverID, String userId) async {
+    try {
+      if (receiverID == FirebaseAuth.instance.currentUser?.uid) {
+        //This case we prevent user from sending notification to their own
+        return;
+      }
+
+      final HttpsCallable callable = FirebaseFunctions.instance
+          .httpsCallable('sendNotificationToSpecificUser');
+      debugPrint('Payload is ${senderID} ${receiverID} ${userId}');
+      final response = await callable.call({
+        'eventType': 'following',
+        'senderID': senderID,
+        'receiverID': receiverID,
+        'postID': userId,
+      });
+      debugPrint('Notification sent: ${response.data}');
+    } catch (e) {
+      debugPrint('Error sending notification: $e');
+      rethrow;
+    }
   }
 }

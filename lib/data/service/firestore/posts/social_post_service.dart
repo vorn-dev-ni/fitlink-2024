@@ -29,11 +29,6 @@ class SocialPostService extends BaseSocialMediaService {
   }
 
   @override
-  Future editPost() {
-    throw UnimplementedError();
-  }
-
-  @override
   Future updateLikeCount(String docId, int currentLikes) async {
     try {
       final docRef = _firestore.collection('posts').doc(docId);
@@ -127,5 +122,40 @@ class SocialPostService extends BaseSocialMediaService {
         .snapshots();
 
     return snapshot;
+  }
+
+  @override
+  Future deletePost(String? postId) async {
+    try {
+      if (postId == null) {
+        return;
+      }
+      final postRef = _firestore.collection('posts').doc(postId);
+      await postRef.delete();
+      debugPrint("post has been deleted ");
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future editPost(String postId, Map<String, dynamic> payload) {
+    // TODO: implement editPost
+    throw UnimplementedError();
+  }
+
+  @override
+  Future updatePost(Map<String, dynamic> payload, String postId) async {
+    try {
+      if (FirebaseAuth.instance.currentUser == null) {
+        return;
+      }
+
+      debugPrint("UPdate post with ${payload} ${postId}");
+      await _firestore.collection('posts').doc(postId).update(payload);
+      return false;
+    } catch (e) {
+      rethrow;
+    }
   }
 }

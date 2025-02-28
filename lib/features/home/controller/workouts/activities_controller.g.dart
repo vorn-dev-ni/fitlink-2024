@@ -7,7 +7,7 @@ part of 'activities_controller.dart';
 // **************************************************************************
 
 String _$activitiesControllerHash() =>
-    r'b9b742ad133fc7c0532dd0a1c2831060247cd846';
+    r'3e55dfd6979c74de7e4a4754de6fd0e9a3278f95';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -33,9 +33,11 @@ class _SystemHash {
 abstract class _$ActivitiesController
     extends BuildlessAsyncNotifier<List<WorkoutExcerciseResponse>?> {
   late final DateTime? date;
+  late final String userId;
 
   FutureOr<List<WorkoutExcerciseResponse>?> build(
     DateTime? date,
+    String userId,
   );
 }
 
@@ -52,9 +54,11 @@ class ActivitiesControllerFamily
   /// See also [ActivitiesController].
   ActivitiesControllerProvider call(
     DateTime? date,
+    String userId,
   ) {
     return ActivitiesControllerProvider(
       date,
+      userId,
     );
   }
 
@@ -64,6 +68,7 @@ class ActivitiesControllerFamily
   ) {
     return call(
       provider.date,
+      provider.userId,
     );
   }
 
@@ -88,8 +93,11 @@ class ActivitiesControllerProvider extends AsyncNotifierProviderImpl<
   /// See also [ActivitiesController].
   ActivitiesControllerProvider(
     DateTime? date,
+    String userId,
   ) : this._internal(
-          () => ActivitiesController()..date = date,
+          () => ActivitiesController()
+            ..date = date
+            ..userId = userId,
           from: activitiesControllerProvider,
           name: r'activitiesControllerProvider',
           debugGetCreateSourceHash:
@@ -100,6 +108,7 @@ class ActivitiesControllerProvider extends AsyncNotifierProviderImpl<
           allTransitiveDependencies:
               ActivitiesControllerFamily._allTransitiveDependencies,
           date: date,
+          userId: userId,
         );
 
   ActivitiesControllerProvider._internal(
@@ -110,9 +119,11 @@ class ActivitiesControllerProvider extends AsyncNotifierProviderImpl<
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.date,
+    required this.userId,
   }) : super.internal();
 
   final DateTime? date;
+  final String userId;
 
   @override
   FutureOr<List<WorkoutExcerciseResponse>?> runNotifierBuild(
@@ -120,6 +131,7 @@ class ActivitiesControllerProvider extends AsyncNotifierProviderImpl<
   ) {
     return notifier.build(
       date,
+      userId,
     );
   }
 
@@ -128,13 +140,16 @@ class ActivitiesControllerProvider extends AsyncNotifierProviderImpl<
     return ProviderOverride(
       origin: this,
       override: ActivitiesControllerProvider._internal(
-        () => create()..date = date,
+        () => create()
+          ..date = date
+          ..userId = userId,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         date: date,
+        userId: userId,
       ),
     );
   }
@@ -147,13 +162,16 @@ class ActivitiesControllerProvider extends AsyncNotifierProviderImpl<
 
   @override
   bool operator ==(Object other) {
-    return other is ActivitiesControllerProvider && other.date == date;
+    return other is ActivitiesControllerProvider &&
+        other.date == date &&
+        other.userId == userId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, date.hashCode);
+    hash = _SystemHash.combine(hash, userId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -165,6 +183,9 @@ mixin ActivitiesControllerRef
     on AsyncNotifierProviderRef<List<WorkoutExcerciseResponse>?> {
   /// The parameter `date` of this provider.
   DateTime? get date;
+
+  /// The parameter `userId` of this provider.
+  String get userId;
 }
 
 class _ActivitiesControllerProviderElement extends AsyncNotifierProviderElement<
@@ -174,6 +195,8 @@ class _ActivitiesControllerProviderElement extends AsyncNotifierProviderElement<
 
   @override
   DateTime? get date => (origin as ActivitiesControllerProvider).date;
+  @override
+  String get userId => (origin as ActivitiesControllerProvider).userId;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

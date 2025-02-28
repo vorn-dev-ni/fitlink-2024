@@ -17,6 +17,30 @@ class NotificationRepo {
     }
   }
 
+  Future sendCommentLikedNotification(
+      {required String senderID,
+      required String receiverID,
+      required String postId}) async {
+    try {
+      await notificationBaseService.sendCommentNotification(
+          senderID, receiverID, postId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future sentFollowingNotification(
+      {required String senderID,
+      required String receiverID,
+      required String userId}) async {
+    try {
+      await notificationBaseService.sendFollowingNotification(
+          senderID, receiverID, userId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future sendLikeNotification(
       {required String senderID,
       required String receiverID,

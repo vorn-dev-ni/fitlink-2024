@@ -65,6 +65,20 @@ class Post {
     };
   }
 
+  Map<String, dynamic> toJsonUpdated() {
+    return {
+      "caption": caption,
+      "likesCount": likesCount,
+      "commentsCount": commentsCount,
+      if (imageUrl != null) "imageUrl": imageUrl,
+      if (tag != null) "tag": tag,
+      if (feeling != null) "feeling": feeling,
+      if (emoji != null) "emoji": emoji,
+      "type": type,
+      "updatedAt": FieldValue.serverTimestamp(),
+    };
+  }
+
   Post copyWith({
     String? postId,
     UserData? user,
@@ -80,6 +94,7 @@ class Post {
     String? feeling,
   }) {
     return Post(
+      postId: postId ?? this.postId,
       caption: caption ?? this.caption,
       commentsCount: commentsCount ?? this.commentsCount,
       type: type ?? this.type,
@@ -96,6 +111,9 @@ class Post {
 class UserData {
   String? id;
   String? avatar;
+  int? followingCount;
+  int? followerCount;
+  int? notificationCount;
   String? coverFeature;
   String? provider;
   String? bio;
@@ -114,6 +132,9 @@ class UserData {
       this.role,
       this.fullName,
       this.email,
+      this.followerCount = 0,
+      this.followingCount = 0,
+      this.notificationCount = 0,
       this.updatedAt,
       this.createdAt});
 
@@ -124,6 +145,9 @@ class UserData {
     provider = json['provider'];
     bio = json['bio'];
     id = json['id'];
+    followerCount = json['followerCount'];
+    followingCount = json['followingCount'];
+    notificationCount = json['notificationCount'];
     role = json['role'];
     fullName = json['fullName'];
     email = json['email'];

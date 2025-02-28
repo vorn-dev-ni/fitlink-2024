@@ -1,5 +1,6 @@
 import 'package:demo/common/model/user_model.dart';
 import 'package:demo/features/authentication/controller/auth_controller.dart';
+import 'package:demo/features/home/views/profile/profile_header.dart';
 import 'package:demo/features/home/views/single_profile/controller/single_user_controller.dart';
 import 'package:demo/features/home/views/profile/post/post_profile.dart';
 import 'package:demo/features/home/views/profile/video/video_profile.dart';
@@ -40,7 +41,9 @@ class _SingleProfileState extends ConsumerState<SingleProfile> {
         userId: uid ?? "",
       ),
       const VideoProfile(),
-      const WorkoutProfile(),
+      WorkoutProfile(
+        userId: uid ?? "",
+      ),
     ];
     _tabBarheaders = [
       Tab(
@@ -124,34 +127,34 @@ class _SingleProfileState extends ConsumerState<SingleProfile> {
     );
   }
 
-  Skeletonizer build_loading() {
+  Widget build_loading() {
     return Skeletonizer(
       enabled: true,
       ignorePointers: true,
       justifyMultiLineText: false,
+      // ignoreContainers: true,
       effect: const ShimmerEffect(
           highlightColor: Colors.white,
           baseColor: Color.fromARGB(212, 213, 213, 213)),
-      child: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SingleProfileHeader(
-            uid: "example",
-            onLogout: () {},
-          ),
-        ],
-        body: SafeArea(
-          child: Column(
-            children: [
-              TabBar(
-                tabAlignment: TabAlignment.center,
-                isScrollable: true,
-                indicatorSize: TabBarIndicatorSize.label,
-                dividerColor: Colors.transparent,
-                tabs: _tabBarheaders,
-                indicatorColor: AppColors.secondaryColor,
-              ),
-              renderView()
-            ],
+      child: SafeArea(
+        top: DeviceUtils.isIOS(),
+        child: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) =>
+              [ProfileHeader(onLogout: () {}, uid: uid)],
+          body: SafeArea(
+            child: Column(
+              children: [
+                TabBar(
+                  tabAlignment: TabAlignment.center,
+                  isScrollable: true,
+                  indicatorSize: TabBarIndicatorSize.label,
+                  dividerColor: Colors.transparent,
+                  tabs: _tabBarheaders,
+                  indicatorColor: AppColors.secondaryColor,
+                ),
+                renderView()
+              ],
+            ),
           ),
         ),
       ),
@@ -176,7 +179,9 @@ class _SingleProfileState extends ConsumerState<SingleProfile> {
           _screens = [
             PostProfile(userId: data['userId']),
             const VideoProfile(),
-            const WorkoutProfile(),
+            WorkoutProfile(
+              userId: data['userId'],
+            ),
           ];
         });
       } else {

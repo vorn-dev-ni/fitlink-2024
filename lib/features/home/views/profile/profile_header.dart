@@ -1,12 +1,13 @@
 import 'dart:io';
 import 'package:demo/common/model/transparent_container.dart';
+import 'package:demo/common/model/user_model.dart';
 import 'package:demo/common/widget/app_dialog.dart';
 import 'package:demo/common/widget/bottom_upload_sheet.dart';
 import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/common/widget/error_image_placeholder.dart';
 import 'package:demo/common/widget/image_modal_viewer.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
-import 'package:demo/features/home/views/single_profile/controller/single_user_controller.dart';
+import 'package:demo/features/home/views/single_profile/controller/media_tag_conroller.dart';
 import 'package:demo/features/home/views/profile/user_media.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
@@ -54,27 +55,7 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
             const SizedBox(
               height: Sizes.lg,
             ),
-            Skeletonizer(
-              enabled: showLoading,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.backgroundDark.withOpacity(0.4),
-                ),
-                margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
-                child: IconButton(
-                    padding: const EdgeInsets.all(0),
-                    onPressed: () {
-                      HelpersUtils.navigatorState(context)
-                          .pushNamed(AppPage.NotificationPath);
-                    },
-                    icon: const Icon(
-                      Icons.notifications,
-                      size: Sizes.xxl,
-                      color: AppColors.backgroundLight,
-                    )),
-              ),
-            ),
+            renderNotificationIcon(showLoading, context, currentUser?.id),
             Skeletonizer(
               enabled: showLoading,
               child: Container(
@@ -354,33 +335,7 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                 ),
                               ],
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 95.w,
-                                  child: transparentContainer(
-                                    child: Row(
-                                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                            child: userSocialMediaTab(
-                                                floatingText: '0',
-                                                type: 'Workouts')),
-                                        Expanded(
-                                            child: userSocialMediaTab(
-                                                floatingText: '0',
-                                                type: 'Followings')),
-                                        Expanded(
-                                            child: userSocialMediaTab(
-                                                floatingText: '0',
-                                                type: 'Followers'))
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            )
+                            RenderMediaStatus(currentUser)
                           ],
                         ),
                       ),
@@ -389,6 +344,153 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                 )),
           ),
         );
+      },
+    );
+  }
+
+  Widget renderNotificationIcon(
+      bool showLoading, BuildContext context, String? userId) {
+    final async = ref.watch(mediaTagConrollerProvider(userId ?? ""));
+    return Skeletonizer(
+      enabled: showLoading,
+      child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColors.backgroundDark.withOpacity(0.4),
+          ),
+          margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
+          child: async.when(
+            data: (data) {
+              return Stack(
+                children: [
+                  IconButton(
+                      padding: const EdgeInsets.all(0),
+                      onPressed: () {
+                        HelpersUtils.navigatorState(context)
+                            .pushNamed(AppPage.NotificationPath);
+                      },
+                      icon: const Icon(
+                        Icons.notifications,
+                        size: Sizes.xxl,
+                        color: AppColors.backgroundLight,
+                      )),
+                  if (data?.notificaitonCount != null &&
+                      data!.notificaitonCount! > 0)
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Badge(
+                        label: Text('${data!.notificaitonCount}'),
+                        backgroundColor: AppColors.errorColor,
+                        textColor: AppColors.backgroundLight,
+                        smallSize: 20,
+                      ),
+                    ),
+                ],
+              );
+            },
+            error: (error, stackTrace) {
+              return const Text('');
+            },
+            loading: () {
+              return Skeletonizer(
+                enabled: true,
+                child: Stack(
+                  children: [
+                    IconButton(
+                        padding: const EdgeInsets.all(0),
+                        onPressed: () {
+                          HelpersUtils.navigatorState(context)
+                              .pushNamed(AppPage.NotificationPath);
+                        },
+                        icon: const Icon(
+                          Icons.notifications,
+                          size: Sizes.xxl,
+                          color: AppColors.backgroundLight,
+                        )),
+                    const Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Badge(
+                        label: Text('3'),
+                        backgroundColor: AppColors.errorColor,
+                        textColor: AppColors.backgroundLight,
+                        smallSize: 20,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          )),
+    );
+  }
+
+  Widget RenderMediaStatus(AuthModel? currentUser) {
+    final async = ref.watch(mediaTagConrollerProvider(currentUser?.id ?? ""));
+    return async.when(
+      data: (data) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 95.w,
+              child: transparentContainer(
+                child: Row(
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                        child: userSocialMediaTab(
+                            floatingText: '${data?.workoutCounts ?? 0}',
+                            type: 'Workouts')),
+                    Expanded(
+                        child: userSocialMediaTab(
+                            floatingText: '${data?.followingCount ?? 0}',
+                            type: 'Followings')),
+                    Expanded(
+                        child: userSocialMediaTab(
+                            floatingText: '${data?.followerCount ?? 0}',
+                            type: 'Followers'))
+                  ],
+                ),
+              ),
+            )
+          ],
+        );
+      },
+      loading: () {
+        return Skeletonizer(
+          enabled: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 95.w,
+                child: transparentContainer(
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                          child: userSocialMediaTab(
+                              floatingText: '0', type: 'Workouts')),
+                      Expanded(
+                          child: userSocialMediaTab(
+                              floatingText: '${currentUser?.followingCount}',
+                              type: 'Followings')),
+                      Expanded(
+                          child: userSocialMediaTab(
+                              floatingText: '${currentUser?.followerCount}',
+                              type: 'Followers'))
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+      error: (error, stackTrace) {
+        return emptyContent(title: error.toString());
       },
     );
   }

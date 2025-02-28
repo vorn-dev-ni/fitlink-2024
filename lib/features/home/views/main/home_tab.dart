@@ -1,9 +1,10 @@
+import 'package:demo/common/widget/app_loading.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
-import 'package:demo/features/home/controller/event/events_listing_controller.dart';
 import 'package:demo/features/home/controller/posts/social_post_controller.dart';
 import 'package:demo/features/home/controller/tab/event_scroll_controller.dart';
 import 'package:demo/features/home/controller/tab/home_scroll_controller.dart';
+import 'package:demo/features/home/controller/tab/tab_loading.dart';
 import 'package:demo/features/home/views/main/event/event.dart';
 import 'package:demo/features/home/views/main/my_home/social_media.dart';
 import 'package:demo/features/home/views/main/work_out/workout_tab.dart';
@@ -31,6 +32,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
     WorkoutTab(),
     EventTabs(),
   ];
+  int _previousTabIndex = 0; // Store previous tab index
 
   @override
   void didChangeDependencies() {
@@ -79,69 +81,70 @@ class _HomeTabState extends ConsumerState<HomeTab>
   }
 
   Widget tabBarHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: Sizes.xl),
-          child: Assets.utils.fitlinkLogo
-              .image(fit: BoxFit.contain, width: 70, height: 70),
-        ),
-        Expanded(
-          child: TabBar(
-            controller: _tabController,
-            onTap: (value) {
-              switch (value) {
-                case 0:
-                  ref.read(homeScrollControllerProvider.notifier).scrollToTop(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.bounceIn);
-                  ref.invalidate(socialPostControllerProvider);
-                  break;
-                case 2:
-                  ref.read(eventScrollControllerProvider.notifier).scrollToTop(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.bounceIn);
-                  ref.invalidate(eventsListingControllerProvider);
-                  break;
-                default:
-                  break;
-              }
-            },
-            indicatorColor: Colors.transparent,
-            indicatorSize: TabBarIndicatorSize.label,
-            isScrollable: true,
-            tabAlignment: TabAlignment.center,
-            labelStyle: AppTextTheme.lightTextTheme.labelLarge,
-            overlayColor:
-                const WidgetStatePropertyAll(AppColors.backgroundLight),
-            dividerColor: Colors.transparent,
-            indicatorWeight: 1,
-            labelPadding: const EdgeInsets.all(Sizes.sm),
-            labelColor: AppColors.secondaryColor,
-            unselectedLabelColor: AppColors.neutralDark,
-            tabs: const [
-              Tab(
-                text: 'Home',
-              ),
-              Tab(text: 'Workout'),
-              Tab(text: 'Event'),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: Sizes.sm),
-          child: IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.search,
-              size: Sizes.iconMd,
-              color: Color.fromARGB(255, 180, 184, 190),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: Sizes.xl),
+              child: Assets.utils.fitlinkLogo
+                  .image(fit: BoxFit.contain, width: 70, height: 70),
             ),
-          ),
+            Expanded(
+              child: TabBar(
+                controller: _tabController,
+                onTap: (value) {},
+                indicatorColor: Colors.transparent,
+                indicatorSize: TabBarIndicatorSize.label,
+                isScrollable: true,
+                tabAlignment: TabAlignment.center,
+                labelStyle: AppTextTheme.lightTextTheme.labelLarge,
+                overlayColor:
+                    const WidgetStatePropertyAll(AppColors.backgroundLight),
+                dividerColor: Colors.transparent,
+                indicatorWeight: 1,
+                labelPadding: const EdgeInsets.all(Sizes.sm),
+                labelColor: AppColors.secondaryColor,
+                unselectedLabelColor: AppColors.neutralDark,
+                tabs: [
+                  GestureDetector(
+                    onTap: () => _handleRefreshTab(0),
+                    child: const Tab(
+                      text: 'Home',
+                    ),
+                  ),
+                  const Tab(text: 'Workout'),
+                  GestureDetector(
+                      onTap: () => _handleRefreshTab(2),
+                      child: const Tab(text: 'Event')),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: Sizes.sm),
+              child: IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.search,
+                  size: Sizes.iconMd,
+                  color: Color.fromARGB(255, 180, 184, 190),
+                ),
+              ),
+            ),
+          ],
         ),
+        renderLoading(),
       ],
     );
+  }
+
+  Widget renderLoading() {
+    final isLoading = ref.watch(tabLoadingControllerProvider);
+    return isLoading
+        ? Positioned.fill(
+            left: 0, right: 0, top: 45, child: appLoadingSpinner())
+        : const SizedBox();
   }
 
   Expanded tabBarContent() {
@@ -151,5 +154,32 @@ class _HomeTabState extends ConsumerState<HomeTab>
         children: _screens,
       ),
     );
+  }
+
+  void _handleRefreshTab(int index) {
+    _tabController.animateTo(index);
+    if (_tabController.index == index &&
+        _tabController.indexIsChanging == false) {
+      ref.read(tabLoadingControllerProvider.notifier).setState(true);
+
+      switch (index) {
+        case 0:
+          ref.read(homeScrollControllerProvider.notifier).scrollToTop(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.bounceIn);
+          ref.invalidate(socialPostControllerProvider);
+          break;
+        case 2:
+          ref.read(eventScrollControllerProvider.notifier).scrollToTop(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.bounceIn);
+          ref.invalidate(eventScrollControllerProvider);
+          break;
+      }
+
+      Future.delayed(const Duration(seconds: 1), () {
+        ref.read(tabLoadingControllerProvider.notifier).setState(false);
+      });
+    }
   }
 }

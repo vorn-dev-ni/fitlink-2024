@@ -15,12 +15,13 @@ class ActivitiesController extends _$ActivitiesController {
   late ActivitiesRepository activitiesRepository;
 
   @override
-  Future<List<WorkoutExcerciseResponse>?> build(DateTime? date) async {
+  Future<List<WorkoutExcerciseResponse>?> build(
+      DateTime? date, String userId) async {
     activitiesRepository = ActivitiesRepository(
         baseService:
             ActivitiesService(firebaseAuthService: FirebaseAuthService()));
     if (date != null) {
-      return getWorkout(date);
+      return getWorkout(date, userId);
     }
     return null;
   }
@@ -57,7 +58,8 @@ class ActivitiesController extends _$ActivitiesController {
           DateTime(datetime!.year, datetime.month, datetime.day);
       await activitiesRepository.updateWorkoutProcess(
           workoutId: workoutId!, date: normalizedDate);
-      ref.invalidate(activitiesControllerProvider(datetime));
+      ref.invalidate(activitiesControllerProvider(
+          datetime, FirebaseAuth.instance.currentUser?.uid ?? ""));
     } catch (e) {
       Fluttertoast.showToast(
           msg: e.toString(),
@@ -70,10 +72,11 @@ class ActivitiesController extends _$ActivitiesController {
     }
   }
 
-  FutureOr<List<WorkoutExcerciseResponse>?> getWorkout(DateTime date) async {
+  FutureOr<List<WorkoutExcerciseResponse>?> getWorkout(
+      DateTime date, String userId) async {
     try {
       return await activitiesRepository.getUserActivities(
-          date: date, uid: FirebaseAuth.instance.currentUser!.uid);
+          date: date, uid: userId);
     } catch (e) {
       rethrow;
     }

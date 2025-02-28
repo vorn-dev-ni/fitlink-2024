@@ -1,13 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'single_user_controller.dart';
+part of 'media_tag_conroller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$singleUserControllerHash() =>
-    r'a66d7222386f5cbd7e18136136986fbacce0cf4e';
+String _$mediaTagConrollerHash() => r'a0b0cd6ba133499a76ee17e47f6e2d3c46ebaea7';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,36 +29,35 @@ class _SystemHash {
   }
 }
 
-abstract class _$SingleUserController
-    extends BuildlessAsyncNotifier<AuthModel?> {
+abstract class _$MediaTagConroller extends BuildlessAsyncNotifier<MediaCount?> {
   late final String uid;
 
-  FutureOr<AuthModel?> build(
+  FutureOr<MediaCount?> build(
     String uid,
   );
 }
 
-/// See also [SingleUserController].
-@ProviderFor(SingleUserController)
-const singleUserControllerProvider = SingleUserControllerFamily();
+/// See also [MediaTagConroller].
+@ProviderFor(MediaTagConroller)
+const mediaTagConrollerProvider = MediaTagConrollerFamily();
 
-/// See also [SingleUserController].
-class SingleUserControllerFamily extends Family<AsyncValue<AuthModel?>> {
-  /// See also [SingleUserController].
-  const SingleUserControllerFamily();
+/// See also [MediaTagConroller].
+class MediaTagConrollerFamily extends Family<AsyncValue<MediaCount?>> {
+  /// See also [MediaTagConroller].
+  const MediaTagConrollerFamily();
 
-  /// See also [SingleUserController].
-  SingleUserControllerProvider call(
+  /// See also [MediaTagConroller].
+  MediaTagConrollerProvider call(
     String uid,
   ) {
-    return SingleUserControllerProvider(
+    return MediaTagConrollerProvider(
       uid,
     );
   }
 
   @override
-  SingleUserControllerProvider getProviderOverride(
-    covariant SingleUserControllerProvider provider,
+  MediaTagConrollerProvider getProviderOverride(
+    covariant MediaTagConrollerProvider provider,
   ) {
     return call(
       provider.uid,
@@ -78,30 +76,30 @@ class SingleUserControllerFamily extends Family<AsyncValue<AuthModel?>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'singleUserControllerProvider';
+  String? get name => r'mediaTagConrollerProvider';
 }
 
-/// See also [SingleUserController].
-class SingleUserControllerProvider
-    extends AsyncNotifierProviderImpl<SingleUserController, AuthModel?> {
-  /// See also [SingleUserController].
-  SingleUserControllerProvider(
+/// See also [MediaTagConroller].
+class MediaTagConrollerProvider
+    extends AsyncNotifierProviderImpl<MediaTagConroller, MediaCount?> {
+  /// See also [MediaTagConroller].
+  MediaTagConrollerProvider(
     String uid,
   ) : this._internal(
-          () => SingleUserController()..uid = uid,
-          from: singleUserControllerProvider,
-          name: r'singleUserControllerProvider',
+          () => MediaTagConroller()..uid = uid,
+          from: mediaTagConrollerProvider,
+          name: r'mediaTagConrollerProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$singleUserControllerHash,
-          dependencies: SingleUserControllerFamily._dependencies,
+                  : _$mediaTagConrollerHash,
+          dependencies: MediaTagConrollerFamily._dependencies,
           allTransitiveDependencies:
-              SingleUserControllerFamily._allTransitiveDependencies,
+              MediaTagConrollerFamily._allTransitiveDependencies,
           uid: uid,
         );
 
-  SingleUserControllerProvider._internal(
+  MediaTagConrollerProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -114,8 +112,8 @@ class SingleUserControllerProvider
   final String uid;
 
   @override
-  FutureOr<AuthModel?> runNotifierBuild(
-    covariant SingleUserController notifier,
+  FutureOr<MediaCount?> runNotifierBuild(
+    covariant MediaTagConroller notifier,
   ) {
     return notifier.build(
       uid,
@@ -123,10 +121,10 @@ class SingleUserControllerProvider
   }
 
   @override
-  Override overrideWith(SingleUserController Function() create) {
+  Override overrideWith(MediaTagConroller Function() create) {
     return ProviderOverride(
       origin: this,
-      override: SingleUserControllerProvider._internal(
+      override: MediaTagConrollerProvider._internal(
         () => create()..uid = uid,
         from: from,
         name: null,
@@ -139,14 +137,13 @@ class SingleUserControllerProvider
   }
 
   @override
-  AsyncNotifierProviderElement<SingleUserController, AuthModel?>
-      createElement() {
-    return _SingleUserControllerProviderElement(this);
+  AsyncNotifierProviderElement<MediaTagConroller, MediaCount?> createElement() {
+    return _MediaTagConrollerProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is SingleUserControllerProvider && other.uid == uid;
+    return other is MediaTagConrollerProvider && other.uid == uid;
   }
 
   @override
@@ -160,18 +157,18 @@ class SingleUserControllerProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin SingleUserControllerRef on AsyncNotifierProviderRef<AuthModel?> {
+mixin MediaTagConrollerRef on AsyncNotifierProviderRef<MediaCount?> {
   /// The parameter `uid` of this provider.
   String get uid;
 }
 
-class _SingleUserControllerProviderElement
-    extends AsyncNotifierProviderElement<SingleUserController, AuthModel?>
-    with SingleUserControllerRef {
-  _SingleUserControllerProviderElement(super.provider);
+class _MediaTagConrollerProviderElement
+    extends AsyncNotifierProviderElement<MediaTagConroller, MediaCount?>
+    with MediaTagConrollerRef {
+  _MediaTagConrollerProviderElement(super.provider);
 
   @override
-  String get uid => (origin as SingleUserControllerProvider).uid;
+  String get uid => (origin as MediaTagConrollerProvider).uid;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

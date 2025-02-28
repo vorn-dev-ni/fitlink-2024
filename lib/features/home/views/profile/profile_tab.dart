@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/common/model/user_model.dart';
 import 'package:demo/common/widget/backdrop_loading.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
@@ -10,10 +9,8 @@ import 'package:demo/features/home/controller/navbar_controller.dart';
 import 'package:demo/features/home/controller/posts/social_post_controller.dart';
 import 'package:demo/features/home/controller/posts/user_like_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
+import 'package:demo/features/home/views/single_profile/controller/media_tag_conroller.dart';
 import 'package:demo/features/home/views/single_profile/controller/single_user_controller.dart';
-import 'package:demo/features/home/controller/profile/user_form_controller.dart';
-import 'package:demo/features/home/views/profile/events/event_profile.dart';
-import 'package:demo/features/home/views/profile/favorites/favorite_profile.dart';
 import 'package:demo/features/home/views/profile/post/post_profile.dart';
 import 'package:demo/features/home/views/profile/profile_header.dart';
 import 'package:demo/features/home/views/profile/video/video_profile.dart';
@@ -60,7 +57,9 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
         userId: uid ?? "",
       ),
       const VideoProfile(),
-      const WorkoutProfile(),
+      WorkoutProfile(
+        userId: uid ?? "",
+      ),
     ];
     _tabBarheaders = [
       Tab(
@@ -89,60 +88,66 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
   @override
   Widget build(BuildContext context) {
     final asyncUser = ref.watch(profileUserControllerProvider);
+    final isLoading = ref.watch(appLoadingStateProvider);
     return DefaultTabController(
       length: _screens.length,
-      child: Scaffold(
-          body: asyncUser.when(
-        data: (data) {
-          final emailExisted = data?.email;
-          return SafeArea(
-            top: DeviceUtils.isIOS(),
-            child: NestedScrollView(
-              floatHeaderSlivers: false,
-              headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                ProfileHeader(
-                  uid: data?.id ?? "",
-                  onLogout: () async {
-                    await handleLogout();
-                  },
-                ),
-              ],
-              body: Skeletonizer(
-                enabled: emailExisted == null ? true : false,
-                child: Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(top: Sizes.sm),
-                      color: Colors.white,
-                      child: TabBar(
-                        tabAlignment: TabAlignment.start,
-                        isScrollable: true,
-                        indicatorSize: TabBarIndicatorSize.label,
-                        dividerColor: Colors.transparent,
-                        tabs: _tabBarheaders,
-                        indicatorColor: AppColors.secondaryColor,
-                      ),
+      child: Stack(
+        children: [
+          Scaffold(
+              body: asyncUser.when(
+            data: (data) {
+              final emailExisted = data?.email;
+              return SafeArea(
+                top: DeviceUtils.isIOS(),
+                child: NestedScrollView(
+                  floatHeaderSlivers: false,
+                  headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                    ProfileHeader(
+                      uid: data?.id ?? "",
+                      onLogout: () async {
+                        await handleLogout();
+                      },
                     ),
-                    renderView(),
                   ],
+                  body: Skeletonizer(
+                    enabled: emailExisted == null ? true : false,
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: Sizes.sm),
+                          color: Colors.white,
+                          child: TabBar(
+                            tabAlignment: TabAlignment.start,
+                            isScrollable: true,
+                            indicatorSize: TabBarIndicatorSize.label,
+                            dividerColor: Colors.transparent,
+                            tabs: _tabBarheaders,
+                            indicatorColor: AppColors.secondaryColor,
+                          ),
+                        ),
+                        renderView(),
+                      ],
+                    ),
+                  ),
                 ),
+              );
+            },
+            error: (error, stackTrace) => Center(
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                error.toString(),
+                style: AppTextTheme.lightTextTheme.bodyMedium
+                    ?.copyWith(color: AppColors.errorColor),
               ),
-            ),
-          );
-        },
-        error: (error, stackTrace) => Center(
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            error.toString(),
-            style: AppTextTheme.lightTextTheme.bodyMedium
-                ?.copyWith(color: AppColors.errorColor),
-          ),
-        )),
-        loading: () {
-          return build_loading();
-        },
-      )),
+            )),
+            loading: () {
+              return build_loading();
+            },
+          )),
+          if (isLoading) backDropLoading()
+        ],
+      ),
     );
   }
 
@@ -154,28 +159,31 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
       effect: const ShimmerEffect(
           highlightColor: Colors.white,
           baseColor: Color.fromARGB(212, 213, 213, 213)),
-      child: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          ProfileHeader(
-            uid: "example",
-            onLogout: () {
-              // handleLogout();
-            },
-          ),
-        ],
-        body: SafeArea(
-          child: Column(
-            children: [
-              TabBar(
-                tabAlignment: TabAlignment.center,
-                isScrollable: true,
-                indicatorSize: TabBarIndicatorSize.label,
-                dividerColor: Colors.transparent,
-                tabs: _tabBarheaders,
-                indicatorColor: AppColors.secondaryColor,
-              ),
-              renderView()
-            ],
+      child: SafeArea(
+        top: DeviceUtils.isIOS(),
+        child: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            ProfileHeader(
+              uid: "example",
+              onLogout: () {
+                // handleLogout();
+              },
+            ),
+          ],
+          body: SafeArea(
+            child: Column(
+              children: [
+                TabBar(
+                  tabAlignment: TabAlignment.center,
+                  isScrollable: true,
+                  indicatorSize: TabBarIndicatorSize.label,
+                  dividerColor: Colors.transparent,
+                  tabs: _tabBarheaders,
+                  indicatorColor: AppColors.secondaryColor,
+                ),
+                renderView()
+              ],
+            ),
           ),
         ),
       ),
@@ -206,8 +214,9 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
       ref.invalidate(loginControllerProvider);
       ref.invalidate(socialPostControllerProvider);
       ref.invalidate(userLikeControllerProvider);
-      ref.invalidate(profileUserControllerProvider);
+      ref.invalidate(mediaTagConrollerProvider);
       await authController.logout();
+      ref.invalidate(profileUserControllerProvider);
     }
   }
 

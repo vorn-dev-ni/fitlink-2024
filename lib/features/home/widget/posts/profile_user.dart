@@ -27,6 +27,7 @@ class ProfileHeader extends ConsumerStatefulWidget {
   final bool showBackButton;
   final UserData? user;
   final Comment? comment;
+  final VoidCallback? onPressThreeDot;
   final Post? post;
   final BuildContext? context;
   final String? desc;
@@ -35,6 +36,7 @@ class ProfileHeader extends ConsumerStatefulWidget {
     Key? key,
     required this.user,
     this.postId,
+    this.onPressThreeDot,
     this.post,
     this.comment,
     required this.imageUrl,
@@ -150,7 +152,12 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
           if (widget.type == ProfileType.profile &&
               widget.post?.user?.id == FirebaseAuth.instance.currentUser?.uid)
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                debugPrint("Rn");
+                widget.onPressThreeDot != null
+                    ? widget.onPressThreeDot!()
+                    : null;
+              },
               icon: const Icon(
                 CupertinoIcons.ellipsis,
                 size: Sizes.iconMd,
@@ -222,19 +229,22 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                         color: const Color.fromARGB(255, 170, 173, 178),
                       ),
                     ),
-                    const TextSpan(
-                      text: 'is',
-                    ),
-                    TextSpan(
-                      text: ' ${widget.post?.emoji} ',
-                    ),
-                    const TextSpan(
-                      text: 'feeling ',
-                    ),
-                    TextSpan(
-                      text: widget.post?.feeling,
-                      style: const TextStyle(fontWeight: FontWeight.w500),
-                    ),
+                    if (widget.post?.feeling != "")
+                      TextSpan(children: [
+                        const TextSpan(
+                          text: 'is',
+                        ),
+                        TextSpan(
+                          text: ' ${widget.post?.emoji} ',
+                        ),
+                        const TextSpan(
+                          text: 'feeling ',
+                        ),
+                        TextSpan(
+                          text: widget.post?.feeling,
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                      ])
                   ],
                 ),
               ),
@@ -291,6 +301,7 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
             .toggleUserLikes(
                 likes: widget.comment?.likesCount ?? 0,
                 hasLiked: isCurrentlyLiked,
+                receiverID: widget.comment?.user?.id ?? "",
                 id: widget.comment!.commentId,
                 parentId: widget.postId!);
       } else {
@@ -301,6 +312,7 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
             .toggleUserLikes(
                 likes: widget.comment?.likesCount ?? 0,
                 hasLiked: isCurrentlyLiked,
+                receiverID: widget.comment?.user?.id ?? "",
                 id: widget.comment!.commentId,
                 parentId: widget.postId!);
       }

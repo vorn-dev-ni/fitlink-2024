@@ -28,16 +28,20 @@ import 'package:lottie/lottie.dart';
 class PostPanel extends ConsumerStatefulWidget {
   final bool showHeader;
   final String? url;
+  final bool? showEditable;
   final VoidCallback? twoFingersOn;
   final VoidCallback? twoFingersOff;
+  final VoidCallback? pressThreedot;
   final Post post;
   final bool? isComment;
   const PostPanel({
     this.isComment = false,
+    this.pressThreedot,
     this.showHeader = true,
     this.twoFingersOff,
     required this.post,
     this.url,
+    this.showEditable = false,
     this.twoFingersOn,
     Key? key,
   }) : super(key: key);
@@ -148,7 +152,12 @@ class _PostPanelState extends ConsumerState<PostPanel>
               desc: widget.post.tag ?? "",
               user: widget.post.user,
               imageUrl: widget.post.user?.avatar ?? "",
-              type: ProfileType.profile,
+              type: widget.showEditable == false
+                  ? ProfileType.header
+                  : ProfileType.profile,
+              onPressThreeDot: () {
+                widget.pressThreedot!();
+              },
               post: widget.post,
               context: null),
         if (widget.post.imageUrl != null && widget.post.imageUrl != "")
@@ -312,19 +321,24 @@ class _PostPanelState extends ConsumerState<PostPanel>
     setState(() {});
   }
 
-  void checkUserLiked() async {
-    streamAuthState = _firebaseAuthService.authStateChanges.listen(
-      (user) async {
-        final email = LocalStorageUtils().getKey('email');
-        if (email != null && email != "") {
-          final result = await ref
-              .read(socialPostControllerProvider.notifier)
-              .isUserLiked(widget.post.postId ?? "");
-          ref
-              .read(userLikeControllerProvider(widget.post.postId).notifier)
-              .setLikeStatus(result);
-        }
-      },
-    );
+  void checkUserLiked() {
+    if (mounted) {
+      streamAuthState = _firebaseAuthService.authStateChanges.listen(
+        (user) async {
+          final email = LocalStorageUtils().getKey('email');
+          if (email != null && email != "") {
+            final result = await ref
+                .read(socialPostControllerProvider.notifier)
+                .isUserLiked(widget.post.postId ?? "");
+
+            if (mounted) {
+              ref
+                  .read(userLikeControllerProvider(widget.post.postId).notifier)
+                  .setLikeStatus(result);
+            }
+          }
+        },
+      );
+    }
   }
 }

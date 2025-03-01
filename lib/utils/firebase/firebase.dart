@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 Future<void> initializeFirebaseApp(
     FirebaseOptions DefaultFirebaseOptions) async {
@@ -73,17 +74,20 @@ AppException handleFirebaseErrorResponse(FirebaseException exception) {
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint(
       "---------------------On Background Message when app is killed or in background mode --------------------");
-  debugPrint("Message data: ${message.data}");
+  debugPrint("Message data: ${message.messageId}");
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp();
   } // You can access message.notification, message.data, etc.
   if (message.notification != null) {
-    debugPrint('Notification Title: ${message.notification!.title}');
-    debugPrint('Notification Body: ${message.notification!.body}');
+    debugPrint('Notification Title: ${message.notification?.title}');
+    debugPrint('Notification Body: ${message.notification?.body}');
+  }
+  try {
     String title = message.notification!.title!;
     String body = message.notification!.body!;
-
-    await NotificationService()
-        .showNotification(id: 100, title: title, body: body);
+    await NotificationService().showNotification(
+        id: message.notification.hashCode, title: title, body: body);
+  } catch (e) {
+    Fluttertoast.showToast(msg: e.toString());
   }
 }

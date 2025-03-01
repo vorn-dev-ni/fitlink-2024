@@ -27,7 +27,7 @@ class _NotificationMainState extends State<NotificationMain> {
                 label: const Text('Send With Payload'),
                 onPressed: () async {
                   await GlobalConfig.notificationService.showNotification(
-                      id: 1, body: 'This is desc', title: 'Hello World');
+                      id: 12, body: 'This is desc', title: 'Hello World');
                 },
               ),
             )

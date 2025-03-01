@@ -11,6 +11,7 @@ import 'package:demo/features/home/views/main/work_out/workout_tab.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/sizes.dart';
+import 'package:demo/utils/helpers/permission_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

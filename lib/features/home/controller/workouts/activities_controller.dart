@@ -1,6 +1,7 @@
 import 'package:demo/data/repository/firebase/activities_repo.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/activities/activities_service.dart';
+import 'package:demo/features/home/controller/logout_controller.dart';
 import 'package:demo/features/home/model/workout_activity.dart';
 import 'package:demo/model/workouts/workout_response.dart';
 import 'package:demo/utils/constant/app_colors.dart';
@@ -20,6 +21,8 @@ class ActivitiesController extends _$ActivitiesController {
     activitiesRepository = ActivitiesRepository(
         baseService:
             ActivitiesService(firebaseAuthService: FirebaseAuthService()));
+    debugPrint("re build activity controler ${date} ${userId}");
+
     if (date != null) {
       return getWorkout(date, userId);
     }
@@ -37,6 +40,12 @@ class ActivitiesController extends _$ActivitiesController {
           uid: FirebaseAuth.instance.currentUser!.uid,
           workoutId: workoutId,
           activities: activities);
+
+      debugPrint(
+          "addWorkout with date ${date} ${FirebaseAuth.instance.currentUser?.uid}");
+
+      ref.invalidate(activitiesControllerProvider(
+          date, FirebaseAuth.instance.currentUser?.uid ?? ""));
     } catch (e) {
       Fluttertoast.showToast(
           msg: e.toString(),
@@ -58,6 +67,8 @@ class ActivitiesController extends _$ActivitiesController {
           DateTime(datetime!.year, datetime.month, datetime.day);
       await activitiesRepository.updateWorkoutProcess(
           workoutId: workoutId!, date: normalizedDate);
+      debugPrint(
+          "updateWorkoutCompleted with date ${normalizedDate} ${FirebaseAuth.instance.currentUser?.uid}");
       ref.invalidate(activitiesControllerProvider(
           datetime, FirebaseAuth.instance.currentUser?.uid ?? ""));
     } catch (e) {
@@ -73,10 +84,13 @@ class ActivitiesController extends _$ActivitiesController {
   }
 
   FutureOr<List<WorkoutExcerciseResponse>?> getWorkout(
-      DateTime date, String userId) async {
+      DateTime date, String? userId) async {
     try {
+      debugPrint("activite x2 date is ${date} ${userId}");
+
       return await activitiesRepository.getUserActivities(
-          date: date, uid: userId);
+          date: date,
+          uid: userId == "" ? FirebaseAuth.instance.currentUser?.uid : userId);
     } catch (e) {
       rethrow;
     }

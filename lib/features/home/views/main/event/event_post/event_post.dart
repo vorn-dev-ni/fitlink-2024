@@ -26,6 +26,7 @@ import 'package:demo/utils/device/device_utils.dart';
 import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/formatters/formatter_utils.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
+import 'package:demo/utils/helpers/permission_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:demo/utils/validation/event_create_validation.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -626,6 +627,9 @@ class _EventPostingState extends ConsumerState<EventPosting> {
 
   void _uploadingImage(UploadType type) async {
     try {
+      // type == UploadType.camera
+      //     ? PermissionUtils.checkCameraPermission(context)
+      //     : PermissionUtils.checkGalleryPermission(context);
       File? fileImage = await HelpersUtils.pickImage(
           type == UploadType.photo ? ImageSource.gallery : ImageSource.camera);
       setState(() {
@@ -648,6 +652,7 @@ class _EventPostingState extends ConsumerState<EventPosting> {
         HelpersUtils.showErrorSnackbar(
             duration: 3000, context, 'Oop!', e.message, StatusSnackbar.failed);
       }
+      isUploading = false;
     } finally {
       setState(() {});
       isUploading = false;
@@ -817,6 +822,7 @@ class _EventPostingState extends ConsumerState<EventPosting> {
 
   void navigateToMap() {
     resetFocusScope();
+
     HelpersUtils.navigatorState(context).push(MaterialPageRoute(
       builder: (context) => const EventSelectMap(),
     ));

@@ -410,6 +410,7 @@ class NavbarController extends _$NavbarController {
             );
           }
         }
+
         return e;
       },
     ).toList();

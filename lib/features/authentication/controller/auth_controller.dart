@@ -105,8 +105,12 @@ class AuthController {
   }
 
   Future<void> logout() async {
+    try {
+      await _authLoginRepository.logoutUser();
+    } catch (e) {
+      rethrow;
+    }
     // await FirebaseFirestore.instance.clearPersistence();
-    await _authLoginRepository.logoutUser();
   }
 
   Future loginWithGoogle() async {

@@ -7,7 +7,7 @@ part of 'profile_post_controller.dart';
 // **************************************************************************
 
 String _$profilePostControllerHash() =>
-    r'341e7adc15365d5c829200faa3fb2b76b5cc084a';
+    r'8bf7037fc3a2b5b6c9c92e3caf29888d739d0c21';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -32,10 +32,10 @@ class _SystemHash {
 
 abstract class _$ProfilePostController
     extends BuildlessStreamNotifier<List<Post>?> {
-  late final String uid;
+  late final String? uid;
 
   Stream<List<Post>?> build(
-    String uid,
+    String? uid,
   );
 }
 
@@ -50,7 +50,7 @@ class ProfilePostControllerFamily extends Family<AsyncValue<List<Post>?>> {
 
   /// See also [ProfilePostController].
   ProfilePostControllerProvider call(
-    String uid,
+    String? uid,
   ) {
     return ProfilePostControllerProvider(
       uid,
@@ -86,7 +86,7 @@ class ProfilePostControllerProvider
     extends StreamNotifierProviderImpl<ProfilePostController, List<Post>?> {
   /// See also [ProfilePostController].
   ProfilePostControllerProvider(
-    String uid,
+    String? uid,
   ) : this._internal(
           () => ProfilePostController()..uid = uid,
           from: profilePostControllerProvider,
@@ -111,7 +111,7 @@ class ProfilePostControllerProvider
     required this.uid,
   }) : super.internal();
 
-  final String uid;
+  final String? uid;
 
   @override
   Stream<List<Post>?> runNotifierBuild(
@@ -162,7 +162,7 @@ class ProfilePostControllerProvider
 // ignore: unused_element
 mixin ProfilePostControllerRef on StreamNotifierProviderRef<List<Post>?> {
   /// The parameter `uid` of this provider.
-  String get uid;
+  String? get uid;
 }
 
 class _ProfilePostControllerProviderElement
@@ -171,7 +171,7 @@ class _ProfilePostControllerProviderElement
   _ProfilePostControllerProviderElement(super.provider);
 
   @override
-  String get uid => (origin as ProfilePostControllerProvider).uid;
+  String? get uid => (origin as ProfilePostControllerProvider).uid;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

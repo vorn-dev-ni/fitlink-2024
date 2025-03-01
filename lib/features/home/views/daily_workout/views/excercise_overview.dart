@@ -99,6 +99,14 @@ class _SliverAppBarExampleState extends ConsumerState<ExcerciseOverviewScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                // Text(
+                //   'date  ${workouts['date']}',
+                //   style: TextStyle(color: AppColors.backgroundLight),
+                // ),
+                // Text(
+                //   'date ${ref.read(workoutDateControllerProvider)}',
+                //   style: TextStyle(color: AppColors.backgroundLight),
+                // ),
                 Text(
                   workouts['title'],
                   // textAlign: TextAlign.start,
@@ -254,10 +262,11 @@ class _SliverAppBarExampleState extends ConsumerState<ExcerciseOverviewScreen> {
       if (!HelpersUtils.isAuthenticated(context)) {
         return;
       }
-      final selectedDate = ref.read(workoutDateControllerProvider);
+      final selectedDate = workouts['date'];
 
       ref.read(appLoadingStateProvider.notifier).setState(true);
-
+      DateTime normalizedDate =
+          DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
       await ref
           .read(activitiesControllerProvider(
                   null, FirebaseAuth.instance.currentUser?.uid ?? "")
@@ -266,13 +275,11 @@ class _SliverAppBarExampleState extends ConsumerState<ExcerciseOverviewScreen> {
               uid: FirebaseAuth.instance.currentUser!.uid,
               activities: null,
               workoutId: workouts['docId'],
-              date: selectedDate);
+              date: normalizedDate);
 
       if (mounted) {
-        DateTime normalizedDate =
-            DateTime(selectedDate!.year, selectedDate.month, selectedDate.day);
-        ref.invalidate(activitiesControllerProvider(
-            normalizedDate, FirebaseAuth.instance.currentUser?.uid ?? ""));
+        // ref.invalidate(activitiesControllerProvider(
+        //     normalizedDate, FirebaseAuth.instance.currentUser?.uid ?? ""));
         ref.read(appLoadingStateProvider.notifier).setState(false);
         HelpersUtils.navigatorState(context)
             .pushNamed(AppPage.excerciseDetail, arguments: {

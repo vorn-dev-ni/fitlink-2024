@@ -12,12 +12,12 @@ class NotificationData {
     required this.type,
   });
 
-  factory NotificationData.fromMap(Map<String, dynamic> map) {
+  factory NotificationData.fromMap(Map<String, dynamic>? map) {
     return NotificationData(
-      senderID: map['senderID'],
-      receiverID: map['receiverID'],
-      postID: map['postID'],
-      type: map['type'],
+      senderID: map != null ? map['senderID'] ?? '' : "",
+      receiverID: map != null ? map['receiverID'] : '',
+      postID: map != null ? map['postID'] : "",
+      type: map != null ? map['type'] : '',
     );
   }
 

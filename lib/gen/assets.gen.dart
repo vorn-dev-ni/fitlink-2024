@@ -137,8 +137,11 @@ class $AssetsLottiesGen {
   /// File path: assets/lotties/loading_two.json
   String get loadingTwo => 'assets/lotties/loading_two.json';
 
+  /// File path: assets/lotties/surpise.json
+  String get surpise => 'assets/lotties/surpise.json';
+
   /// List of all assets
-  List<String> get values => [heart, loading, loadingTwo];
+  List<String> get values => [heart, loading, loadingTwo, surpise];
 }
 
 class $AssetsSplashGen {

@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:demo/features/home/controller/logout_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
 import 'package:demo/core/riverpod/navigation_state.dart';
 import 'package:demo/features/home/views/chat/chat_tab.dart';
@@ -13,12 +14,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-List<Widget> tabScreens = const [
-  HomeTab(),
-  ChatTab(),
-  NoInternet(),
-  MainWorkoutScreen(),
-  ProfileTab()
+List<Widget> tabScreens = [
+  const HomeTab(),
+  const ChatTab(),
+  const NoInternet(),
+  const MainWorkoutScreen(),
+  ProfileTab(key: UniqueKey()),
 ];
 
 class MyHomeScreen extends ConsumerStatefulWidget {
@@ -45,6 +46,17 @@ class _MyHomeScreenState extends ConsumerState<MyHomeScreen> {
   Widget build(BuildContext contex) {
     final tabIndex = ref.watch(navigationStateProvider);
     final navBars = ref.watch(navbarControllerProvider);
+    final isLoggedOut = ref.watch(logoutControllerProvider);
+
+    if (isLoggedOut) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(logoutControllerProvider.notifier).reset();
+        setState(() {
+          tabScreens[4] = ProfileTab(key: UniqueKey());
+        });
+      });
+    }
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
@@ -77,6 +89,8 @@ class _MyHomeScreenState extends ConsumerState<MyHomeScreen> {
       ),
     );
   }
+
+  void onLogout() {}
 
   void _onTap(int index) {
     if ([1, 2, 4].contains(index)) {

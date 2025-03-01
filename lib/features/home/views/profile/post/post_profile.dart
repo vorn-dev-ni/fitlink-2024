@@ -12,7 +12,6 @@ import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
-import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,7 +23,8 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 class PostProfile extends ConsumerStatefulWidget {
   String userId;
-  PostProfile({super.key, required this.userId});
+  bool? currentUser;
+  PostProfile({super.key, required this.userId, this.currentUser = true});
 
   @override
   ConsumerState<PostProfile> createState() => _PostProfileState();
@@ -41,7 +41,8 @@ class _PostProfileState extends ConsumerState<PostProfile> {
 
   @override
   Widget build(BuildContext context) {
-    final async = ref.watch(profilePostControllerProvider(widget.userId));
+    final async = ref.watch(profilePostControllerProvider(
+        widget.currentUser == true ? null : widget.userId));
 
     return async.when(
       data: (data) {
@@ -270,28 +271,22 @@ class _PostProfileState extends ConsumerState<PostProfile> {
   Widget renderLoading() {
     return Skeletonizer(
       enabled: true,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Sizes.lg),
-        child: ListView.builder(
-          itemCount: 4,
-          padding: const EdgeInsets.only(top: Sizes.xl, bottom: 140),
-          shrinkWrap: true,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: Sizes.xs),
-              child: ClipRRect(
+      child: ListView.builder(
+        itemCount: 4,
+        padding: const EdgeInsets.only(top: Sizes.xl, bottom: 140),
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: Sizes.xs),
+            child: ClipRRect(
                 borderRadius: BorderRadius.circular(Sizes.lg),
-                child: FancyShimmerImage(
-                    width: 100.w,
-                    boxFit: BoxFit.cover,
-                    height: 250,
-                    imageUrl: index % 2 == 0
-                        ? 'https://www.fastandup.in/nutrition-world/wp-content/uploads/2023/05/Workouts-for-Men.jpg'
-                        : 'https://hips.hearstapps.com/hmg-prod/images/social-media-lifting-654a0331a2803.jpg?crop=1.00xw:0.751xh;0,0.204xh&resize=1200:*'),
-              ),
-            );
-          },
-        ),
+                child: Assets.app.defaultAvatar.image(
+                  width: 100.w,
+                  fit: BoxFit.cover,
+                  height: 250,
+                )),
+          );
+        },
       ),
     );
   }

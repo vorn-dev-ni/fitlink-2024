@@ -37,7 +37,6 @@ class _WorkoutActivitiesState extends ConsumerState<WorkoutActivities> {
   Widget build(BuildContext context) {
     final asyncValue =
         ref.watch(activitiesControllerProvider(_selectedDate, widget.userId));
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

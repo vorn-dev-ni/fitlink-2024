@@ -90,6 +90,13 @@
         </activity>
 
         <!-- Meta-Data -->
+ <!-- Set the custom default notification icon -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/branding" />
+        
+        <!-- Set the color used with incoming notification messages -->
+    
         <meta-data
     android:name="com.google.firebase.messaging.default_notification_channel_id"
     android:value="default_channel" />

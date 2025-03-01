@@ -7,6 +7,7 @@ import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
@@ -40,18 +41,20 @@ class FcmService {
   }
 
   Future initToken() async {
-    await fcmInstance.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: true,
-      provisional: false,
-      sound: true,
-    );
+    try {
+      await fcmInstance.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: true,
+        provisional: false,
+        sound: true,
+      );
 
-    await HelpersUtils.getDeviceToken();
-    await setUpPushnotification();
+      await HelpersUtils.getDeviceToken();
+      await setUpPushnotification();
+    } catch (e) {}
   }
 
   void requestNotificationPermissions() async {
@@ -73,19 +76,29 @@ class FcmService {
         navigatorKey.currentState?.pushNamed(AppPage.commentListings,
             arguments: {'post': Post(postId: data.postID)});
       }
-      // navigatorKey.currentState?.pushNamed(AppPage.NOTFOUND);
+      if (FirebaseAuth.instance.currentUser != null &&
+          data.type == 'following') {
+        navigatorKey.currentState?.pushNamed(AppPage.viewProfile,
+            arguments: {'userId': data.postID});
+      }
     }
   }
 
   void _processPushNotification({required RemoteMessage? value}) async {
     if (value?.data != null) {
       final data = NotificationData.fromMap(value!.data);
-      if (FirebaseAuth.instance.currentUser != null && data.type == 'comment' ||
+      if (FirebaseAuth.instance.currentUser != null &&
+              data?.type == 'comment' ||
           data.type == 'like') {
-        Future.delayed(const Duration(milliseconds: 3500), () {
+        Future.delayed(const Duration(milliseconds: 4000), () {
           navigatorKey.currentState?.pushNamed(AppPage.commentListings,
               arguments: {'post': Post(postId: data.postID)});
         });
+      }
+      if (FirebaseAuth.instance.currentUser != null &&
+          data?.type == 'following') {
+        navigatorKey.currentState?.pushNamed(AppPage.viewProfile,
+            arguments: {'userId': data.postID});
       }
     }
   }
@@ -96,7 +109,6 @@ class FcmService {
         _processPushNotification(value: value);
       },
     );
-
     FirebaseMessaging.onMessageOpenedApp.listen(getDetailNotification);
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -104,7 +116,8 @@ class FcmService {
       String? body = message.notification?.body;
       Map<String, dynamic>? data = message.data;
       NotificationService().setPayload(data);
-      NotificationService().showNotification(id: 1, body: body, title: title);
+      NotificationService().showNotification(
+          id: message.notification.hashCode, body: body, title: title);
 
       if (message.notification != null) {
         debugPrint('Message also contained a notification: ${data}');

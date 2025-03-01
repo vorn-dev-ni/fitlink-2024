@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -24,7 +25,8 @@ class ExcerciseSuccess extends ConsumerStatefulWidget {
   ConsumerState<ExcerciseSuccess> createState() => _ExcerciseSuccessState();
 }
 
-class _ExcerciseSuccessState extends ConsumerState<ExcerciseSuccess> {
+class _ExcerciseSuccessState extends ConsumerState<ExcerciseSuccess>
+    with TickerProviderStateMixin {
   String? isSelected = '';
   late AudioPlayer _playSoundNextSet;
   late AudioPlayer _finishSound;
@@ -35,13 +37,19 @@ class _ExcerciseSuccessState extends ConsumerState<ExcerciseSuccess> {
   late String title;
   late String workoutId;
   late DateTime date;
+  late bool showSurpriseEffect;
+  late AnimationController _lottieController; // Declare the Lottie controller
 
   @override
   void initState() {
+    _lottieController = AnimationController(vsync: this);
+
     _finishSound = AudioPlayer();
     _sussySound = AudioPlayer();
     _playSoundNextSet = AudioPlayer();
     playCongratSound();
+    showSurpriseEffect = true;
+
     super.initState();
   }
 
@@ -62,6 +70,8 @@ class _ExcerciseSuccessState extends ConsumerState<ExcerciseSuccess> {
   void dispose() {
     _finishSound.dispose();
     _playSoundNextSet.dispose();
+    _lottieController.dispose();
+
     super.dispose();
   }
 
@@ -192,6 +202,19 @@ class _ExcerciseSuccessState extends ConsumerState<ExcerciseSuccess> {
                             ], // Control fade transition
                           ),
                         ),
+                      ),
+                    ),
+                    Positioned.fill(
+                      child: Lottie.asset(
+                        controller: _lottieController,
+                        Assets.lotties.surpise,
+                        fit: BoxFit.cover,
+                        onLoaded: (composition) {
+                          final extendedDuration = composition.duration * 1;
+                          _lottieController
+                            ..duration = extendedDuration
+                            ..forward();
+                        },
                       ),
                     ),
                   ],

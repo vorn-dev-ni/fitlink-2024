@@ -7,7 +7,7 @@ part of 'single_user_controller.dart';
 // **************************************************************************
 
 String _$singleUserControllerHash() =>
-    r'a66d7222386f5cbd7e18136136986fbacce0cf4e';
+    r'1eacb4a470390e60c5252d8ae7e175dd4bdb8d4c';
 
 /// Copied from Dart SDK
 class _SystemHash {

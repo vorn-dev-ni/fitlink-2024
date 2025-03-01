@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
 import 'package:demo/features/home/views/single_profile/model/media_count.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ProfileService implements BaseUserService {
@@ -91,6 +92,9 @@ class ProfileService implements BaseUserService {
   @override
   Future<MediaCount> getMediaCount(String userId) async {
     try {
+      if (FirebaseAuth.instance.currentUser == null) {
+        return MediaCount();
+      }
       final notificationsSnapshot = await _firestore
           .collection('users')
           .doc(userId)

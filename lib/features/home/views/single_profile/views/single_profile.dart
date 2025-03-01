@@ -39,6 +39,7 @@ class _SingleProfileState extends ConsumerState<SingleProfile> {
     _screens = [
       PostProfile(
         userId: uid ?? "",
+        currentUser: false,
       ),
       const VideoProfile(),
       WorkoutProfile(
@@ -145,7 +146,7 @@ class _SingleProfileState extends ConsumerState<SingleProfile> {
             child: Column(
               children: [
                 TabBar(
-                  tabAlignment: TabAlignment.center,
+                  tabAlignment: TabAlignment.start,
                   isScrollable: true,
                   indicatorSize: TabBarIndicatorSize.label,
                   dividerColor: Colors.transparent,
@@ -177,7 +178,10 @@ class _SingleProfileState extends ConsumerState<SingleProfile> {
         uid = data['userId'];
         setState(() {
           _screens = [
-            PostProfile(userId: data['userId']),
+            PostProfile(
+              userId: data['userId'],
+              currentUser: false,
+            ),
             const VideoProfile(),
             WorkoutProfile(
               userId: data['userId'],

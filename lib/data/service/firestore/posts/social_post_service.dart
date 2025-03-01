@@ -61,7 +61,7 @@ class SocialPostService extends BaseSocialMediaService {
   @override
   Future checkUserLike(String? postId) async {
     try {
-      if (FirebaseAuth.instance.currentUser == null && postId == null) {
+      if (FirebaseAuth.instance.currentUser == null || postId == null) {
         return false;
       }
       final snapShot = await _firestore

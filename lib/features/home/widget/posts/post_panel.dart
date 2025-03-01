@@ -162,6 +162,8 @@ class _PostPanelState extends ConsumerState<PostPanel>
               context: null),
         if (widget.post.imageUrl != null && widget.post.imageUrl != "")
           renderImageSection(),
+        if (widget.url == "loading")
+          Assets.app.artOne.image(width: 100.w, fit: BoxFit.cover, height: 300),
         renderSocialMedia(context, animationDuration),
         Column(
           children: [

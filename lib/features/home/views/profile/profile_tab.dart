@@ -5,9 +5,11 @@ import 'package:demo/core/riverpod/navigation_state.dart';
 import 'package:demo/features/authentication/controller/auth_controller.dart';
 import 'package:demo/features/authentication/controller/login_controller.dart';
 import 'package:demo/features/authentication/controller/register_controller.dart';
+import 'package:demo/features/home/controller/logout_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
 import 'package:demo/features/home/controller/posts/social_post_controller.dart';
 import 'package:demo/features/home/controller/posts/user_like_controller.dart';
+import 'package:demo/features/home/controller/profile/profile_post_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/features/home/views/single_profile/controller/media_tag_conroller.dart';
 import 'package:demo/features/home/views/single_profile/controller/single_user_controller.dart';
@@ -54,10 +56,12 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     binding();
     _screens = [
       PostProfile(
+        currentUser: true,
         userId: uid ?? "",
       ),
       const VideoProfile(),
       WorkoutProfile(
+        key: UniqueKey(),
         userId: uid ?? "",
       ),
     ];
@@ -89,6 +93,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
   Widget build(BuildContext context) {
     final asyncUser = ref.watch(profileUserControllerProvider);
     final isLoading = ref.watch(appLoadingStateProvider);
+
     return DefaultTabController(
       length: _screens.length,
       child: Stack(
@@ -199,23 +204,32 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
   }
 
   Future handleLogout() async {
-    if (mounted) {
-      _playsoundLogout.play();
+    try {
+      if (mounted) {
+        _playsoundLogout.play();
 
-      Fluttertoast.showToast(
-          msg: 'See you soon love 😔 !!!',
-          timeInSecForIosWeb: 3,
-          toastLength: Toast.LENGTH_SHORT);
-      LocalStorageUtils().setKeyString('email', '');
-      ref.invalidate(navbarControllerProvider);
-      ref.invalidate(singleUserControllerProvider);
-      ref.invalidate(navigationStateProvider);
-      ref.invalidate(registerControllerProvider);
-      ref.invalidate(loginControllerProvider);
-      ref.invalidate(socialPostControllerProvider);
-      ref.invalidate(userLikeControllerProvider);
-      ref.invalidate(mediaTagConrollerProvider);
-      await authController.logout();
+        Fluttertoast.showToast(
+            msg: 'See you soon love 😔 !!!',
+            timeInSecForIosWeb: 3,
+            toastLength: Toast.LENGTH_SHORT);
+        LocalStorageUtils().setKeyString('email', '');
+        ref.invalidate(navbarControllerProvider);
+        ref.invalidate(singleUserControllerProvider);
+        ref.invalidate(navigationStateProvider);
+        ref.invalidate(registerControllerProvider);
+        ref.invalidate(loginControllerProvider);
+        ref.invalidate(socialPostControllerProvider);
+        ref.invalidate(userLikeControllerProvider);
+        ref.invalidate(mediaTagConrollerProvider);
+        await authController.logout();
+        // ref.invalidate(activitiesControllerProvider);
+
+        ref.read(logoutControllerProvider.notifier).logout();
+        ref.invalidate(profileUserControllerProvider);
+        ref.invalidate(profilePostControllerProvider);
+      }
+    } catch (e) {
+      ref.invalidate(profilePostControllerProvider);
       ref.invalidate(profileUserControllerProvider);
     }
   }

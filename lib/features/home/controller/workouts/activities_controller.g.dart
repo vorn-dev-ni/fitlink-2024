@@ -7,7 +7,7 @@ part of 'activities_controller.dart';
 // **************************************************************************
 
 String _$activitiesControllerHash() =>
-    r'3e55dfd6979c74de7e4a4754de6fd0e9a3278f95';
+    r'0d375e49a5d468907a25eb320cfc73840059ac41';
 
 /// Copied from Dart SDK
 class _SystemHash {

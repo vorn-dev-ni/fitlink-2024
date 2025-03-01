@@ -1,10 +1,13 @@
 import 'package:demo/common/model/notification_payload.dart';
 import 'package:demo/features/home/model/post.dart';
-import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/global_key.dart';
+import 'package:demo/utils/exception/app_exception.dart';
+import 'package:demo/utils/helpers/permission_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -25,8 +28,7 @@ class NotificationService {
     _notificationsPlugin ??= FlutterLocalNotificationsPlugin();
 
     const AndroidInitializationSettings androidInitSettings =
-        AndroidInitializationSettings(
-            '@mipmap/ic_launcher_notification_foreground');
+        AndroidInitializationSettings('@mipmap/ic_launcher_foreground');
 
     const DarwinInitializationSettings iosInitSettings =
         DarwinInitializationSettings(
@@ -56,7 +58,11 @@ class NotificationService {
             AndroidFlutterLocalNotificationsPlugin>();
 
     if (androidPlugin != null) {
-      await androidPlugin.requestNotificationsPermission();
+      final isPermission = await androidPlugin.requestNotificationsPermission();
+
+      // debugPrint('isPermission ${isPermission == true ? 'true' : 'false'}');
+      // Fluttertoast.showToast(
+      //     msg: 'isPermission ${isPermission == true ? 'true' : 'false'}');
     }
   }
 
@@ -78,7 +84,11 @@ class NotificationService {
           arguments: {'post': Post(postId: result?.postID)},
         );
       }
-
+      if (FirebaseAuth.instance.currentUser != null &&
+          result?.type == 'following') {
+        navigatorKey.currentState?.pushNamed(AppPage.viewProfile,
+            arguments: {'userId': result?.postID});
+      }
       // debugPrint('Notification clicked with payload: ${navigatorKey}');
     }
   }
@@ -95,13 +105,15 @@ class NotificationService {
       channelId,
       channelName,
       channelDescription: channelDesc,
-      importance: Importance.max,
+      importance: Importance.high,
       priority: Priority.high,
       playSound: true,
-      channelShowBadge: false,
-      color: AppColors.secondaryColor,
+      icon: '@drawable/branding',
+      channelShowBadge: true,
+      // color: AppColors.secondaryColor,
       sound: const RawResourceAndroidNotificationSound('notification'),
       enableVibration: true,
+      enableLights: true,
       ticker: 'ticker',
     );
 
@@ -109,37 +121,32 @@ class NotificationService {
       presentSound: true,
       sound: 'notification',
     );
+    debugPrint("Show notificaiton now !!!");
 
     return NotificationDetails(android: androidDetails, iOS: iosDetails);
   }
 
   Future<void> showNotification({
-    int id = 0,
+    required int id,
     String? title,
     String? body,
     String channelId = 'default_channel',
-    String channelName = 'Testing',
-    String channelDesc = 'Description channel',
+    String channelName = 'broad-cast-user',
+    String channelDesc = 'This is the channel',
   }) async {
-    await _notificationsPlugin?.show(
-      id,
-      title,
-      body,
-      _notificationDetails(
-          channelId: channelId,
-          channelName: channelName,
-          channelDesc: channelDesc),
-    );
+    try {
+      debugPrint("Run notificaiton ${id} ${title} ${body}");
+      await _notificationsPlugin?.show(
+        id,
+        title,
+        body,
+        _notificationDetails(
+            channelId: channelId,
+            channelName: channelName,
+            channelDesc: channelDesc),
+      );
+    } catch (e) {
+      rethrow;
+    }
   }
-
-  // static void _onDidReceiveBackgroundNotificationResponse(
-  //     NotificationResponse response) {
-  //   if (response.payload != null) {
-  //     _payload = response.payload;
-  //     debugPrint(
-  //         '_onDidReceiveBackgroundNotificationResponse clicked with payload: $_payload');
-  //     // debugPrint('Notification clicked with payload: ${navigatorKey}');
-  //   }
-  //   navigatorKey.currentState?.pushNamed(AppPage.NotificationPath);
-  // }
 }

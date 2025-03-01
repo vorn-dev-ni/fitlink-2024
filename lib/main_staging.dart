@@ -13,7 +13,11 @@ import 'package:demo/features/home/controller/comment/comment_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
 import 'package:demo/features/home/controller/posts/social_post_controller.dart';
 import 'package:demo/features/home/controller/posts/user_like_controller.dart';
+import 'package:demo/features/home/controller/profile/profile_post_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
+import 'package:demo/features/home/controller/workouts/activities_controller.dart';
+import 'package:demo/features/home/controller/workouts/workout_controller.dart';
+import 'package:demo/features/home/controller/workouts/workout_date_controller.dart';
 import 'package:demo/l10n/I10n.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
@@ -158,7 +162,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   Future syncUser(String uid) async {
     try {
-      debugPrint("User is ${FirebaseAuth.instance.currentUser?.uid}");
+      // debugPrint("User is ${FirebaseAuth.instance.currentUser?.uid}");
       if (FirebaseAuth.instance.currentUser?.uid != null) {
         AuthModel? authModel = await firestoreService.getEmail(uid);
         final fmcToken = await HelpersUtils.getDeviceToken();
@@ -170,10 +174,14 @@ class _MyAppState extends ConsumerState<MyApp> {
           ref
               .read(navbarControllerProvider.notifier)
               .updateProfileTab(authModel.avatar ?? "");
-          debugPrint("Sync user again tt hz");
-
+          debugPrint("Sync user again tt hz ${uid}");
           ref.invalidate(socialPostControllerProvider);
           ref.invalidate(commentControllerProvider);
+          ref.invalidate(profilePostControllerProvider);
+          ref.invalidate(activitiesControllerProvider);
+          // ref.invalidate(workoutControllerProvider);
+          // ref.invalidate(workoutDateControllerProvider);
+
           ref.invalidate(profileUserControllerProvider);
           ref.read(appLoadingStateProvider.notifier).setState(false);
         }

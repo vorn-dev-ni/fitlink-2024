@@ -1,10 +1,10 @@
-import 'package:demo/common/widget/app_loading.dart';
 import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/features/home/controller/posts/social_post_controller.dart';
 import 'package:demo/features/home/controller/tab/home_scroll_controller.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/features/home/widget/posts/post_panel.dart';
 import 'package:demo/utils/constant/sizes.dart';
+import 'package:demo/utils/helpers/permission_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pinch_zoom_release_unzoom/pinch_zoom_release_unzoom.dart';
@@ -31,6 +31,11 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
   ];
   @override
   void initState() {
+    if (mounted) {
+      Future.delayed(const Duration(seconds: 10), () {
+        PermissionUtils.checkNotificationPermission(context);
+      });
+    }
     super.initState();
   }
 
@@ -80,8 +85,18 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
         physics: const NeverScrollableScrollPhysics(),
         itemCount: dummyData.length,
         itemBuilder: (context, index) {
-          final img = dummyData[index];
-          return renderItem(Post(imageUrl: img));
+          return Padding(
+            padding: const EdgeInsets.only(bottom: Sizes.xs),
+            child: PostPanel(
+              post: Post(),
+              url: "loading",
+              twoFingersOn: () => setState(() => blockScroll = true),
+              twoFingersOff: () => Future.delayed(
+                PinchZoomReleaseUnzoomWidget.defaultResetDuration,
+                () => setState(() => blockScroll = false),
+              ),
+            ),
+          );
         },
       ),
     );
@@ -93,7 +108,7 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
       child: PostPanel(
         post: post,
         key: ValueKey(post.postId),
-        url: post.imageUrl ?? "",
+        // url: "loading",
         twoFingersOn: () => setState(() => blockScroll = true),
         twoFingersOff: () => Future.delayed(
           PinchZoomReleaseUnzoomWidget.defaultResetDuration,

@@ -28,7 +28,12 @@ import 'package:skeletonizer/skeletonizer.dart';
 class ProfileHeader extends ConsumerStatefulWidget {
   final Function onLogout;
   String? uid;
-  ProfileHeader({super.key, required this.onLogout, required this.uid});
+  bool? singleMode;
+  ProfileHeader(
+      {super.key,
+      required this.onLogout,
+      required this.uid,
+      this.singleMode = false});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ProfileHeaderState();
@@ -51,49 +56,53 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
             currentUser?.email == null || currentUser?.email == "";
         return SliverAppBar(
           expandedHeight: 60.h,
-          actions: [
-            const SizedBox(
-              height: Sizes.lg,
-            ),
-            renderNotificationIcon(showLoading, context, currentUser?.id),
-            Skeletonizer(
-              enabled: showLoading,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.backgroundDark.withOpacity(0.4),
-                ),
-                margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
-                child: IconButton(
-                    padding: const EdgeInsets.all(0),
-                    onPressed: () =>
-                        _openBottomSheet(context, currentUser?.cover_feature),
-                    icon: const Icon(
-                      Icons.camera_alt_outlined,
-                      size: Sizes.xxl,
-                      color: AppColors.backgroundLight,
-                    )),
-              ),
-            ),
-            Skeletonizer(
-              enabled: showLoading,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.backgroundDark.withOpacity(0.4),
-                ),
-                margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
-                child: const IconButton(
-                    padding: EdgeInsets.all(0),
-                    onPressed: null,
-                    icon: Icon(
-                      Icons.more_vert,
-                      size: Sizes.xxl,
-                      color: AppColors.backgroundLight,
-                    )),
-              ),
-            )
-          ],
+          actions: widget.singleMode == false
+              ? [
+                  const SizedBox(
+                    height: Sizes.lg,
+                  ),
+                  renderNotificationIcon(showLoading, context, currentUser?.id),
+                  Skeletonizer(
+                    enabled: showLoading,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.backgroundDark.withOpacity(0.4),
+                      ),
+                      margin:
+                          const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
+                      child: IconButton(
+                          padding: const EdgeInsets.all(0),
+                          onPressed: () => _openBottomSheet(
+                              context, currentUser?.cover_feature),
+                          icon: const Icon(
+                            Icons.camera_alt_outlined,
+                            size: Sizes.xxl,
+                            color: AppColors.backgroundLight,
+                          )),
+                    ),
+                  ),
+                  Skeletonizer(
+                    enabled: showLoading,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.backgroundDark.withOpacity(0.4),
+                      ),
+                      margin:
+                          const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
+                      child: const IconButton(
+                          padding: EdgeInsets.all(0),
+                          onPressed: null,
+                          icon: Icon(
+                            Icons.more_vert,
+                            size: Sizes.xxl,
+                            color: AppColors.backgroundLight,
+                          )),
+                    ),
+                  )
+                ]
+              : null,
           stretch: true,
           backgroundColor: Colors.transparent,
           flexibleSpace: Skeletonizer(

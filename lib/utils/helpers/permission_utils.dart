@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +11,7 @@ class PermissionUtils {
   /// Check and request notification permission
   static Future<void> checkNotificationPermission(BuildContext context) async {
     PermissionStatus status = await Permission.notification.status;
+    debugPrint('Status is ${status}');
     if (status == PermissionStatus.denied ||
         status == PermissionStatus.permanentlyDenied) {
       _handlePermissionStatus(

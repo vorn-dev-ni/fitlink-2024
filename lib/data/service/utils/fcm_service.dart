@@ -87,8 +87,7 @@ class FcmService {
   void _processPushNotification({required RemoteMessage? value}) async {
     if (value?.data != null) {
       final data = NotificationData.fromMap(value!.data);
-      if (FirebaseAuth.instance.currentUser != null &&
-              data?.type == 'comment' ||
+      if (FirebaseAuth.instance.currentUser != null && data.type == 'comment' ||
           data.type == 'like') {
         Future.delayed(const Duration(milliseconds: 4000), () {
           navigatorKey.currentState?.pushNamed(AppPage.commentListings,
@@ -96,9 +95,11 @@ class FcmService {
         });
       }
       if (FirebaseAuth.instance.currentUser != null &&
-          data?.type == 'following') {
-        navigatorKey.currentState?.pushNamed(AppPage.viewProfile,
-            arguments: {'userId': data.postID});
+          data.type == 'following') {
+        Future.delayed(const Duration(milliseconds: 4000), () {
+          navigatorKey.currentState?.pushNamed(AppPage.viewProfile,
+              arguments: {'userId': data.postID});
+        });
       }
     }
   }
@@ -111,12 +112,12 @@ class FcmService {
     );
     FirebaseMessaging.onMessageOpenedApp.listen(getDetailNotification);
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       String? title = message.notification?.title;
       String? body = message.notification?.body;
       Map<String, dynamic>? data = message.data;
       NotificationService().setPayload(data);
-      NotificationService().showNotification(
+      await NotificationService().showNotification(
           id: message.notification.hashCode, body: body, title: title);
 
       if (message.notification != null) {

@@ -5,7 +5,37 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: flutter pub run build_runner watch --delete-conflicting-outputs" time="1937.001098">
+      <testcase classname="fastlane.lanes" name="0: Switch to android load_env lane" time="0.000107">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: increment_version_name" time="0.001163">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: increment_version_code" time="0.000893">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="3: get_version_name" time="0.000195">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="4: get_version_code" time="0.000258">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="5: firebase_app_distribution" time="19.426597">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="6: telegram" time="2.564534">
         
       </testcase>
     

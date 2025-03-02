@@ -1,6 +1,5 @@
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:flutter/material.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 class EventItemSkeleton extends StatelessWidget {
   const EventItemSkeleton({super.key});

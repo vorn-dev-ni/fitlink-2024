@@ -64,7 +64,9 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _handlePress(widget.post?.user?.id),
+      onTap: () => _handlePress(widget.type == ProfileType.comment
+          ? widget.comment?.user?.id
+          : widget.post?.user?.id),
       child: Padding(
         padding: const EdgeInsets.all(Sizes.sm),
         child: widget.type == ProfileType.post

@@ -207,50 +207,53 @@ end
    firebase_app_distribution(
     app: "1:77080916809:android:ebe1398ec028ced65b2098",  # Your Firebase App ID
     testers: "Sivsovanpanhavorn@gmail.com, Sovanpanhavorn.siv@tovtrip.com,amyjohn922@gmail.com, henghuylong1@gmail.com, narakithya@gmail.com",  # Testers' email addresses
-    release_notes: "📢 New Android Build Available on Firebase App Distribution!
+    release_notes:  "📢 New Android Build Available on Firebase App Distribution!
 • Environment: Staging
 • Build: #{version_code}
 • Version: #{version_name}
 
-🚀 New Features & Updates:
+🚀 Fix Bug Features & Updates:
 
-Edit Profile → Pops user out & plays a sound → Shows toast: Profile updated!
-Create Event → Pops user out & plays a sound → Shows toast: Event created!
-Create Event Request → Pops user out & plays a sound → Shows toast: Request sent!
-Workout Activity Feature → Users can list and track their workout activities.
-Workouts Listing → Users can browse workouts, add exercises, track reps & sets, and customize activities.
-Exercise Tracking → Users can log workouts and track progress over time.
-Play Sound on Actions → A sound effect plays when users update their profile, create an event, submit a form, or log a workout.
-Activity Management → Users can edit & filter activities based on date.
+Fix Notification issues
+User now can view profile in comments listing
+Adjust some UI issues
+
 ⚠ Known Issues:
 
-Facebook (Dev Mode) → Profile name will not be retrieved, so the user will appear as anonymous on Android/iOS.
-OTP Issue (Android Beta) → OTP functionality is not working in the Android beta version (only available in production mode). iOS version is unaffected.
-🧪 Enjoy testing! 🚀 Feel free to report any issues!",
+Facebook (Dev Mode) → The app may not retrieve the user’s profile name when logged in under Facebook’s Dev Mode, causing the user to appear as annouymous on both Android and iOS. This issue is not present in the production version.
 
+OTP Issue (Android Beta) → OTP functionality is not working in the Android beta version (available only in production). This issue does not affect the iOS version.
+
+Android Notification Icon → When the app is in the background or terminated, the app icon may appear differently than expected. This issue is currently being the android design system and will need you guy to give me an icon.
+
+💬 Feedback:
+We’re excited to hear your thoughts on the new features! Test everything out, and feel free to report any bugs or issues you encounter. Your feedback helps us improve the app for everyone.
+
+🧪 Enjoy testing! 🚀",
 apk_path: "/Users/macbook/Documents/flutter/fitlink-2024/build/app/outputs/flutter-apk/app-staging-release.apk"
 
 )
-deploy_message = "📢 New Android Build Available on Firebase App Distribution!
+deploy_message =  "📢 New Android Build Available on Firebase App Distribution!
 • Environment: Staging
 • Build: #{version_code}
 • Version: #{version_name}
 
-🚀 New Features & Updates:
+🚀 Fix Bug Features & Updates:
 
-Edit Profile → Pops user out & plays a sound → Shows toast: Profile updated!
-Create Event → Pops user out & plays a sound → Shows toast: Event created!
-Create Event Request → Pops user out & plays a sound → Shows toast: Request sent!
-Workout Activity Feature → Users can list and track their workout activities.
-Workouts Listing → Users can browse workouts, add exercises, track reps & sets, and customize activities.
-Exercise Tracking → Users can log workouts and track progress over time.
-Play Sound on Actions → A sound effect plays when users update their profile, create an event, submit a form, or log a workout.
-Activity Management → Users can edit & filter activities based on date.
-⚠ Known Issues:
+Fix Notification issues
+User now can view profile in comments listing
+Adjust some UI issues
 
-Facebook (Dev Mode) → Profile name will not be retrieved, so the user will appear as anonymous on Android/iOS.
-OTP Issue (Android Beta) → OTP functionality is not working in the Android beta version (only available in production mode). iOS version is unaffected.
-🧪 Enjoy testing! 🚀 Feel free to report any issues!"
+Facebook (Dev Mode) → The app may not retrieve the user’s profile name when logged in under Facebook’s Dev Mode, causing the user to appear as annouymous on both Android and iOS. This issue is not present in the production version.
+
+OTP Issue (Android Beta) → OTP functionality is not working in the Android beta version (available only in production). This issue does not affect the iOS version.
+
+Android Notification Icon → When the app is in the background or terminated, the app icon may appear differently than expected. This issue is currently being the android design system and will need you guy to give me an icon.
+
+💬 Feedback:
+We’re excited to hear your thoughts on the new features! Test everything out, and feel free to report any bugs or issues you encounter. Your feedback helps us improve the app for everyone.
+
+🧪 Enjoy testing! 🚀"
 
 # Move this below the assignment
 puts "CHATID: #{deploy_message}"

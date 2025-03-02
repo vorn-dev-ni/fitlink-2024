@@ -9,6 +9,7 @@ import 'package:demo/data/service/firestore/profiles/profile_service.dart';
 import 'package:demo/features/home/views/single_profile/controller/media_tag_conroller.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -50,6 +51,15 @@ class SingleUserController extends _$SingleUserController {
     try {
       return await profileRepository.checkIsFollowing(targetUserId) ?? false;
     } catch (e) {
+      Fluttertoast.showToast(
+          msg: e.toString(),
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 5,
+          backgroundColor: AppColors.errorColor,
+          textColor: Colors.white,
+          fontSize: 16.0);
+
       rethrow;
     }
   }
@@ -59,18 +69,19 @@ class SingleUserController extends _$SingleUserController {
       if (FirebaseAuth.instance.currentUser?.uid != null) {
         await profileRepository.unfollowingUser(receiverID);
         ref.invalidate(mediaTagConrollerProvider);
-        // await notificationRepo.sentFollowingNotification(
-        //     senderID: senderId, receiverID: receiverID, userId: senderId);
       }
     } catch (e) {
-      Fluttertoast.showToast(
-          msg: e.toString(),
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 5,
-          backgroundColor: AppColors.errorColor,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      if (kDebugMode) {
+        Fluttertoast.showToast(
+            msg: e.toString(),
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 5,
+            backgroundColor: AppColors.errorColor,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+
       rethrow;
     }
   }
@@ -84,14 +95,16 @@ class SingleUserController extends _$SingleUserController {
             senderID: senderId, receiverID: receiverID, userId: senderId);
       }
     } catch (e) {
-      Fluttertoast.showToast(
-          msg: e.toString(),
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 5,
-          backgroundColor: AppColors.errorColor,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      if (kDebugMode) {
+        Fluttertoast.showToast(
+            msg: e.toString(),
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 5,
+            backgroundColor: AppColors.errorColor,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
       rethrow;
     }
   }

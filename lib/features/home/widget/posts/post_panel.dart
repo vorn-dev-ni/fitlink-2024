@@ -207,9 +207,9 @@ class _PostPanelState extends ConsumerState<PostPanel>
               resetDuration: const Duration(milliseconds: 0),
               child: FancyShimmerImage(
                 errorWidget: errorImgplaceholder(),
-                cacheKey: widget.url,
+                cacheKey: widget.post.imageUrl,
                 boxFit: BoxFit.cover,
-                imageUrl: widget.url ??
+                imageUrl: widget.post.imageUrl ??
                     "https://plus.unsplash.com/premium_photo-1661964304872-7b715cf38cd1?q=80&w=3570&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 width: 100.w,
               ),

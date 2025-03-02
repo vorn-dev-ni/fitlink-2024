@@ -70,16 +70,10 @@ class _EventGridListState extends ConsumerState<EventGridList> {
       enabled: true,
       ignorePointers: true,
       justifyMultiLineText: false,
-
       effect: const ShimmerEffect(
           highlightColor: Colors.white,
           baseColor: Color.fromARGB(212, 213, 213, 213)),
-
       ignoreContainers: true,
-
-      // containersColor: AppColors.neutralBlack,
-      // containersColor: AppColors.backgroundDark,
-
       child: StaggeredGrid.count(
         crossAxisCount: 2,
         mainAxisSpacing: 2,

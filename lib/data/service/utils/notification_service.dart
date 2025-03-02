@@ -2,12 +2,9 @@ import 'package:demo/common/model/notification_payload.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/global_key.dart';
-import 'package:demo/utils/exception/app_exception.dart';
-import 'package:demo/utils/helpers/permission_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -58,7 +55,7 @@ class NotificationService {
             AndroidFlutterLocalNotificationsPlugin>();
 
     if (androidPlugin != null) {
-      final isPermission = await androidPlugin.requestNotificationsPermission();
+      await androidPlugin.requestNotificationsPermission();
 
       // debugPrint('isPermission ${isPermission == true ? 'true' : 'false'}');
       // Fluttertoast.showToast(
@@ -69,6 +66,7 @@ class NotificationService {
   static void _onDidReceiveNotificationResponse(NotificationResponse response) {
     // debugPrint('Notification clicked with payload: ${response.}');
     NotificationData? result;
+    debugPrint('_onDidReceiveNotificationResponse cl icked with payload');
     if (response.payload != null) {
       // When user click notificaiton in forceground
 

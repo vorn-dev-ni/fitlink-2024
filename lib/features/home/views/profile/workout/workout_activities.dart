@@ -1,5 +1,6 @@
 import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/features/home/controller/workouts/activities_controller.dart';
+import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/model/workouts/workout_response.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
@@ -491,10 +492,9 @@ class _WorkoutActivitiesState extends ConsumerState<WorkoutActivities> {
                   Positioned(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(Sizes.lg),
-                      child: Image.network(
+                      child: Assets.app.catGym.image(
                         height: 240,
                         width: 100.w,
-                        'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2340&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                         fit: BoxFit.cover,
                       ),
                     ),

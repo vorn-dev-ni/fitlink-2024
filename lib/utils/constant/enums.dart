@@ -12,6 +12,8 @@ enum NutritionFactsType { calories, fat, protein, sugar, carbohydrate }
 
 enum WorkoutType { feature, beginner, advance, intermediate }
 
+enum ProfileType { comment, post, profile, header }
+
 enum TimeSelection { startTime, endTime }
 
 // ignore: constant_identifier_names

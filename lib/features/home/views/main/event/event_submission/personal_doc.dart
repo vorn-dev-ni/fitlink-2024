@@ -10,6 +10,7 @@ import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
+import 'package:demo/utils/helpers/permission_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:demo/utils/validation/event_submit_validation.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -19,6 +20,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sizer/sizer.dart';
 import 'package:path/path.dart' as p;
 
@@ -261,41 +263,48 @@ class _PersonalDocState extends ConsumerState<PersonalDoc> {
   }
 
   void _openFilePicker({List<String>? extensions}) async {
-    ref.read(formLoadingControllerProvider.notifier).setState(true);
+    try {
+      ref.read(formLoadingControllerProvider.notifier).setState(true);
 
-    if (_tempo_files.length >= 2) {
-      showDialog(
-          context: context,
-          builder: (context) => AppALertDialog(
-              onConfirm: () {},
-              title: 'File Notice',
-              desc:
-                  "The limitation of uploading file is 2 per documents please delete any one to upload again!!!"));
-      ref.read(formLoadingControllerProvider.notifier).setState(false);
+      if (_tempo_files.length >= 2) {
+        showDialog(
+            context: context,
+            builder: (context) => AppALertDialog(
+                onConfirm: () {},
+                title: 'File Notice',
+                desc:
+                    "The limitation of uploading file is 2 per documents please delete any one to upload again!!!"));
+        ref.read(formLoadingControllerProvider.notifier).setState(false);
 
-      return;
-    }
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
-      allowCompression: true,
-      type: FileType.custom,
-      allowedExtensions: extensions,
-    );
-
-    if (result != null) {
-      File file = File(result.files.single.path!);
-      _tempo_files.add(file);
-      if (mounted) {
-        ref
-            .read(formSubmissionControllerProvider.notifier)
-            .updateDocumentInfo(temp_files: _tempo_files);
+        return;
       }
-      ref.read(formLoadingControllerProvider.notifier).setState(false);
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: false,
+        allowCompression: true,
+        type: FileType.custom,
+        allowedExtensions: extensions,
+      );
 
-      setState(() {});
-    } else {
-      //User cancel
-      ref.read(formLoadingControllerProvider.notifier).setState(false);
+      if (result != null) {
+        File file = File(result.files.single.path!);
+        _tempo_files.add(file);
+        if (mounted) {
+          ref
+              .read(formSubmissionControllerProvider.notifier)
+              .updateDocumentInfo(temp_files: _tempo_files);
+        }
+        ref.read(formLoadingControllerProvider.notifier).setState(false);
+
+        setState(() {});
+      } else {
+        //User cancel
+        ref.read(formLoadingControllerProvider.notifier).setState(false);
+      }
+    } catch (e) {
+      if (mounted) {
+        PermissionUtils.checkStoragePermission(context);
+        ref.read(formLoadingControllerProvider.notifier).setState(false);
+      }
     }
   }
 

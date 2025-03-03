@@ -33,10 +33,13 @@ class ActivitiesService extends BaseActivitiesService {
       data['workoutId'] = workoutRef;
       QuerySnapshot querySnapshot = await _firestore
           .collection('activities')
-          .where('userId', isEqualTo: firebaseAuthService.currentUser!.uid)
+          .where('userId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
           .where('date', isEqualTo: dateTimestamp)
           .where('workoutId', isEqualTo: workoutRef)
           .get();
+
+      debugPrint(
+          'Current user is ${FirebaseAuth.instance.currentUser?.uid} date ${data['date']} workout id ${data['workoutId']}');
 
       if (querySnapshot.docs.isNotEmpty) {
         Fluttertoast.showToast(

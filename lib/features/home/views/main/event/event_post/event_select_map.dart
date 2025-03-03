@@ -7,6 +7,7 @@ import 'package:demo/features/home/controller/event_create/event_form_controller
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
+import 'package:demo/utils/helpers/permission_utils.dart';
 import 'package:demo/utils/https/https_client.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:sizer/sizer.dart';
+import 'package:permission_handler/permission_handler.dart' as perm;
 
 class EventSelectMap extends ConsumerStatefulWidget {
   const EventSelectMap({super.key});
@@ -48,6 +50,18 @@ class EventSelectMapState extends ConsumerState<EventSelectMap> {
     }
 
     super.dispose();
+  }
+
+  Future<void> checkLocationPermission() async {
+    perm.PermissionStatus status = await perm.Permission.location.request();
+    debugPrint("Permission is ${status}");
+    if (status.isGranted && mounted) {
+      debugPrint("Location permission granted!");
+    } else if (status.isDenied && mounted) {
+      HelpersUtils.navigatorState(context).pop();
+    } else if (status.isPermanentlyDenied && mounted) {
+      HelpersUtils.navigatorState(context).pop();
+    }
   }
 
   @override
@@ -234,32 +248,39 @@ class EventSelectMapState extends ConsumerState<EventSelectMap> {
 
   void requestCurrentLocation() async {
     // ref.read(appLoadingStateProvider.notifier).setState(true);
-    final lat = ref.read(eventFormControllerProvider).lat;
-    final lng = ref.read(eventFormControllerProvider).lng;
-    LocationData? position;
-    if (lat == null && lng == null) {
-      position = await HelpersUtils.getCurrentLocation();
+    try {
+      final lat = ref.read(eventFormControllerProvider).lat;
+      final lng = ref.read(eventFormControllerProvider).lng;
+      LocationData? position;
+      if (lat == null && lng == null) {
+        position = await HelpersUtils.getCurrentLocation();
 
-      initMap = CameraPosition(
-        target: LatLng(
-            position.latitude ?? 11.5564, position.longitude ?? 104.9282),
-        zoom: 14,
+        initMap = CameraPosition(
+          target: LatLng(
+              position.latitude ?? 11.5564, position.longitude ?? 104.9282),
+          zoom: 14,
+        );
+      } else {
+        initMap = CameraPosition(
+          target: LatLng(lat!, lng!),
+          zoom: 14,
+        );
+      }
+      debugPrint('position ${position}');
+
+      WidgetsBinding.instance.addPostFrameCallback(
+        (timeStamp) {
+          setState(() {
+            mapPosition = LatLng(lat ?? position!.latitude ?? 11.5564,
+                lng ?? position!.longitude ?? 104.9282);
+          });
+        },
       );
-    } else {
-      initMap = CameraPosition(
-        target: LatLng(lat!, lng!),
-        zoom: 14,
-      );
+    } catch (e) {
+      if (mounted && e.toString().startsWith('Location permissions')) {
+        PermissionUtils.showPermissionDialog(
+            context, 'Location Permission', e.toString(), false);
+      }
     }
-    debugPrint('position ${position}');
-
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        setState(() {
-          mapPosition = LatLng(lat ?? position!.latitude ?? 11.5564,
-              lng ?? position!.longitude ?? 104.9282);
-        });
-      },
-    );
   }
 }

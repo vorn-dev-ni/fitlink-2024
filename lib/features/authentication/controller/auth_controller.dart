@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
-import 'package:demo/core/riverpod/navigation_state.dart';
 import 'package:demo/data/repository/firebase/auth_login_repo.dart';
 import 'package:demo/data/repository/firebase_auth_repo.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
@@ -7,7 +7,6 @@ import 'package:demo/features/authentication/controller/login_controller.dart';
 import 'package:demo/features/authentication/controller/register_controller.dart';
 import 'package:demo/features/authentication/model/auth_user.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
-import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/firebase_auth_message.dart';
 import 'package:demo/utils/exception/app_exception.dart';
@@ -89,11 +88,10 @@ class AuthController {
         return;
       }
       final user = await _authLoginRepository.loginUserEmailPassword(auth);
-
+      // ref.invalidate(profileUserControllerProvider(FirebaseA));
       ref
           .read(navbarControllerProvider.notifier)
           .updateProfileTab(user.avatar ?? "");
-      ref.invalidate(profileUserControllerProvider);
     } catch (e) {
       String message = e.toString();
       if (e is FirebaseException) {
@@ -107,7 +105,12 @@ class AuthController {
   }
 
   Future<void> logout() async {
-    await _authLoginRepository.logoutUser();
+    try {
+      await _authLoginRepository.logoutUser();
+    } catch (e) {
+      rethrow;
+    }
+    // await FirebaseFirestore.instance.clearPersistence();
   }
 
   Future loginWithGoogle() async {

@@ -171,21 +171,7 @@ class _PhoneOtpVerifyState extends ConsumerState<PhoneOtpVerify> {
       DeviceUtils.hideKeyboard(context);
       ref.read(appLoadingStateProvider.notifier).setState(true);
       await ref.read(loginControllerProvider.notifier).sendCodeSignInPhone(
-          onSuccessOtp: () {
-            // HelpersUtils.navigatorState(context).pushNamed(
-            //   AppPage.home,
-            // );
-            // ref.invalidate(profileUserControllerProvider);
-
-            debugPrint("PTTP is >>> ");
-
-            // if (HelpersUtils.navigatorState(context).canPop() == true) {
-            //   HelpersUtils.navigatorState(context).pop();
-            //   HelpersUtils.navigatorState(context).pop();
-            //   // HelpersUtils.navigatorState(context).pop();
-            // }
-          },
-          verificationId: data['verificationId']);
+          onSuccessOtp: () {}, verificationId: data['verificationId']);
       ref.read(appLoadingStateProvider.notifier).setState(false);
     } catch (e) {
       if (mounted) {

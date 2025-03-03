@@ -1,5 +1,4 @@
 import 'package:demo/features/home/widget/workout/workout_body.dart';
-import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';

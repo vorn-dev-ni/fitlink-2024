@@ -6,19 +6,28 @@ import 'package:demo/features/authentication/views/forget_password/forget_passwo
 import 'package:demo/features/authentication/views/login/email_verify.dart';
 import 'package:demo/features/authentication/views/login/phone_verify.dart';
 import 'package:demo/features/authentication/views/register/register.dart';
+import 'package:demo/features/dummy/main_dummy.dart';
 import 'package:demo/features/home/my_home.dart';
+import 'package:demo/features/home/views/chat_detail/chat_detail_screen.dart';
+import 'package:demo/features/home/views/chat_search/chat_search.dart';
 import 'package:demo/features/home/views/daily_workout/main_workout.dart';
 import 'package:demo/features/home/views/daily_workout/views/excercise_activities_form.dart';
 import 'package:demo/features/home/views/daily_workout/views/excercise_detail.dart';
 import 'package:demo/features/home/views/daily_workout/views/excercise_overview.dart';
 import 'package:demo/features/home/views/daily_workout/views/excercise_success.dart';
+import 'package:demo/features/home/views/main/comments/comment_edit.dart';
+import 'package:demo/features/home/views/main/comments/comment_main.dart';
 import 'package:demo/features/home/views/main/event/event_detail/event_detail.dart';
 import 'package:demo/features/home/views/main/event/event_post/event_post.dart';
 import 'package:demo/features/home/views/main/event/event_submission/event_form_submit.dart';
 import 'package:demo/features/home/views/main/event/event_submission/event_success.dart';
+import 'package:demo/features/home/views/main/my_home/feeling_list.dart';
+import 'package:demo/features/home/views/main/my_home/upload_media.dart';
 import 'package:demo/features/home/views/profile/preview/preview_image.dart';
 import 'package:demo/features/home/views/profile/edit_profile/edit_profile.dart';
+import 'package:demo/features/home/views/single_profile/views/single_profile.dart';
 import 'package:demo/features/home/views/upload/upload_tab.dart';
+import 'package:demo/features/notifications/notification_main.dart';
 import 'package:demo/features/on_boarding/on_boarding.dart';
 import 'package:demo/features/other/no_internet.dart';
 import 'package:demo/utils/constant/app_page.dart';
@@ -28,6 +37,32 @@ class AppRoutes {
   AppRoutes._();
 
   static final List<RoutesApp> mainStacks = [
+    RoutesApp(
+        routeName: AppPage.ChatSearching,
+        builder: (context) => const ChatSearchScreen()),
+    RoutesApp(
+        routeName: AppPage.ChatDetails,
+        builder: (context) => const ChatDetailScreen()),
+    RoutesApp(
+        routeName: AppPage.viewProfile, builder: (context) => SingleProfile()),
+    RoutesApp(
+        routeName: AppPage.NotificationPath,
+        builder: (context) => const DummyScreenTest()),
+    RoutesApp(
+        routeName: AppPage.commentEditing,
+        builder: (context) => const CommentEdit()),
+    RoutesApp(
+        routeName: AppPage.feelingListing,
+        builder: (context) => const FeelingListScreen()),
+    RoutesApp(
+        routeName: AppPage.createPost,
+        builder: (context) => const UploadMediaPost()),
+    RoutesApp(
+        routeName: AppPage.commentListings,
+        builder: (context) => const CommentMain()),
+    RoutesApp(
+        routeName: AppPage.notificationListing,
+        builder: (context) => const NotificationMain()),
     RoutesApp(
         routeName: AppPage.uploadingTab,
         builder: (context) => const UploadTab()),

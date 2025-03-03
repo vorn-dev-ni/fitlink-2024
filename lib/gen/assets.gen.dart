@@ -70,6 +70,9 @@ class $AssetsAudioGen {
   /// File path: assets/audio/good_job.mp3
   String get goodJob => 'assets/audio/good_job.mp3';
 
+  /// File path: assets/audio/notification.mp3
+  String get notification => 'assets/audio/notification.mp3';
+
   /// File path: assets/audio/oh_god.mp3
   String get ohGod => 'assets/audio/oh_god.mp3';
 
@@ -102,6 +105,7 @@ class $AssetsAudioGen {
         bgGym,
         bye,
         goodJob,
+        notification,
         ohGod,
         setSuccess,
         successUpload,
@@ -124,14 +128,20 @@ class $AssetsIconGen {
 class $AssetsLottiesGen {
   const $AssetsLottiesGen();
 
+  /// File path: assets/lotties/heart.json
+  String get heart => 'assets/lotties/heart.json';
+
   /// File path: assets/lotties/loading.json
   String get loading => 'assets/lotties/loading.json';
 
   /// File path: assets/lotties/loading_two.json
   String get loadingTwo => 'assets/lotties/loading_two.json';
 
+  /// File path: assets/lotties/surpise.json
+  String get surpise => 'assets/lotties/surpise.json';
+
   /// List of all assets
-  List<String> get values => [loading, loadingTwo];
+  List<String> get values => [heart, loading, loadingTwo, surpise];
 }
 
 class $AssetsSplashGen {
@@ -174,6 +184,9 @@ class $AssetsUtilsGen {
 class $AssetsIconSvgGen {
   const $AssetsIconSvgGen();
 
+  /// File path: assets/icon/svg/camera.svg
+  String get camera => 'assets/icon/svg/camera.svg';
+
   /// File path: assets/icon/svg/chat.svg
   String get chat => 'assets/icon/svg/chat.svg';
 
@@ -198,6 +211,9 @@ class $AssetsIconSvgGen {
   /// File path: assets/icon/svg/eye.svg
   String get eye => 'assets/icon/svg/eye.svg';
 
+  /// File path: assets/icon/svg/feeling.svg
+  String get feeling => 'assets/icon/svg/feeling.svg';
+
   /// File path: assets/icon/svg/file-neutral.svg
   String get fileNeutral => 'assets/icon/svg/file-neutral.svg';
 
@@ -209,6 +225,9 @@ class $AssetsIconSvgGen {
 
   /// File path: assets/icon/svg/not_found.svg
   String get notFound => 'assets/icon/svg/not_found.svg';
+
+  /// File path: assets/icon/svg/photo.svg
+  String get photo => 'assets/icon/svg/photo.svg';
 
   /// File path: assets/icon/svg/plus.svg
   String get plus => 'assets/icon/svg/plus.svg';
@@ -224,6 +243,7 @@ class $AssetsIconSvgGen {
 
   /// List of all assets
   List<String> get values => [
+        camera,
         chat,
         check,
         circle,
@@ -232,10 +252,12 @@ class $AssetsIconSvgGen {
         dumbell,
         eyeClosed,
         eye,
+        feeling,
         fileNeutral,
         house,
         mdiLocation,
         notFound,
+        photo,
         plus,
         plus20,
         share,

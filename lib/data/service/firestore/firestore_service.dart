@@ -14,19 +14,16 @@ class FirestoreService {
   FirestoreService({
     required this.firebaseAuthService,
   });
-  Stream<AuthModel?> getUserStream(String uid) {
-    debugPrint("call stream ${uid}");
+  FirebaseFirestore get firestore => _firestore;
 
+  Stream<AuthModel?> getUserStream(String uid) {
     return FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
         .snapshots()
         .map((snapshot) {
       if (snapshot.exists) {
-        debugPrint("call exist tah ${uid}");
         final data = AuthModel.fromFirestore(snapshot);
-        debugPrint("call exist tah ${data.toString()}");
-
         return data;
       } else {
         return null;
@@ -79,20 +76,19 @@ class FirestoreService {
   }
 
   Future<AuthModel> getEmail(String? uid) async {
-    // final User? currentUser = FirebaseAuth.instance.currentUser;
-
     if (uid != null) {
       try {
-        DocumentSnapshot snapshot =
-            await _firestore.collection('users').doc(uid).get();
-
+        final userRef = _firestore.collection('users').doc(uid);
+        DocumentSnapshot snapshot = await userRef.get();
         if (snapshot.data() == null) {
           return AuthModel();
         }
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-        debugPrint('snap shot is ${data['email']} with id of ${uid}');
 
         if (data.isNotEmpty) {
+          final followerSnapshot = await userRef.collection('followers').get();
+
+          debugPrint("follow ${followerSnapshot.size}");
           String email = data['email'] ?? "";
           String fullname = data['fullName'] ?? "";
           String avatar = data['avatar'] ?? "";
@@ -101,6 +97,7 @@ class FirestoreService {
           String cover_image = data['cover_feature'] ?? '';
 
           return AuthModel(
+              id: snapshot.id,
               fullname: fullname,
               email: email,
               avatar: avatar,

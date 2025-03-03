@@ -8,7 +8,6 @@ import 'package:demo/data/service/firebase/storage_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
 import 'package:demo/data/service/firestore/profiles/profile_service.dart';
 import 'package:demo/features/authentication/model/profile_request.dart';
-import 'package:demo/features/home/controller/navbar_controller.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,17 +31,14 @@ class ProfileUserController extends _$ProfileUserController {
     firestoreService =
         FirestoreService(firebaseAuthService: FirebaseAuthService());
 
-    return await getData();
+    return await getData(FirebaseAuth.instance.currentUser?.uid);
   }
 
-  FutureOr<AuthModel?> getData() async {
-    debugPrint(
-        "Fireabse user data is ${FirebaseAuth.instance.currentUser?.uid}");
+  FutureOr<AuthModel?> getData(String? userId) async {
     if (FirebaseAuth.instance.currentUser == null) {
       return AuthModel();
     } else {
-      AuthModel? authModel = await firestoreService
-          .getEmail(FirebaseAuth.instance.currentUser!.uid);
+      AuthModel? authModel = await firestoreService.getEmail(userId);
 
       return authModel;
     }
@@ -50,7 +46,7 @@ class ProfileUserController extends _$ProfileUserController {
 
   Future getDownloadUrl(File imageFile) async {
     String extensionWithoutFileExtension =
-        HelpersUtils.getLastFileName(imageFile!.path);
+        HelpersUtils.getLastFileName(imageFile.path);
     final result = await storageService.uploadFile(
         file: imageFile, fileName: extensionWithoutFileExtension);
     return result!['downloadUrl'];

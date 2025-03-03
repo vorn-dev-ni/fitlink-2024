@@ -25,8 +25,6 @@ class _CahceImageNetworkState extends State<CahceImageNetwork>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    debugPrint("Re build event item");
-
     return FancyShimmerImage(
       cacheKey: widget.feature,
       boxFit: BoxFit.cover,

@@ -1,5 +1,6 @@
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
+import 'package:demo/features/home/controller/posts/post_media_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
@@ -8,6 +9,7 @@ import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
@@ -39,6 +41,7 @@ class _UploadTabState extends ConsumerState<UploadTab>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
         backgroundColor: AppColors.backgroundLight,
@@ -66,10 +69,22 @@ class _UploadTabState extends ConsumerState<UploadTab>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Posts',
-                  style: AppTextTheme.lightTextTheme.bodyMedium
-                      ?.copyWith(color: AppColors.backgroundLight),
+                GestureDetector(
+                  onTap: () {
+                    if (mounted) {
+                      // ref
+                      //     .read(postMediaControllerProvider.notifier)
+                      //     .clearState();
+                      ref.invalidate(postMediaControllerProvider);
+                    }
+                    HelpersUtils.navigatorState(context)
+                        .pushNamed(AppPage.createPost);
+                  },
+                  child: Text(
+                    'Posts',
+                    style: AppTextTheme.lightTextTheme.bodyMedium
+                        ?.copyWith(color: AppColors.backgroundLight),
+                  ),
                 ),
                 Text(
                   'Videos',
@@ -97,7 +112,6 @@ class _UploadTabState extends ConsumerState<UploadTab>
 
   void fetchUserRole() async {
     final asyncValues = await ref.watch(profileUserControllerProvider.future);
-    debugPrint("USer role is ${asyncValues}");
     if (mounted) {
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) {

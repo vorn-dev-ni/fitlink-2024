@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:demo/common/model/user_model.dart';
 import 'package:demo/data/repository/firebase_auth_repo.dart';
+import 'package:demo/data/service/firestore/notification/notification_service.dart';
 import 'package:demo/data/service/social/facebook_service.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
@@ -18,6 +19,7 @@ class AuthLoginRepository extends FirebaseAuthRepository {
   late final FirestoreService firestoreService;
   late final GoogleService googleService;
   late final FacebookService facebookService;
+  late final NotificationRemoteService notificationRemoteService;
   AuthLoginRepository({
     required this.firebaseAuthService,
   }) {
@@ -25,6 +27,8 @@ class AuthLoginRepository extends FirebaseAuthRepository {
         FirestoreService(firebaseAuthService: firebaseAuthService);
     googleService = GoogleService();
     facebookService = FacebookService();
+    notificationRemoteService =
+        NotificationRemoteService(firebaseAuthService: firebaseAuthService);
   }
 
   @override
@@ -121,6 +125,11 @@ class AuthLoginRepository extends FirebaseAuthRepository {
 
   @override
   Future logoutUser() async {
+    if (firebaseAuthService.currentUser != null) {
+      await notificationRemoteService
+          .removeFcmToken(firebaseAuthService.currentUser!.uid);
+      await firebaseAuthService.currentUser?.reload();
+    }
     await firebaseAuthService.signOut();
     await googleService.logout();
     await facebookService.logoutFacebook();

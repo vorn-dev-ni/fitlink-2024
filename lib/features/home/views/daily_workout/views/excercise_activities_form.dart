@@ -16,6 +16,7 @@ import 'package:demo/utils/formatters/formatter_utils.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:demo/utils/validation/activity_validation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -199,12 +200,14 @@ class _ExcerciseActivitiesFormState
 
           DateTime normalizedDate =
               DateTime(initDate!.year, initDate!.month, initDate!.day);
-          ref.invalidate(activitiesControllerProvider(normalizedDate));
+          ref.invalidate(activitiesControllerProvider(
+              normalizedDate, FirebaseAuth.instance.currentUser?.uid ?? ""));
         } else {
           DateTime normalizedDate =
               DateTime(date!.year, date!.month, date!.day);
           await ref.read(activityFormWorkoutControllerProvider.notifier).save();
-          ref.invalidate(activitiesControllerProvider(normalizedDate));
+          ref.invalidate(activitiesControllerProvider(
+              normalizedDate, FirebaseAuth.instance.currentUser?.uid ?? ""));
         }
 
         if (mounted) {
@@ -473,6 +476,7 @@ class _ExcerciseActivitiesFormState
   }
 
   void playAudio() {
+    playAudioUpload.seek(const Duration(seconds: 0));
     playAudioUpload.play();
   }
 }

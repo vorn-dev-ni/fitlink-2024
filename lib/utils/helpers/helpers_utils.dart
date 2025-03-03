@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:demo/utils/constant/app_page.dart';
+import 'package:demo/utils/device/device_utils.dart';
+import 'package:demo/utils/local_storage/local_storage_utils.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:location/location.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/exception/app_exception.dart';
@@ -14,7 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:permission_handler/permission_handler.dart';
@@ -36,6 +37,15 @@ class HelpersUtils {
     final asset = await rootBundle.load(assetPath);
     final icon = BitmapDescriptor.fromBytes(asset.buffer.asUint8List());
     return icon;
+  }
+
+  static bool isAuthenticated(BuildContext context) {
+    final email = LocalStorageUtils().getKey('email');
+    if (email == "" || email == null) {
+      HelpersUtils.navigatorState(context).pushNamed(AppPage.auth);
+      return false;
+    }
+    return true;
   }
 
   static Future<LocationData> getCurrentLocation() async {
@@ -70,51 +80,29 @@ class HelpersUtils {
     try {
       LocationData locationData = await location.getLocation();
 
-      debugPrint("Location data is ${locationData}");
       return locationData;
     } catch (e) {
       return Future.error('Failed to get location: $e');
     }
   }
-  // static Future<Position> getCurrentLocation() async {
-  //   bool serviceEnabled;
-  //   LocationPermission permission;
-  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  //   if (!serviceEnabled) {
-  //     // Location services are not enabled don't continue
-  //     // accessing the position and request users of the
-  //     // App to enable the location services.
-  //     return Future.error('Location services are disabled.');
-  //   }
 
-  //   permission = await Geolocator.checkPermission();
-  //   if (permission == LocationPermission.denied) {
-  //     permission = await Geolocator.requestPermission();
-  //     if (permission == LocationPermission.denied) {
-  //       // Permissions are denied, next time you could try
-  //       // requesting permissions again (this is also where
-  //       // Android's shouldShowRequestPermissionRationale
-  //       // returned true. According to Android guidelines
-  //       // your App should show an explanatory UI now.
-  //       return Future.error('Location permissions are denied');
-  //     }
-  //   }
+  static Future<String?> getDeviceToken() async {
+    try {
+      String? token = DeviceUtils.isAndroid()
+          ? await FirebaseMessaging.instance.getToken()
+          : await FirebaseMessaging.instance.getAPNSToken();
 
-  //   if (permission == LocationPermission.deniedForever) {
-  //     // Permissions are denied forever, handle appropriately.
-  //     return Future.error(
-  //         'Location permissions are permanently denied, we cannot request permissions.');
-  //   }
+      if (token != null) {
+        debugPrint("Device FCM Token: $token");
 
-  //   const LocationSettings locationSettings = LocationSettings(
-  //     accuracy: LocationAccuracy.high,
-  //     distanceFilter: 100,
-  //   );
-  //   // When we reach here, permissions are granted and we can
-  //   // continue accessing the position of the device.
-  //   return await Geolocator.getCurrentPosition(
-  //       locationSettings: locationSettings);
-  // }
+        return token;
+      } else {
+        debugPrint("Failed to retrieve FCM token");
+      }
+    } catch (e) {
+      debugPrint("Error retrieving FCM token: $e");
+    }
+  }
 
   static String generateRandomUsername() {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';

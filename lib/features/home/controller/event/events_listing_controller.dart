@@ -23,18 +23,4 @@ class EventsListingController extends _$EventsListingController {
       rethrow;
     }
   }
-
-  // FutureOr<List<Event>?> build() {
-  //   eventsRepository = EventsRepository(
-  //       baseService: EventService(firebaseAuthService: FirebaseAuthService()));
-  //   return fetchEvents();
-  // }
-
-  // Future<List<Event>?> fetchEvents() async {
-  //   try {
-  //     return await eventsRepository.getAllOneTimeEvent();
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
 }

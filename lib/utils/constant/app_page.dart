@@ -1,5 +1,3 @@
-import 'package:demo/features/home/views/upload/upload_tab.dart';
-
 class AppPage {
   AppPage._();
   // ignore: constant_identifier_names
@@ -54,11 +52,32 @@ class AppPage {
   static const previewImage = 'PreviewImage';
 
   //User
+  static const viewProfile = 'ViewProfile';
 
   static const editProfile = 'EditProfile';
 
-  //SUCCCESS_OTP
+  //Notification
+  static const notificationListing = 'NotificationMain';
 
   //Upload tab
   static const uploadingTab = 'Upload';
+
+  //Post
+  static const createPost = 'PostCreate';
+  static const feelingListing = 'FeelingListing';
+
+  //Comment
+  static const commentEditing = 'CommentEditing';
+  static const commentListings = 'Comments';
+
+  static const NotificationPath = 'NotificationTesting';
+
+  //Chat App
+  static const ChatMessagingListing = 'ChatMessagingListing';
+  static const ChatDetails = 'ChatDetails';
+  static const ChatSearching = 'ChatSearching';
+
+  //Video App
+  static const VideoDetails = 'VideoDetails';
+  static const VideoSearch = 'VideoSearch';
 }

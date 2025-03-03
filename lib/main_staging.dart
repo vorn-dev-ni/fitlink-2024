@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:demo/app_cycle.dart';
 import 'package:demo/common/model/user_model.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/core/riverpod/app_setting.dart';
@@ -7,12 +8,23 @@ import 'package:demo/core/riverpod/connectivity_state.dart';
 import 'package:demo/data/service/firebase/firebase_remote_config.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
+import 'package:demo/data/service/firestore/notification/notification_service.dart';
+import 'package:demo/data/service/utils/notification_service.dart';
+import 'package:demo/features/home/controller/chat/user_status_controller.dart';
+import 'package:demo/features/home/controller/comment/comment_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
+import 'package:demo/features/home/controller/posts/social_post_controller.dart';
+import 'package:demo/features/home/controller/posts/user_like_controller.dart';
+import 'package:demo/features/home/controller/profile/profile_post_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
+import 'package:demo/features/home/controller/workouts/activities_controller.dart';
+import 'package:demo/features/home/controller/workouts/workout_controller.dart';
+import 'package:demo/features/home/controller/workouts/workout_date_controller.dart';
 import 'package:demo/l10n/I10n.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/enums.dart';
+import 'package:demo/utils/constant/global_key.dart';
 import 'package:demo/utils/flavor/config.dart';
 import 'package:demo/utils/global_config.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
@@ -46,7 +58,7 @@ void main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: AppLifecycleObserver(child: MyApp())));
 }
 
 class MyApp extends ConsumerStatefulWidget {
@@ -60,7 +72,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   late String titleBar;
   bool showSnackbar = false;
   late StreamSubscription<dynamic> _streamSubscription;
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  late NotificationRemoteService notificationRemoteService;
   StreamSubscription<User?>? streamAuthState;
   StreamSubscription<AuthModel?>? streamUserFirestore;
 
@@ -79,34 +91,44 @@ class _MyAppState extends ConsumerState<MyApp> {
       statusBarBrightness: Brightness.dark, // For iOS
     ));
     _firebaseAuthService = FirebaseAuthService();
+    notificationRemoteService =
+        NotificationRemoteService(firebaseAuthService: _firebaseAuthService);
+    _firebaseAuthService = FirebaseAuthService();
     firestoreService =
         FirestoreService(firebaseAuthService: _firebaseAuthService);
     HelpersUtils.removeSplashScreen();
 
     streamAuthState = _firebaseAuthService.authStateChanges.listen(
       (user) async {
-        debugPrint("Top level user is ${user?.uid}");
         if (user == null &&
             LocalStorageUtils().getKey('email') != null &&
             LocalStorageUtils().getKey('email')!.isNotEmpty) {
           FirebaseAuth.instance.signOut();
-          await user?.reload();
+          Fluttertoast.showToast(msg: 'Auth state changes');
           LocalStorageUtils().setKeyString('email', '');
+          await user?.reload();
         }
 
         String? provider = user?.providerData[0].providerId;
         if (user != null && user.emailVerified ||
             provider == 'facebook.com' ||
             user?.phoneNumber != null && user?.phoneNumber != "") {
+          ref.read(userStatusControllerProvider.notifier).setUserOnline();
+
           if (mounted && !isNavigating) {
             isNavigating = true;
+            await LocalStorageUtils().setKeyString('uid', user?.uid ?? "");
             await LocalStorageUtils().setKeyString('email',
                 user?.email != null ? user!.email! : user?.phoneNumber ?? "");
             if (user != null) {
               streamUserFirestore = firestoreService
                   .getUserStream(user.uid)
                   .listen((userDoc) async {
-                if (userDoc != null) {
+                final isUserEmailExist = LocalStorageUtils().getKey('email');
+
+                if (userDoc != null &&
+                    isUserEmailExist != null &&
+                    isUserEmailExist != "") {
                   await syncUser(user.uid);
                 }
               });
@@ -146,17 +168,29 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   Future syncUser(String uid) async {
     try {
-      AuthModel? authModel = await firestoreService.getEmail(uid);
-      debugPrint(
-          'avatar is ${authModel.avatar} ${FirebaseAuth.instance.currentUser?.uid}');
+      // debugPrint("User is ${FirebaseAuth.instance.currentUser?.uid}");
+      if (FirebaseAuth.instance.currentUser?.uid != null) {
+        AuthModel? authModel = await firestoreService.getEmail(uid);
+        final fmcToken = await HelpersUtils.getDeviceToken();
+        if (fmcToken != null) {
+          notificationRemoteService.storeFcmToken(uid, fmcToken);
+        }
+        if (mounted) {
+          ref.invalidate(navbarControllerProvider);
+          ref
+              .read(navbarControllerProvider.notifier)
+              .updateProfileTab(authModel.avatar ?? "");
+          debugPrint("Sync user again tt hz ${uid}");
+          ref.invalidate(socialPostControllerProvider);
+          ref.invalidate(commentControllerProvider);
+          ref.invalidate(profilePostControllerProvider);
+          ref.invalidate(activitiesControllerProvider);
+          // ref.invalidate(workoutControllerProvider);
+          // ref.invalidate(workoutDateControllerProvider);
 
-      if (mounted) {
-        ref
-            .read(navbarControllerProvider.notifier)
-            .updateProfileTab(authModel.avatar ?? "");
-
-        ref.invalidate(profileUserControllerProvider);
-        ref.read(appLoadingStateProvider.notifier).setState(false);
+          ref.invalidate(profileUserControllerProvider);
+          ref.read(appLoadingStateProvider.notifier).setState(false);
+        }
       }
     } catch (e) {
       if (mounted) {

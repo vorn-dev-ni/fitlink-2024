@@ -16,6 +16,8 @@ class SchemaData {
       extensions: const [
         SkeletonizerConfigData(),
       ],
+      bottomSheetTheme:
+          const BottomSheetThemeData(dragHandleColor: AppColors.neutralBlack),
       scaffoldBackgroundColor: AppColors.backgroundLight,
       primaryColor: AppColors.primaryColor,
       brightness: Brightness.light,
@@ -43,6 +45,8 @@ class SchemaData {
       extensions: const [
         SkeletonizerConfigData(),
       ],
+      bottomSheetTheme:
+          const BottomSheetThemeData(dragHandleColor: AppColors.neutralBlack),
       elevatedButtonTheme: ElevationTheme.elevationButtonDark,
       primaryColorDark: AppColors.primaryDark,
       textSelectionTheme: AppTextThemeSelection.darkTheme,

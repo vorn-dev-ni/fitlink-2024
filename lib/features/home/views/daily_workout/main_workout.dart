@@ -22,7 +22,8 @@ class MainWorkoutScreen extends ConsumerStatefulWidget {
   ConsumerState<MainWorkoutScreen> createState() => _MainWorkoutScreenState();
 }
 
-class _MainWorkoutScreenState extends ConsumerState<MainWorkoutScreen> {
+class _MainWorkoutScreenState extends ConsumerState<MainWorkoutScreen>
+    with AutomaticKeepAliveClientMixin<MainWorkoutScreen> {
   // late DateTime selectedDate;
 
   @override
@@ -36,7 +37,10 @@ class _MainWorkoutScreenState extends ConsumerState<MainWorkoutScreen> {
     final selectedDate = ref.watch(workoutDateControllerProvider);
     return Scaffold(
       body: RefreshIndicator(
+        backgroundColor: AppColors.backgroundLight,
         onRefresh: () async {
+          await Future.delayed(const Duration(seconds: 1));
+
           ref.invalidate(workoutControllerProvider);
           ref.invalidate(excercisesControllerProvider);
           // ref.refresh(workoutControllerProvider(WorkoutType.feature).future);
@@ -87,6 +91,9 @@ class _MainWorkoutScreenState extends ConsumerState<MainWorkoutScreen> {
                   child: IconButton(
                     padding: const EdgeInsets.all(12),
                     onPressed: () {
+                      if (!HelpersUtils.isAuthenticated(context)) {
+                        return;
+                      }
                       HelpersUtils.navigatorState(context).pushNamed(
                           AppPage.excerciseActivitiesForm,
                           arguments: {'title': '', 'date': selectedDate});
@@ -228,4 +235,8 @@ class _MainWorkoutScreenState extends ConsumerState<MainWorkoutScreen> {
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

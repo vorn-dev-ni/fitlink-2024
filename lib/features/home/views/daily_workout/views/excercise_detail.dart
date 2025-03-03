@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:demo/common/widget/app_bar_custom.dart';
 import 'package:demo/common/widget/app_dialog.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/model/workouts/workout_response.dart';

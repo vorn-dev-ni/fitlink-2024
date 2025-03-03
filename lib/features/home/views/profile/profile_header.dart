@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:demo/common/model/transparent_container.dart';
+import 'package:demo/common/model/user_model.dart';
 import 'package:demo/common/widget/app_dialog.dart';
 import 'package:demo/common/widget/bottom_upload_sheet.dart';
 import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/common/widget/error_image_placeholder.dart';
 import 'package:demo/common/widget/image_modal_viewer.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
+import 'package:demo/features/home/views/single_profile/controller/media_tag_conroller.dart';
 import 'package:demo/features/home/views/profile/user_media.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
@@ -25,7 +27,13 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 class ProfileHeader extends ConsumerStatefulWidget {
   final Function onLogout;
-  const ProfileHeader({super.key, required this.onLogout});
+  String? uid;
+  bool? singleMode;
+  ProfileHeader(
+      {super.key,
+      required this.onLogout,
+      required this.uid,
+      this.singleMode = false});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ProfileHeaderState();
@@ -35,7 +43,6 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
   @override
   Widget build(BuildContext context) {
     final asyncUser = ref.watch(profileUserControllerProvider);
-
     return asyncUser.when(
       error: (error, stackTrace) {
         return emptyContent(title: error.toString());
@@ -49,66 +56,53 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
             currentUser?.email == null || currentUser?.email == "";
         return SliverAppBar(
           expandedHeight: 60.h,
-          actions: [
-            const SizedBox(
-              height: Sizes.lg,
-            ),
-            Skeletonizer(
-              enabled: showLoading,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.backgroundDark.withOpacity(0.4),
-                ),
-                margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
-                child: IconButton(
-                    padding: const EdgeInsets.all(0),
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.notifications,
-                      size: Sizes.xxl,
-                      color: AppColors.backgroundLight,
-                    )),
-              ),
-            ),
-            Skeletonizer(
-              enabled: showLoading,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.backgroundDark.withOpacity(0.4),
-                ),
-                margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
-                child: IconButton(
-                    padding: const EdgeInsets.all(0),
-                    onPressed: () =>
-                        _openBottomSheet(context, currentUser?.cover_feature),
-                    icon: const Icon(
-                      Icons.camera_alt_outlined,
-                      size: Sizes.xxl,
-                      color: AppColors.backgroundLight,
-                    )),
-              ),
-            ),
-            Skeletonizer(
-              enabled: showLoading,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.backgroundDark.withOpacity(0.4),
-                ),
-                margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
-                child: const IconButton(
-                    padding: EdgeInsets.all(0),
-                    onPressed: null,
-                    icon: Icon(
-                      Icons.more_vert,
-                      size: Sizes.xxl,
-                      color: AppColors.backgroundLight,
-                    )),
-              ),
-            )
-          ],
+          actions: widget.singleMode == false
+              ? [
+                  const SizedBox(
+                    height: Sizes.lg,
+                  ),
+                  renderNotificationIcon(showLoading, context, currentUser?.id),
+                  Skeletonizer(
+                    enabled: showLoading,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.backgroundDark.withOpacity(0.4),
+                      ),
+                      margin:
+                          const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
+                      child: IconButton(
+                          padding: const EdgeInsets.all(0),
+                          onPressed: () => _openBottomSheet(
+                              context, currentUser?.cover_feature),
+                          icon: const Icon(
+                            Icons.camera_alt_outlined,
+                            size: Sizes.xxl,
+                            color: AppColors.backgroundLight,
+                          )),
+                    ),
+                  ),
+                  Skeletonizer(
+                    enabled: showLoading,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.backgroundDark.withOpacity(0.4),
+                      ),
+                      margin:
+                          const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
+                      child: const IconButton(
+                          padding: EdgeInsets.all(0),
+                          onPressed: null,
+                          icon: Icon(
+                            Icons.more_vert,
+                            size: Sizes.xxl,
+                            color: AppColors.backgroundLight,
+                          )),
+                    ),
+                  )
+                ]
+              : null,
           stretch: true,
           backgroundColor: Colors.transparent,
           flexibleSpace: Skeletonizer(
@@ -267,9 +261,6 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                     const SizedBox(
                                       width: Sizes.lg,
                                     ),
-                                    const SizedBox(
-                                      width: Sizes.lg,
-                                    ),
                                     ClipRRect(
                                       clipBehavior: Clip.antiAlias,
                                       child: TextButton(
@@ -288,7 +279,8 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                                 context: context,
                                                 builder: (context) =>
                                                     AppALertDialog(
-                                                        bgColor: Color.fromRGBO(
+                                                        bgColor: const Color
+                                                                .fromRGBO(
                                                                 0, 0, 0, 1)
                                                             .withOpacity(0.4),
                                                         onConfirm: () {},
@@ -352,33 +344,7 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                 ),
                               ],
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 95.w,
-                                  child: transparentContainer(
-                                    child: Row(
-                                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                            child: userSocialMediaTab(
-                                                floatingText: '0',
-                                                type: 'Workouts')),
-                                        Expanded(
-                                            child: userSocialMediaTab(
-                                                floatingText: '0',
-                                                type: 'Followings')),
-                                        Expanded(
-                                            child: userSocialMediaTab(
-                                                floatingText: '0',
-                                                type: 'Followers'))
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            )
+                            RenderMediaStatus(currentUser)
                           ],
                         ),
                       ),
@@ -391,11 +357,156 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
     );
   }
 
+  Widget renderNotificationIcon(
+      bool showLoading, BuildContext context, String? userId) {
+    final async = ref.watch(mediaTagConrollerProvider(userId ?? ""));
+    return Skeletonizer(
+      enabled: showLoading,
+      child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColors.backgroundDark.withOpacity(0.4),
+          ),
+          margin: const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
+          child: async.when(
+            data: (data) {
+              return Stack(
+                children: [
+                  IconButton(
+                      padding: const EdgeInsets.all(0),
+                      onPressed: () {
+                        HelpersUtils.navigatorState(context)
+                            .pushNamed(AppPage.NotificationPath);
+                      },
+                      icon: const Icon(
+                        Icons.notifications,
+                        size: Sizes.xxl,
+                        color: AppColors.backgroundLight,
+                      )),
+                  if (data?.notificaitonCount != null &&
+                      data!.notificaitonCount! > 0)
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Badge(
+                        label: Text('${data!.notificaitonCount}'),
+                        backgroundColor: AppColors.errorColor,
+                        textColor: AppColors.backgroundLight,
+                        smallSize: 20,
+                      ),
+                    ),
+                ],
+              );
+            },
+            error: (error, stackTrace) {
+              return const Text('');
+            },
+            loading: () {
+              return Skeletonizer(
+                enabled: true,
+                child: Stack(
+                  children: [
+                    IconButton(
+                        padding: const EdgeInsets.all(0),
+                        onPressed: () {
+                          HelpersUtils.navigatorState(context)
+                              .pushNamed(AppPage.NotificationPath);
+                        },
+                        icon: const Icon(
+                          Icons.notifications,
+                          size: Sizes.xxl,
+                          color: AppColors.backgroundLight,
+                        )),
+                    const Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Badge(
+                        label: Text('3'),
+                        backgroundColor: AppColors.errorColor,
+                        textColor: AppColors.backgroundLight,
+                        smallSize: 20,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          )),
+    );
+  }
+
+  Widget RenderMediaStatus(AuthModel? currentUser) {
+    final async = ref.watch(mediaTagConrollerProvider(currentUser?.id ?? ""));
+    return async.when(
+      data: (data) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 95.w,
+              child: transparentContainer(
+                child: Row(
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                        child: userSocialMediaTab(
+                            floatingText: '${data?.workoutCounts ?? 0}',
+                            type: 'Workouts')),
+                    Expanded(
+                        child: userSocialMediaTab(
+                            floatingText: '${data?.followingCount ?? 0}',
+                            type: 'Followings')),
+                    Expanded(
+                        child: userSocialMediaTab(
+                            floatingText: '${data?.followerCount ?? 0}',
+                            type: 'Followers'))
+                  ],
+                ),
+              ),
+            )
+          ],
+        );
+      },
+      loading: () {
+        return Skeletonizer(
+          enabled: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 95.w,
+                child: transparentContainer(
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                          child: userSocialMediaTab(
+                              floatingText: '0', type: 'Workouts')),
+                      Expanded(
+                          child: userSocialMediaTab(
+                              floatingText: '${currentUser?.followingCount}',
+                              type: 'Followings')),
+                      Expanded(
+                          child: userSocialMediaTab(
+                              floatingText: '${currentUser?.followerCount}',
+                              type: 'Followers'))
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+      error: (error, stackTrace) {
+        return emptyContent(title: error.toString());
+      },
+    );
+  }
+
   SliverAppBar _buildLoading(BuildContext context) {
     return SliverAppBar(
       expandedHeight: 60.h,
-      // floating: false,
-      // pinned: true,
       actions: [
         Container(
           decoration: BoxDecoration(
@@ -505,23 +616,6 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                 onPressed: () {},
                                 child: const Text('Edit Profile')),
                           ),
-                          const SizedBox(
-                            width: Sizes.lg,
-                          ),
-                          ClipRRect(
-                            clipBehavior: Clip.antiAlias,
-                            child: TextButton(
-                                style: TextButton.styleFrom(
-                                    backgroundColor: AppColors.primaryColor
-                                        .withOpacity(0.15),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(Sizes.lg))),
-                                onPressed: () {
-                                  ref.invalidate(profileUserControllerProvider);
-                                },
-                                child: const Text('Refresh')),
-                          )
                         ],
                       ),
                       const SizedBox(

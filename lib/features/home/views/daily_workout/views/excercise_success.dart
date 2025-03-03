@@ -1,18 +1,20 @@
 import 'package:demo/common/widget/app_loading.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/features/home/controller/workouts/activities_controller.dart';
+import 'package:demo/features/home/views/single_profile/controller/media_tag_conroller.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
-import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/formatters/formatter_utils.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -23,7 +25,8 @@ class ExcerciseSuccess extends ConsumerStatefulWidget {
   ConsumerState<ExcerciseSuccess> createState() => _ExcerciseSuccessState();
 }
 
-class _ExcerciseSuccessState extends ConsumerState<ExcerciseSuccess> {
+class _ExcerciseSuccessState extends ConsumerState<ExcerciseSuccess>
+    with TickerProviderStateMixin {
   String? isSelected = '';
   late AudioPlayer _playSoundNextSet;
   late AudioPlayer _finishSound;
@@ -34,13 +37,19 @@ class _ExcerciseSuccessState extends ConsumerState<ExcerciseSuccess> {
   late String title;
   late String workoutId;
   late DateTime date;
+  late bool showSurpriseEffect;
+  late AnimationController _lottieController; // Declare the Lottie controller
 
   @override
   void initState() {
+    _lottieController = AnimationController(vsync: this);
+
     _finishSound = AudioPlayer();
     _sussySound = AudioPlayer();
     _playSoundNextSet = AudioPlayer();
     playCongratSound();
+    showSurpriseEffect = true;
+
     super.initState();
   }
 
@@ -61,6 +70,8 @@ class _ExcerciseSuccessState extends ConsumerState<ExcerciseSuccess> {
   void dispose() {
     _finishSound.dispose();
     _playSoundNextSet.dispose();
+    _lottieController.dispose();
+
     super.dispose();
   }
 
@@ -84,9 +95,14 @@ class _ExcerciseSuccessState extends ConsumerState<ExcerciseSuccess> {
       _finishSound.play();
       ref.read(appLoadingStateProvider.notifier).setState(true);
       await ref
-          .read(activitiesControllerProvider(null).notifier)
+          .read(activitiesControllerProvider(
+                  null, FirebaseAuth.instance.currentUser?.uid ?? "")
+              .notifier)
           .updateWorkoutCompleted(workoutId: workoutId, datetime: date);
+
       if (mounted) {
+        ref.invalidate(mediaTagConrollerProvider(
+            FirebaseAuth.instance.currentUser?.uid ?? ""));
         ref.read(appLoadingStateProvider.notifier).setState(false);
         HelpersUtils.navigatorState(context).pop();
         HelpersUtils.navigatorState(context).pop();
@@ -186,6 +202,19 @@ class _ExcerciseSuccessState extends ConsumerState<ExcerciseSuccess> {
                             ], // Control fade transition
                           ),
                         ),
+                      ),
+                    ),
+                    Positioned.fill(
+                      child: Lottie.asset(
+                        controller: _lottieController,
+                        Assets.lotties.surpise,
+                        fit: BoxFit.cover,
+                        onLoaded: (composition) {
+                          final extendedDuration = composition.duration * 1;
+                          _lottieController
+                            ..duration = extendedDuration
+                            ..forward();
+                        },
                       ),
                     ),
                   ],

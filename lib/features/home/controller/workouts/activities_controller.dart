@@ -1,6 +1,7 @@
 import 'package:demo/data/repository/firebase/activities_repo.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/activities/activities_service.dart';
+import 'package:demo/features/home/controller/logout_controller.dart';
 import 'package:demo/features/home/model/workout_activity.dart';
 import 'package:demo/model/workouts/workout_response.dart';
 import 'package:demo/utils/constant/app_colors.dart';
@@ -15,12 +16,15 @@ class ActivitiesController extends _$ActivitiesController {
   late ActivitiesRepository activitiesRepository;
 
   @override
-  Future<List<WorkoutExcerciseResponse>?> build(DateTime? date) async {
+  Future<List<WorkoutExcerciseResponse>?> build(
+      DateTime? date, String userId) async {
     activitiesRepository = ActivitiesRepository(
         baseService:
             ActivitiesService(firebaseAuthService: FirebaseAuthService()));
+    debugPrint("re build activity controler ${date} ${userId}");
+
     if (date != null) {
-      return getWorkout(date);
+      return getWorkout(date, userId);
     }
     return null;
   }
@@ -36,6 +40,12 @@ class ActivitiesController extends _$ActivitiesController {
           uid: FirebaseAuth.instance.currentUser!.uid,
           workoutId: workoutId,
           activities: activities);
+
+      debugPrint(
+          "addWorkout with date ${date} ${FirebaseAuth.instance.currentUser?.uid}");
+
+      ref.invalidate(activitiesControllerProvider(
+          date, FirebaseAuth.instance.currentUser?.uid ?? ""));
     } catch (e) {
       Fluttertoast.showToast(
           msg: e.toString(),
@@ -57,7 +67,10 @@ class ActivitiesController extends _$ActivitiesController {
           DateTime(datetime!.year, datetime.month, datetime.day);
       await activitiesRepository.updateWorkoutProcess(
           workoutId: workoutId!, date: normalizedDate);
-      ref.invalidate(activitiesControllerProvider(datetime));
+      debugPrint(
+          "updateWorkoutCompleted with date ${normalizedDate} ${FirebaseAuth.instance.currentUser?.uid}");
+      ref.invalidate(activitiesControllerProvider(
+          datetime, FirebaseAuth.instance.currentUser?.uid ?? ""));
     } catch (e) {
       Fluttertoast.showToast(
           msg: e.toString(),
@@ -70,10 +83,14 @@ class ActivitiesController extends _$ActivitiesController {
     }
   }
 
-  FutureOr<List<WorkoutExcerciseResponse>?> getWorkout(DateTime date) async {
+  FutureOr<List<WorkoutExcerciseResponse>?> getWorkout(
+      DateTime date, String? userId) async {
     try {
+      debugPrint("activite x2 date is ${date} ${userId}");
+
       return await activitiesRepository.getUserActivities(
-          date: date, uid: FirebaseAuth.instance.currentUser!.uid);
+          date: date,
+          uid: userId == "" ? FirebaseAuth.instance.currentUser?.uid : userId);
     } catch (e) {
       rethrow;
     }

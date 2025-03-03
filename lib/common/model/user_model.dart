@@ -3,17 +3,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/utils/constant/enums.dart';
 
 class AuthModel {
+  String? id;
   String? fullname;
   String? email;
   String? avatar;
+  int? followingCount;
+  int? followerCount;
+  int? notificationCount;
   String? bio;
   String? cover_feature;
   UserRoles? userRoles;
   AuthModel(
       {this.fullname,
+      this.id,
       this.email,
       this.avatar,
       this.userRoles,
+      this.followerCount,
+      this.followingCount,
+      this.notificationCount,
       this.cover_feature,
       this.bio});
   factory AuthModel.fromFirestore(DocumentSnapshot doc) {
@@ -22,6 +30,10 @@ class AuthModel {
     if (data == null) return AuthModel();
 
     return AuthModel(
+        id: data['id'],
+        followerCount: data['followerCount'],
+        followingCount: data['followingCount'],
+        notificationCount: data['notificationCount'],
         fullname: data['fullName'] as String?,
         email: data['email'] as String?,
         avatar: data['avatar'] as String?,

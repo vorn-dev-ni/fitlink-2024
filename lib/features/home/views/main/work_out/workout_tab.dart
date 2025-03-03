@@ -17,28 +17,20 @@ class _WorkoutTabState extends State<WorkoutTab>
     "https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?q=80&w=3569&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "https://images.unsplash.com/photo-1497015455546-1da71faf8d06?q=80&w=3732&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   ];
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: dummyImages.length,
-            itemBuilder: (context, index) {
-              final img = dummyImages[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: FancyShimmerImage(
-                  errorWidget: errorImgplaceholder(),
-                  imageUrl: img,
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+    return PageView.builder(
+      scrollDirection: Axis.vertical,
+      itemCount: dummyImages.length,
+      itemBuilder: (context, index) {
+        final img = dummyImages[index];
+        return FancyShimmerImage(
+          errorWidget: errorImgplaceholder(),
+          imageUrl: img,
+          boxFit: BoxFit.cover,
+        );
+      },
     );
   }
 

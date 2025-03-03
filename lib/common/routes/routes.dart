@@ -8,6 +8,8 @@ import 'package:demo/features/authentication/views/login/phone_verify.dart';
 import 'package:demo/features/authentication/views/register/register.dart';
 import 'package:demo/features/dummy/main_dummy.dart';
 import 'package:demo/features/home/my_home.dart';
+import 'package:demo/features/home/views/chat_detail/chat_detail_screen.dart';
+import 'package:demo/features/home/views/chat_search/chat_search.dart';
 import 'package:demo/features/home/views/daily_workout/main_workout.dart';
 import 'package:demo/features/home/views/daily_workout/views/excercise_activities_form.dart';
 import 'package:demo/features/home/views/daily_workout/views/excercise_detail.dart';
@@ -35,6 +37,12 @@ class AppRoutes {
   AppRoutes._();
 
   static final List<RoutesApp> mainStacks = [
+    RoutesApp(
+        routeName: AppPage.ChatSearching,
+        builder: (context) => const ChatSearchScreen()),
+    RoutesApp(
+        routeName: AppPage.ChatDetails,
+        builder: (context) => const ChatDetailScreen()),
     RoutesApp(
         routeName: AppPage.viewProfile, builder: (context) => SingleProfile()),
     RoutesApp(

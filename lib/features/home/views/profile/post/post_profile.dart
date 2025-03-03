@@ -3,6 +3,7 @@ import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/features/home/controller/posts/post_media_controller.dart';
 import 'package:demo/features/home/controller/posts/social_post_controller.dart';
+import 'package:demo/features/home/controller/posts/social_postone_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_post_controller.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/features/home/widget/posts/post_panel.dart';
@@ -33,10 +34,17 @@ class PostProfile extends ConsumerStatefulWidget {
 class _PostProfileState extends ConsumerState<PostProfile> {
   bool blockScroll = false;
   late AudioPlayer playAudioUpload;
+
   @override
   void initState() {
     bindingAudio();
     super.initState();
+  }
+
+  Future<void> loadNextPage() async {
+    // await ref
+    //     .read(commentControllerProvider(post.postId!).notifier)
+    //     .loadNextPage(post.postId!);
   }
 
   @override
@@ -49,9 +57,10 @@ class _PostProfileState extends ConsumerState<PostProfile> {
         return data != null && data.isNotEmpty
             ? ListView.builder(
                 itemCount: data.length,
-                physics: blockScroll
-                    ? const NeverScrollableScrollPhysics()
-                    : const ScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
+                // physics: blockScroll
+                //     ? const NeverScrollableScrollPhysics()
+                //     : const ScrollPhysics(),
                 padding: const EdgeInsets.only(top: Sizes.xl, bottom: 140),
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
@@ -62,7 +71,7 @@ class _PostProfileState extends ConsumerState<PostProfile> {
                       _onTapUserProfile(context, result.postId, result);
                     },
                     showEditable: true,
-                    isComment: false,
+                    isComment: true,
                     url: result.imageUrl,
                     showHeader: true,
                     twoFingersOn: () => setState(() => blockScroll = true),
@@ -114,6 +123,7 @@ class _PostProfileState extends ConsumerState<PostProfile> {
           .read(socialPostControllerProvider.notifier)
           .deletePost(postId ?? "", postImageUrl);
       ref.invalidate(socialPostControllerProvider);
+      ref.invalidate(socialPostoneControllerProvider);
       Fluttertoast.showToast(
           msg: "Post has been deleted !!!",
           toastLength: Toast.LENGTH_SHORT,

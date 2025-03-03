@@ -5,6 +5,8 @@ import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/comments/comment_service.dart';
 import 'package:demo/data/service/firestore/notification/notification_service.dart';
 import 'package:demo/features/home/controller/comment/comment_loading.dart';
+import 'package:demo/features/home/controller/posts/social_like_controller.dart';
+import 'package:demo/features/home/controller/posts/social_postone_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/features/home/model/comment.dart';
 import 'package:demo/features/home/model/post.dart';
@@ -56,6 +58,7 @@ class CommentController extends _$CommentController {
 
       await commentRepo.deleteComment(postId, commentId);
       ref.invalidateSelf();
+      ref.invalidate(socialPostoneControllerProvider);
     } catch (e) {
       rethrow;
     }
@@ -105,12 +108,14 @@ class CommentController extends _$CommentController {
       );
 
       state = AsyncData([...state.value ?? []]);
+      ref.invalidate(socialPostoneControllerProvider);
       ref.invalidateSelf();
       await notificationRepo.sendCommentNotification(
           senderID: FirebaseAuth.instance.currentUser!.uid,
           receiverID: receiverId,
           postId: parentId);
     } catch (e) {
+      ref.invalidate(socialPostoneControllerProvider);
       ref.invalidateSelf();
     }
   }

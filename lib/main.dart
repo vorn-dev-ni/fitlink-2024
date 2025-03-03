@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:demo/app_cycle.dart';
 import 'package:demo/common/model/user_model.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/core/riverpod/app_setting.dart';
@@ -9,6 +10,7 @@ import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
 import 'package:demo/data/service/firestore/notification/notification_service.dart';
 import 'package:demo/data/service/utils/notification_service.dart';
+import 'package:demo/features/home/controller/chat/user_status_controller.dart';
 import 'package:demo/features/home/controller/comment/comment_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
 import 'package:demo/features/home/controller/posts/social_post_controller.dart';
@@ -56,7 +58,7 @@ void main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: AppLifecycleObserver(child: MyApp())));
 }
 
 class MyApp extends ConsumerStatefulWidget {
@@ -102,6 +104,7 @@ class _MyAppState extends ConsumerState<MyApp> {
             LocalStorageUtils().getKey('email') != null &&
             LocalStorageUtils().getKey('email')!.isNotEmpty) {
           FirebaseAuth.instance.signOut();
+          Fluttertoast.showToast(msg: 'Auth state changes');
           LocalStorageUtils().setKeyString('email', '');
           await user?.reload();
         }
@@ -110,8 +113,11 @@ class _MyAppState extends ConsumerState<MyApp> {
         if (user != null && user.emailVerified ||
             provider == 'facebook.com' ||
             user?.phoneNumber != null && user?.phoneNumber != "") {
+          ref.read(userStatusControllerProvider.notifier).setUserOnline();
+
           if (mounted && !isNavigating) {
             isNavigating = true;
+            await LocalStorageUtils().setKeyString('uid', user?.uid ?? "");
             await LocalStorageUtils().setKeyString('email',
                 user?.email != null ? user!.email! : user?.phoneNumber ?? "");
             if (user != null) {
@@ -234,7 +240,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         : ThemeMode.dark;
     return Sizer(builder: (context, orientation, screenType) {
       return MaterialApp(
-        title: 'Flutter production',
+        title: 'Flutter Production',
 
         builder: FToastBuilder(),
         debugShowCheckedModeBanner: false,

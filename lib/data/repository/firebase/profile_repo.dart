@@ -55,4 +55,38 @@ class ProfileRepository {
       rethrow;
     }
   }
+
+  Stream<bool> getUserStatus(String? userId) {
+    try {
+      final docRef = baseService.getUserStatus(userId);
+      return docRef.map(
+        (event) {
+          if (event.exists) {
+            final result = event.data() as Map<String, dynamic>;
+            return result['isOnline'];
+          }
+
+          return false;
+        },
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future setUserOffline(String? userId) async {
+    try {
+      await baseService.setUserOffline(userId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future setUserOnline(String? userId) async {
+    try {
+      await baseService.setUserOnline(userId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

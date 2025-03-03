@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class PostSocialRepo {
   late BaseSocialMediaService baseSocialMediaService;
@@ -17,9 +18,74 @@ class PostSocialRepo {
     }
   }
 
+  Stream<Post> listenToPost(String postId) {
+    try {
+      return baseSocialMediaService.getPostSocial(postId).map(
+        (event) {
+          if (event.exists) {
+            return Post.fromJson(event.data() as Map<String, dynamic>);
+          }
+          return Post();
+        },
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future addPost(Post post) async {
     try {
       return await baseSocialMediaService.addPost(post.toJson());
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<int> getTotalPosts() async {
+    try {
+      return await baseSocialMediaService.getTotalPosts();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Post>?> getOneTimePosts(String uid, int? pageSize) async {
+    try {
+      final snapShot =
+          await baseSocialMediaService.getAllPostOneTime(pageSize ?? 8);
+      if (snapShot.size <= 0) {
+        return null;
+      }
+
+      List<Post> posts = await Future.wait(
+        snapShot.docs.map((doc) async {
+          Map<String, dynamic> postData = doc.data();
+          DocumentReference? userRef = postData['userId'] as DocumentReference?;
+
+          Map<String, dynamic>? userData =
+              userRef != null ? await extractUserData(userRef) : null;
+
+          bool isLiked = await checkUserLikePost(doc.id);
+
+          return Post.fromJson({
+            "postId": doc.id,
+            "userLiked": isLiked,
+            "likesCount": postData['likesCount'],
+            "user": userData,
+            "imageUrl": postData['imageUrl'],
+            "caption": postData['caption'],
+            "commentsCount": postData['commentsCount'],
+            "tag": postData['tag'],
+            "createdAt": postData['createdAt'],
+            "type": postData['type'],
+            "emoji": postData['emoji'],
+            "feeling": postData['feeling'],
+            'formattedCreatedAt': postData['createdAt'],
+          });
+        }).toList(),
+      );
+
+      return posts;
     } catch (e) {
       rethrow;
     }
@@ -63,6 +129,81 @@ class PostSocialRepo {
       }
 
       return const Stream.empty();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Stream<List<Post>?> getAllPostV2(String? uid, int? pageSize) {
+    try {
+      return baseSocialMediaService
+          .getHybridFeedWithPagination(uid, pageSize ?? 6)
+          .asyncMap((snapshot) async {
+        List<Post> posts = await Future.wait(snapshot.docs.map((doc) async {
+          if (doc.exists) {
+            Map<String, dynamic> postData = doc.data();
+            DocumentReference? userRef =
+                postData['userId'] as DocumentReference?;
+            Map<String, dynamic>? userData =
+                userRef != null ? await extractUserData(userRef) : null;
+            bool isLiked = await checkUserLikePost(doc.id);
+            return Post.fromJson({
+              "postId": doc.id,
+              "userLiked": isLiked,
+              "likesCount": doc.data()['likesCount'],
+              "user": userData,
+              "imageUrl": doc.data()['imageUrl'],
+              "caption": doc.data()['caption'],
+              "commentsCount": doc.data()['commentsCount'],
+              "tag": doc.data()['tag'],
+              "createdAt": doc.data()['createdAt'],
+              "type": doc.data()['type'],
+              "emoji": doc.data()['emoji'],
+              "feeling": doc.data()['feeling'],
+              'formattedCreatedAt': doc.data()['createdAt'],
+            });
+          }
+
+          return Post();
+        }));
+        return posts;
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Stream<List<Post>?> getAllPosts() {
+    try {
+      return baseSocialMediaService.getAllPosts().asyncMap((snapshot) async {
+        List<Post> posts = await Future.wait(snapshot.docs.map((doc) async {
+          if (doc.exists) {
+            Map<String, dynamic> postData = doc.data();
+            DocumentReference? userRef =
+                postData['userId'] as DocumentReference?;
+            Map<String, dynamic>? userData =
+                userRef != null ? await extractUserData(userRef) : null;
+            bool isLiked = await checkUserLikePost(doc.id);
+            return Post.fromJson({
+              "postId": doc.id,
+              "userLiked": isLiked,
+              "likesCount": doc.data()['likesCount'],
+              "user": userData,
+              "imageUrl": doc.data()['imageUrl'],
+              "caption": doc.data()['caption'],
+              "commentsCount": doc.data()['commentsCount'],
+              "tag": doc.data()['tag'],
+              "createdAt": doc.data()['createdAt'],
+              "type": doc.data()['type'],
+              "emoji": doc.data()['emoji'],
+              "feeling": doc.data()['feeling'],
+              'formattedCreatedAt': doc.data()['createdAt'],
+            });
+          }
+          return Post();
+        }));
+        return posts;
+      });
     } catch (e) {
       rethrow;
     }
@@ -129,42 +270,6 @@ class PostSocialRepo {
   Future removeLikeCount(String docId, int currentLikes) async {
     try {
       await baseSocialMediaService.removeLikesCount(docId, currentLikes);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Stream<List<Post>?> getAllPosts() {
-    try {
-      return baseSocialMediaService.getAllPosts().asyncMap((snapshot) async {
-        List<Post> posts = await Future.wait(snapshot.docs.map((doc) async {
-          if (doc.exists) {
-            Map<String, dynamic> postData = doc.data();
-            DocumentReference? userRef =
-                postData['userId'] as DocumentReference?;
-            Map<String, dynamic>? userData =
-                userRef != null ? await extractUserData(userRef) : null;
-            bool isLiked = await checkUserLikePost(doc.id);
-            return Post.fromJson({
-              "postId": doc.id,
-              "userLiked": isLiked,
-              "likesCount": doc.data()['likesCount'],
-              "user": userData,
-              "imageUrl": doc.data()['imageUrl'],
-              "caption": doc.data()['caption'],
-              "commentsCount": doc.data()['commentsCount'],
-              "tag": doc.data()['tag'],
-              "createdAt": doc.data()['createdAt'],
-              "type": doc.data()['type'],
-              "emoji": doc.data()['emoji'],
-              "feeling": doc.data()['feeling'],
-              'formattedCreatedAt': doc.data()['createdAt'],
-            });
-          }
-          return Post();
-        }));
-        return posts;
-      });
     } catch (e) {
       rethrow;
     }

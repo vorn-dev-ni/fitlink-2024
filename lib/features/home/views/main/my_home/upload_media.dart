@@ -4,6 +4,7 @@ import 'package:demo/common/widget/app_dialog.dart';
 import 'package:demo/common/widget/backdrop_loading.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/features/home/controller/posts/post_media_controller.dart';
+import 'package:demo/features/home/controller/posts/social_postone_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/gen/assets.gen.dart';
@@ -555,41 +556,48 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
   }
 
   void handleSubmit(String? tag) async {
-    if (textcaptionController.text.isNotEmpty && tag != null) {
-      ref.read(appLoadingStateProvider.notifier).setState(true);
-      await ref
-          .read(postMediaControllerProvider.notifier)
-          .handlePost(previewImages, isUpdate);
+    try {
+      if (textcaptionController.text.isNotEmpty && tag != null) {
+        ref.read(appLoadingStateProvider.notifier).setState(true);
+        await ref
+            .read(postMediaControllerProvider.notifier)
+            .handlePost(previewImages, isUpdate);
+        ref.invalidate(socialPostoneControllerProvider);
 
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted) {
-          Fluttertoast.showToast(
-              msg: isUpdate
-                  ? 'Post has been saved !!!'
-                  : "Successfully Posted !!!",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 2,
-              backgroundColor: AppColors.secondaryColor,
-              textColor: Colors.white,
-              fontSize: 16.0);
-          ref.read(appLoadingStateProvider.notifier).setState(false);
-          playAudio();
-          if (isUpdate == true) {
-            HelpersUtils.navigatorState(context).pop();
-          } else {
-            HelpersUtils.navigatorState(context).pop();
-            HelpersUtils.navigatorState(context).pop();
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            Fluttertoast.showToast(
+                msg: isUpdate
+                    ? 'Post has been saved !!!'
+                    : "Successfully Posted !!!",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 2,
+                backgroundColor: AppColors.secondaryColor,
+                textColor: Colors.white,
+                fontSize: 16.0);
+            ref.read(appLoadingStateProvider.notifier).setState(false);
+            playAudio();
+            if (isUpdate == true) {
+              HelpersUtils.navigatorState(context).pop();
+            } else {
+              HelpersUtils.navigatorState(context).pop();
+              HelpersUtils.navigatorState(context).pop();
+            }
           }
-        }
-      });
+        });
 
-      Timer(const Duration(seconds: 2), () {
-        playAudioUpload.dispose();
-        debugPrint("Audio has been dispose");
-      });
-    } else {
-      validationError(context, tag);
+        Timer(const Duration(seconds: 2), () {
+          playAudioUpload.dispose();
+          debugPrint("Audio has been dispose");
+        });
+      } else {
+        validationError(context, tag);
+      }
+    } catch (e) {
+      if (mounted) {
+        ref.read(appLoadingStateProvider.notifier).setState(false);
+      }
     }
   }
 

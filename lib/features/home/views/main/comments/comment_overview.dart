@@ -63,7 +63,9 @@ class _CommentOverviewState extends ConsumerState<CommentOverview> {
 
     return commentsStream.when(
       data: (data) {
-        if (data!.isEmpty) {
+        // return buildLoading();
+
+        if (data?.isEmpty == true) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 0),
             child: emptyContent(title: 'Start the comment now !!!'),
@@ -72,7 +74,7 @@ class _CommentOverviewState extends ConsumerState<CommentOverview> {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: Sizes.lg),
             child: ListView.builder(
-              itemCount: data.length,
+              itemCount: data!.length,
               padding: const EdgeInsets.only(bottom: 0),
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,

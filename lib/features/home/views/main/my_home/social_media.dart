@@ -1,5 +1,8 @@
+import 'package:demo/common/widget/app_loading.dart';
 import 'package:demo/common/widget/empty_content.dart';
+import 'package:demo/features/home/controller/posts/post_loading_paging.dart';
 import 'package:demo/features/home/controller/posts/social_post_controller.dart';
+import 'package:demo/features/home/controller/posts/social_postone_controller.dart';
 import 'package:demo/features/home/controller/tab/home_scroll_controller.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/features/home/widget/posts/post_panel.dart';
@@ -29,22 +32,35 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
     "https://images.unsplash.com/photo-1596079306903-9164c205f400?q=80&w=3571&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "https://plus.unsplash.com/premium_photo-1665673313231-b3cef27c80dd?q=80&w=3570&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   ];
-  @override
-  void initState() {
-    if (mounted) {
-      Future.delayed(const Duration(seconds: 10), () {
-        PermissionUtils.checkNotificationPermission(context);
-      });
-    }
-    super.initState();
-  }
-
+  late ScrollController scrollController;
   bool blockScroll = false;
   bool hasClickTap = false;
   bool isAnimating = false;
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    Future.delayed(const Duration(seconds: 10), () {
+      if (mounted) {
+        PermissionUtils.checkNotificationPermission(context);
+      }
+    });
+
+    final scrollController = ref.read(homeScrollControllerProvider);
+    scrollController.addListener(_scrollListener);
+    super.initState();
+  }
+
+  // This function will be triggered when scrolling
+
   @override
   Widget build(BuildContext context) {
-    final asyncValues = ref.watch(socialPostControllerProvider);
+    final asyncValues = ref.watch(socialPostoneControllerProvider);
     final scrollController = ref.watch(homeScrollControllerProvider);
     return SingleChildScrollView(
       controller: scrollController,
@@ -55,23 +71,33 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
         children: [
           asyncValues.when(
             data: (data) {
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: data?.length,
-                itemBuilder: (context, index) {
-                  final post = data![index];
-                  return renderItem(post);
-                },
-              );
+              return data!.isEmpty
+                  ? emptyContent(title: 'Oop, No post for today yet!!!')
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        final post = data[index];
+                        return renderItem(post);
+                      },
+                    );
             },
             error: (error, stackTrace) {
-              return emptyContent(title: error.toString());
+              debugPrint(error.toString());
+              return SizedBox(
+                  height: 600,
+                  child:
+                      emptyContent(title: error.toString().substring(0, 200)));
             },
             loading: () {
               return _build_loading();
             },
-          )
+          ),
+          renderLoading(),
+          const SizedBox(
+            height: 30,
+          ),
         ],
       ),
     );
@@ -107,8 +133,10 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
       padding: const EdgeInsets.only(bottom: Sizes.xs),
       child: PostPanel(
         post: post,
+        isComment: true,
         key: ValueKey(post.postId),
         // url: "loading",
+
         twoFingersOn: () => setState(() => blockScroll = true),
         twoFingersOff: () => Future.delayed(
           PinchZoomReleaseUnzoomWidget.defaultResetDuration,
@@ -118,6 +146,27 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
     );
   }
 
+  void _scrollListener() {
+    final scrollController = ref.read(homeScrollControllerProvider);
+    if (scrollController.position.atEdge) {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        debugPrint("Reach bottom");
+        ref.read(socialPostoneControllerProvider.notifier).loadNextPage();
+      }
+    }
+  }
+
   @override
   bool get wantKeepAlive => true;
+
+  Widget renderLoading() {
+    final loadingPaging = ref.watch(postLoadingPagingProvider);
+    return loadingPaging
+        ? Padding(
+            padding: const EdgeInsets.only(top: 5, bottom: 5),
+            child: appLoadingSpinner(),
+          )
+        : const SizedBox();
+  }
 }

@@ -2,16 +2,17 @@ import 'package:demo/common/widget/app_loading.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
 import 'package:demo/features/home/controller/posts/social_post_controller.dart';
+import 'package:demo/features/home/controller/posts/social_postone_controller.dart';
 import 'package:demo/features/home/controller/tab/event_scroll_controller.dart';
 import 'package:demo/features/home/controller/tab/home_scroll_controller.dart';
 import 'package:demo/features/home/controller/tab/tab_loading.dart';
+import 'package:demo/features/home/views/daily_workout/main_workout.dart';
 import 'package:demo/features/home/views/main/event/event.dart';
 import 'package:demo/features/home/views/main/my_home/social_media.dart';
 import 'package:demo/features/home/views/main/work_out/workout_tab.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/sizes.dart';
-import 'package:demo/utils/helpers/permission_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,11 +31,11 @@ class _HomeTabState extends ConsumerState<HomeTab>
   late TabController _tabController;
   final List<Widget> _screens = const [
     SocialMediaTab(),
-    WorkoutTab(),
+    // WorkoutTab(),
+    MainWorkoutScreen(),
+
     EventTabs(),
   ];
-  int _previousTabIndex = 0; // Store previous tab index
-
   @override
   void didChangeDependencies() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
@@ -50,7 +51,6 @@ class _HomeTabState extends ConsumerState<HomeTab>
   @override
   void dispose() {
     _tabController.dispose();
-
     super.dispose();
   }
 
@@ -168,7 +168,8 @@ class _HomeTabState extends ConsumerState<HomeTab>
           ref.read(homeScrollControllerProvider.notifier).scrollToTop(
               duration: const Duration(milliseconds: 300),
               curve: Curves.bounceIn);
-          ref.invalidate(socialPostControllerProvider);
+          // ref.invalidate(socialPostControllerProvider);
+          ref.invalidate(socialPostoneControllerProvider);
           break;
         case 2:
           ref.read(eventScrollControllerProvider.notifier).scrollToTop(

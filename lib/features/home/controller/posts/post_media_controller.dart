@@ -4,6 +4,7 @@ import 'package:demo/data/repository/firebase/post_social_repo.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firebase/storage_service.dart';
 import 'package:demo/data/service/firestore/posts/social_post_service.dart';
+import 'package:demo/features/home/controller/posts/social_post_controller.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
@@ -93,6 +94,8 @@ class PostMediaController extends _$PostMediaController {
       isUpdate
           ? await postSocialRepo.editPost(state)
           : await postSocialRepo.addPost(state);
+
+      ref.invalidate(socialPostControllerProvider);
     } catch (e) {
       Fluttertoast.showToast(
           msg: e.toString(),

@@ -3,14 +3,17 @@ import 'package:demo/data/repository/firebase/post_social_repo.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/notification/notification_service.dart';
 import 'package:demo/data/service/firestore/posts/social_post_service.dart';
+import 'package:demo/features/home/controller/posts/post_loading_paging.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'social_post_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 class SocialPostController extends _$SocialPostController {
+  int _pageSizes = 4;
   late PostSocialRepo postSocialRepo;
   late NotificationRepo notificationRepo;
   final firebaseService = FirebaseAuthService();
@@ -22,16 +25,47 @@ class SocialPostController extends _$SocialPostController {
     postSocialRepo = PostSocialRepo(
         baseSocialMediaService:
             SocialPostService(firebaseAuthService: firebaseService));
+
+    debugPrint('re render post again');
+
     return getAllPosts();
   }
 
   Stream<List<Post>?> getAllPosts() async* {
     try {
-      final stream = postSocialRepo.getAllPosts();
+      final stream = postSocialRepo.getAllPostV2(
+          FirebaseAuth.instance.currentUser?.uid, _pageSizes);
+
       await for (var posts in stream) {
         yield posts;
       }
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> loadNextPage() async {
+    try {
+      final total = await postSocialRepo.getTotalPosts();
+      if (total <= _pageSizes) {
+        return;
+      }
+      ref.read(postLoadingPagingProvider.notifier).setState(true);
+      _pageSizes = _pageSizes + 10;
+
+      final newDataStream = postSocialRepo.getAllPostV2(
+        FirebaseAuth.instance.currentUser?.uid,
+        _pageSizes,
+      );
+      ref.invalidateSelf();
+      final newData = await newDataStream.first;
+      if (newData != null && newData.isNotEmpty) {
+        state = AsyncData([...newData]);
+      }
+      ref.read(postLoadingPagingProvider.notifier).setState(false);
+    } catch (e) {
+      ref.read(postLoadingPagingProvider.notifier).setState(false);
+
       rethrow;
     }
   }
@@ -42,7 +76,6 @@ class SocialPostController extends _$SocialPostController {
         final storageReference = FirebaseStorage.instance.refFromURL(imageUrl);
         await storageReference.delete();
       }
-
       await postSocialRepo.deletePost(postId);
     } catch (e) {
       rethrow;
@@ -56,7 +89,6 @@ class SocialPostController extends _$SocialPostController {
         await postSocialRepo.removeLikeCount(docId, likes);
       } else {
         await postSocialRepo.updateLikeCount(docId, likes);
-
         if (receiverId != null && parentId != null) {
           await notificationRepo.sendLikeNotification(
               senderID: FirebaseAuth.instance.currentUser!.uid,

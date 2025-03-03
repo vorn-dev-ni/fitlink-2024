@@ -1,27 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'social_post_controller.dart';
+part of 'post_loading_paging.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$socialPostControllerHash() =>
-    r'aeada0503e5f5df8f73426c9d739312ae86868f9';
+String _$postLoadingPagingHash() => r'8805518b036ab5a7132b072f22b34f1efc8944dc';
 
-/// See also [SocialPostController].
-@ProviderFor(SocialPostController)
-final socialPostControllerProvider =
-    StreamNotifierProvider<SocialPostController, List<Post>?>.internal(
-  SocialPostController.new,
-  name: r'socialPostControllerProvider',
+/// See also [PostLoadingPaging].
+@ProviderFor(PostLoadingPaging)
+final postLoadingPagingProvider =
+    NotifierProvider<PostLoadingPaging, bool>.internal(
+  PostLoadingPaging.new,
+  name: r'postLoadingPagingProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$socialPostControllerHash,
+      : _$postLoadingPagingHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$SocialPostController = StreamNotifier<List<Post>?>;
+typedef _$PostLoadingPaging = Notifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

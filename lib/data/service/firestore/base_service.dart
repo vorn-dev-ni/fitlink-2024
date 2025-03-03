@@ -20,6 +20,9 @@ abstract class BaseUserService {
   Future isFollowingUser(String followedUserId);
   Future unfollowUser(String followedUserId);
   Future<MediaCount> getMediaCount(String userId);
+  Future<void> setUserOnline(String? userId);
+  Future<void> setUserOffline(String? userId);
+  Stream<DocumentSnapshot> getUserStatus(String? userId);
 }
 
 abstract class BaseActivitiesService {
@@ -33,7 +36,16 @@ abstract class BaseActivitiesService {
 
 abstract class BaseSocialMediaService {
   Stream<QuerySnapshot<Map<String, dynamic>>> getAllPosts();
-  Stream<QuerySnapshot<Map<String, dynamic>>> getPostByUser(String id);
+  Future<int> getTotalPosts();
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getPostSocial(String postId);
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getAllPostOneTime(int pageSize);
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getHybridFeedWithPagination(
+    String? currentUserId,
+    int pageSize,
+  );
+  Stream<QuerySnapshot<Map<String, dynamic>>> getPostByUser(String? id);
   Future deletePost(
     String postId,
   );

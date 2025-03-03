@@ -5,6 +5,7 @@ import 'package:demo/core/riverpod/navigation_state.dart';
 import 'package:demo/features/home/views/chat/chat_tab.dart';
 import 'package:demo/features/home/views/daily_workout/main_workout.dart';
 import 'package:demo/features/home/views/main/home_tab.dart';
+import 'package:demo/features/home/views/main/work_out/workout_tab.dart';
 import 'package:demo/features/home/views/profile/profile_tab.dart';
 import 'package:demo/features/other/no_internet.dart';
 import 'package:demo/utils/constant/app_colors.dart';
@@ -18,7 +19,10 @@ List<Widget> tabScreens = [
   const HomeTab(),
   const ChatTab(),
   const NoInternet(),
-  const MainWorkoutScreen(),
+  const WorkoutTab(),
+
+  // const MainWorkoutScreen(),
+
   ProfileTab(key: UniqueKey()),
 ];
 
@@ -89,8 +93,6 @@ class _MyHomeScreenState extends ConsumerState<MyHomeScreen> {
       ),
     );
   }
-
-  void onLogout() {}
 
   void _onTap(int index) {
     if ([1, 2, 4].contains(index)) {

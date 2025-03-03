@@ -22,7 +22,8 @@ class MainWorkoutScreen extends ConsumerStatefulWidget {
   ConsumerState<MainWorkoutScreen> createState() => _MainWorkoutScreenState();
 }
 
-class _MainWorkoutScreenState extends ConsumerState<MainWorkoutScreen> {
+class _MainWorkoutScreenState extends ConsumerState<MainWorkoutScreen>
+    with AutomaticKeepAliveClientMixin<MainWorkoutScreen> {
   // late DateTime selectedDate;
 
   @override
@@ -234,4 +235,8 @@ class _MainWorkoutScreenState extends ConsumerState<MainWorkoutScreen> {
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

@@ -5,6 +5,7 @@ import 'package:demo/core/riverpod/navigation_state.dart';
 import 'package:demo/features/authentication/controller/auth_controller.dart';
 import 'package:demo/features/authentication/controller/login_controller.dart';
 import 'package:demo/features/authentication/controller/register_controller.dart';
+import 'package:demo/features/home/controller/chat/user_status_controller.dart';
 import 'package:demo/features/home/controller/logout_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
 import 'package:demo/features/home/controller/posts/social_post_controller.dart';
@@ -223,12 +224,16 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
         ref.invalidate(mediaTagConrollerProvider);
         await authController.logout();
         // ref.invalidate(activitiesControllerProvider);
-
+        String uid = LocalStorageUtils().getKey('uid') ?? '';
+        ref.read(userStatusControllerProvider.notifier).setUserOffline(uid);
         ref.read(logoutControllerProvider.notifier).logout();
+        LocalStorageUtils().setKeyString('uid', '');
         ref.invalidate(profileUserControllerProvider);
         ref.invalidate(profilePostControllerProvider);
       }
     } catch (e) {
+      LocalStorageUtils().setKeyString('uid', '');
+      LocalStorageUtils().setKeyString('email', '');
       ref.invalidate(profilePostControllerProvider);
       ref.invalidate(profileUserControllerProvider);
     }

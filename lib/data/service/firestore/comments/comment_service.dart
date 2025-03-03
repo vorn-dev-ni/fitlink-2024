@@ -11,7 +11,7 @@ class CommentService extends BaseCommentService {
   CommentService({
     required this.firebaseAuthService,
   });
-
+  @override
   Stream<QuerySnapshot<Map<String, dynamic>>> getAllComments(
       String parentId, int? pageSize, DocumentSnapshot? lastDocument) {
     try {
@@ -33,23 +33,6 @@ class CommentService extends BaseCommentService {
       rethrow;
     }
   }
-
-  // @override
-  // Stream<QuerySnapshot<Map<String, dynamic>>> getAllComments(
-  //     String parentId, int pageSizes) {
-  //   try {
-  //     debugPrint("got size ${pageSizes}");
-  //     return _firestore
-  //         .collection('posts')
-  //         .doc(parentId)
-  //         .collection('comments')
-  //         .orderBy('createdAt', descending: true)
-  //         .limit(pageSizes)
-  //         .snapshots();
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
 
   @override
   Future removeLikesCount(

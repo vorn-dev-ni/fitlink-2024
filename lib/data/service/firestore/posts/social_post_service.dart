@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,13 +14,125 @@ class SocialPostService extends BaseSocialMediaService {
   }) {
     firebaseAuthService = FirebaseAuthService();
   }
+  Future<List<DocumentReference>> getFollowedUsers(
+      String currentUserId, int pageSize) async {
+    // Step 1: Fetch followed user IDs from the 'following' collection
+    final followingSnapshot = await _firestore
+        .collection('users')
+        .doc(currentUserId)
+        .collection('following')
+        .limit(pageSize)
+        .get();
+
+    // Step 2: Extract userIds (doc.id) from the followingSnapshot
+    final followedUserIds = followingSnapshot.docs
+        .map((doc) => doc.id) // Extract the userId (doc.id)
+        .toList();
+
+    // Step 3: Query the 'users' collection to get DocumentReferences
+    List<DocumentReference> userRefs = [];
+    for (var userId in followedUserIds) {
+      final userDocSnapshot = await _firestore
+          .collection('users')
+          .doc(userId) // Fetch the user document using the userId
+          .get();
+
+      // Step 4: If the user document exists, add the DocumentReference to the list
+      if (userDocSnapshot.exists) {
+        userRefs.add(userDocSnapshot.reference);
+      }
+    }
+
+    // Return the list of DocumentReferences
+    return userRefs;
+  }
+
   @override
   Stream<QuerySnapshot<Map<String, dynamic>>> getAllPosts() {
     final querySnapshot = _firestore
         .collection('posts')
         .orderBy('createdAt', descending: true)
+        .orderBy('likesCount', descending: true)
+        .orderBy('commentsCount', descending: true)
         .snapshots();
     return querySnapshot;
+  }
+
+  Future<int> getTotalPostsCount() async {
+    var snapshot = await _firestore.collection('posts').get();
+    return snapshot.size;
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> _getPostsFromFollowedUsers(
+    List<String> followedUserIds,
+    int pageSize,
+  ) {
+    return _firestore
+        .collection('posts')
+        .where('userId',
+            whereIn:
+                followedUserIds.take(10).toList()) // Limit to 10 followed users
+        .orderBy('createdAt', descending: true)
+        .limit(pageSize) // Limit results with dynamic pageSize
+        .snapshots();
+  }
+
+  // Stream<QuerySnapshot<Map<String, dynamic>>> _getTrendingPosts(int pageSize) {
+  //   final now = DateTime.now();
+  //   final tenDayAgo = now.subtract(const Duration(days: 14));
+  //   final startOfToday = DateTime(now.year, now.month, now.day);
+
+  //   // Query for today's posts (prioritize today’s posts)
+  //   final todayPostsQuery = _firestore
+  //       .collection('posts')
+  //       .where('createdAt', isGreaterThanOrEqualTo: tenDayAgo)
+  //       .orderBy('likesCount', descending: true) // Order by likes first
+  //       .orderBy('createdAt', descending: true)
+  //       .limit(pageSize);
+
+  //   return todayPostsQuery.snapshots();
+  // }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> _getTrendingPosts(int pageSize) {
+    final now = DateTime.now();
+    final tenDayAgo = now.subtract(const Duration(days: 14));
+    return _firestore
+        .collection('posts')
+        .where('createdAt', isGreaterThanOrEqualTo: tenDayAgo)
+        .orderBy('createdAt', descending: true)
+        .orderBy('likesCount', descending: true)
+        .orderBy('commentsCount', descending: true)
+        .limit(pageSize)
+        .snapshots();
+  }
+
+  Stream<List<DocumentSnapshot>> getPosts(int pageSize) {
+    final now = DateTime.now();
+    final tenDayAgo = now.subtract(const Duration(days: 14));
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .where('createdAt', isGreaterThanOrEqualTo: tenDayAgo)
+        .orderBy('createdAt', descending: true) // Keep other orders if needed
+        .limit(pageSize)
+        .snapshots()
+        .map((snapshot) =>
+            snapshot.docs); // Fetch posts without ordering by likeCount
+  }
+
+  Stream<List<DocumentSnapshot>> getSortedPosts(int pageSize) {
+    return getPosts(pageSize).map((posts) {
+      // Sort posts based on likeCount
+      posts.sort((a, b) {
+        final likeA = a['likeCount'] ?? 0;
+        final likeB = b['likeCount'] ?? 0;
+        return b['createdAt'].compareTo(a['createdAt']) == 0
+            ? likeB
+                .compareTo(likeA) // If createdAt is the same, sort by likeCount
+            : b['createdAt']
+                .compareTo(a['createdAt']); // Else, sort by createdAt
+      });
+      return posts;
+    });
   }
 
   @override
@@ -108,8 +220,8 @@ class SocialPostService extends BaseSocialMediaService {
   }
 
   @override
-  Stream<QuerySnapshot<Map<String, dynamic>>> getPostByUser(String id) {
-    if (id.isEmpty) {
+  Stream<QuerySnapshot<Map<String, dynamic>>> getPostByUser(String? id) {
+    if (id == null) {
       throw ArgumentError("User ID cannot be empty");
     }
 
@@ -117,7 +229,7 @@ class SocialPostService extends BaseSocialMediaService {
 
     final snapshot = _firestore
         .collection('posts')
-        .where('userId', isEqualTo: userDocPath) // Compare with stored path
+        .where('userId', isEqualTo: userDocPath)
         .orderBy('createdAt', descending: true)
         .snapshots();
 
@@ -157,5 +269,73 @@ class SocialPostService extends BaseSocialMediaService {
     } catch (e) {
       rethrow;
     }
+  }
+
+  @override
+  Stream<QuerySnapshot<Map<String, dynamic>>> getHybridFeedWithPagination(
+    String? currentUserId,
+    int pageSize,
+  ) {
+    if (currentUserId == null) {
+      return _getTrendingPosts(pageSize);
+    }
+
+    // If a user is logged in, fetch posts from followed users
+    return getFollowedUsers(currentUserId, 10)
+        .asStream()
+        .asyncMap((followedUserIds) async {
+      if (followedUserIds.isNotEmpty) {
+        // debugPrint("Following ids ${followedUserIds}");
+        // Fetch posts for followed users (using snapshots for real-time)
+        // final postsQuery = _firestore
+        //     .collection('posts')
+        //     .where('userId', whereIn: followedUserIds)
+        //     .limit(pageSize);
+
+        // final followedPostsStream = postsQuery.snapshots(); // Real-time updates
+        // debugPrint('followedPostsStream ${followedPostsStream.first}');
+        // Trending posts stream
+        final trendingPostsStream =
+            _getTrendingPosts(pageSize); // Trending posts
+
+        // return Rx.merge([followedPostsStream, trendingPostsStream]);
+
+        return trendingPostsStream;
+      } else {
+        return _getTrendingPosts(pageSize);
+      }
+    }).asyncExpand((postsStream) => postsStream);
+  }
+
+  @override
+  Future<int> getTotalPosts() async {
+    try {
+      final ref =
+          _firestore.collection('posts').orderBy('createdAt', descending: true);
+
+      final snapshot = await ref.get();
+      return snapshot.docs.length;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<QuerySnapshot<Map<String, dynamic>>> getAllPostOneTime(
+      int pageSize) async {
+    final now = DateTime.now();
+    final weeksAgo = now.subtract(const Duration(days: 14));
+    return await _firestore
+        .collection('posts')
+        .where('createdAt', isGreaterThanOrEqualTo: weeksAgo)
+        .orderBy('likesCount', descending: true)
+        .orderBy('createdAt', descending: true)
+        .limit(pageSize)
+        .get();
+  }
+
+  @override
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getPostSocial(String postId) {
+    return _firestore.collection('posts').doc(postId).snapshots();
   }
 }

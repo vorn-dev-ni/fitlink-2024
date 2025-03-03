@@ -6,16 +6,14 @@ import 'package:demo/features/home/controller/posts/user_like_controller.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/features/home/widget/posts/post_desc.dart';
 import 'package:demo/features/home/widget/posts/profile_user.dart';
+import 'package:demo/features/home/widget/posts/social_media_like_comment.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
-import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/local_storage/local_storage_utils.dart';
-import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:demo/common/widget/error_image_placeholder.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
@@ -72,7 +70,6 @@ class _PostPanelState extends ConsumerState<PostPanel>
   final likeAnimationKey = GlobalKey<LikeButtonState>();
   @override
   void didChangeDependencies() {
-    checkUserLike();
     super.didChangeDependencies();
   }
 
@@ -102,36 +99,6 @@ class _PostPanelState extends ConsumerState<PostPanel>
     super.initState();
   }
 
-  Future<bool?> _handleLike(bool isCurrentlyLiked, animationDuration) async {
-    try {
-      if (_debounceTimer?.isActive ?? false) {
-        ref
-            .read(userLikeControllerProvider(widget.post.postId).notifier)
-            .setLikeStatus(isCurrentlyLiked);
-        return isCurrentlyLiked;
-      }
-      _scaleController.forward().then((_) {
-        _scaleController.reverse();
-      });
-
-      _debounceTimer = Timer(const Duration(milliseconds: 500), () {});
-      ref
-          .read(userLikeControllerProvider(widget.post.postId).notifier)
-          .setLikeStatus(!isCurrentlyLiked);
-      ref.read(socialPostControllerProvider.notifier).addUserLike(
-          widget.post.postId ?? "",
-          widget.post.likesCount ?? 0,
-          isCurrentlyLiked,
-          parentId: widget.post.postId,
-          receiverId: widget.post.user?.id);
-
-      return !isCurrentlyLiked;
-    } catch (e) {
-      debugPrint("Error: $e");
-      return isCurrentlyLiked;
-    }
-  }
-
   Future _handleDoubleTapLike(bool isLiked) async {
     if (isAnimating == false) {
       _lottieController.reset();
@@ -143,7 +110,6 @@ class _PostPanelState extends ConsumerState<PostPanel>
   }
 
   Widget build(BuildContext context) {
-    const animationDuration = Duration(milliseconds: 300);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -164,7 +130,13 @@ class _PostPanelState extends ConsumerState<PostPanel>
           renderImageSection(),
         if (widget.url == "loading")
           Assets.app.artOne.image(width: 100.w, fit: BoxFit.cover, height: 300),
-        renderSocialMedia(context, animationDuration),
+        if (widget.url != "loading")
+          SocialMediaLikeComment(
+            postId: widget.post.postId ?? "",
+            isComment: widget.isComment,
+            animationKey: likeAnimationKey,
+            post: widget.post,
+          ),
         Column(
           children: [
             postDescription(desc: widget.post.caption ?? ""),
@@ -234,93 +206,6 @@ class _PostPanelState extends ConsumerState<PostPanel>
           ),
       ],
     );
-  }
-
-  Widget renderSocialMedia(BuildContext context, animationDuration) {
-    final isUserLiked =
-        ref.watch(userLikeControllerProvider(widget.post.postId ?? ''));
-    return Padding(
-      padding: const EdgeInsets.only(
-          left: Sizes.lg, right: Sizes.lg, bottom: Sizes.xs, top: Sizes.lg),
-      child: Row(
-        children: [
-          ScaleTransition(
-            scale: _scaleAnimation,
-            child: LikeButton(
-              isLiked: isUserLiked,
-              key: likeAnimationKey,
-              countBuilder: (likeCount, isLiked, text) {
-                return Text(
-                  '$likeCount',
-                  style: AppTextTheme.lightTextTheme.bodyMedium,
-                );
-              },
-              // likeCount: widget.post.likesCount ?? 0,
-              likeCount: widget.post.likesCount,
-              likeCountPadding: const EdgeInsets.all(0),
-              likeCountAnimationType: LikeCountAnimationType.all,
-              likeCountAnimationDuration: animationDuration,
-              likeBuilder: (bool isLiked) => Icon(
-                isLiked ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
-                color: isLiked ? Colors.red : null,
-              ),
-              onTap: (bool isCurrentlyLiked) async {
-                if (!HelpersUtils.isAuthenticated(context)) {
-                  return false;
-                }
-
-                return _handleLike(isCurrentlyLiked, animationDuration);
-              },
-            ),
-          ),
-          const SizedBox(width: Sizes.md),
-          if (widget.isComment == false)
-            GestureDetector(
-              onTap: () async {
-                bool isAuth = HelpersUtils.isAuthenticated(context);
-                if (!isAuth) {
-                  return;
-                }
-
-                await HelpersUtils.navigatorState(context).pushNamed(
-                  AppPage.commentListings,
-                  arguments: {'post': widget.post},
-                );
-              },
-              child: Row(
-                children: [
-                  const Icon(CupertinoIcons.chat_bubble),
-                  const SizedBox(width: Sizes.xs),
-                  Text('${widget.post.commentsCount}'),
-                ],
-              ),
-            ),
-          Expanded(
-            child: Container(
-              alignment: Alignment.centerRight,
-              child: Text(
-                '${widget.post.formattedCreatedAt}',
-                style: AppTextTheme.lightTextTheme.bodySmall?.copyWith(
-                  color: const Color.fromARGB(255, 170, 173, 178),
-                ),
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Future checkUserLike() async {
-    if (widget.post.postId == null ||
-        widget.post.userLiked == null ||
-        widget.post.likesCount == null ||
-        FirebaseAuth.instance.currentUser == null) {
-      return;
-    }
-    isLiking = widget.post.userLiked!;
-    likeCounterTemp = widget.post.likesCount!;
-    setState(() {});
   }
 
   void checkUserLiked() {

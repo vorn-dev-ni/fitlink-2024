@@ -1,5 +1,3 @@
-import 'package:demo/features/home/views/upload/upload_tab.dart';
-
 class AppPage {
   AppPage._();
   // ignore: constant_identifier_names
@@ -73,4 +71,13 @@ class AppPage {
   static const commentListings = 'Comments';
 
   static const NotificationPath = 'NotificationTesting';
+
+  //Chat App
+  static const ChatMessagingListing = 'ChatMessagingListing';
+  static const ChatDetails = 'ChatDetails';
+  static const ChatSearching = 'ChatSearching';
+
+  //Video App
+  static const VideoDetails = 'VideoDetails';
+  static const VideoSearch = 'VideoSearch';
 }

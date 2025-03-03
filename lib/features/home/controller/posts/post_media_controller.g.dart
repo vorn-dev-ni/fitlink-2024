@@ -7,7 +7,7 @@ part of 'post_media_controller.dart';
 // **************************************************************************
 
 String _$postMediaControllerHash() =>
-    r'921abadcc22b56729365a7c406c44ff025893b75';
+    r'7245376281c9f6b22477a6e405026d52bfb88e80';
 
 /// See also [PostMediaController].
 @ProviderFor(PostMediaController)

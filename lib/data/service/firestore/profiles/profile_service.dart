@@ -153,4 +153,34 @@ class ProfileService implements BaseUserService {
       rethrow;
     }
   }
+
+  @override
+  Stream<DocumentSnapshot<Object?>> getUserStatus(String? userId) {
+    if (userId == null) {
+      return const Stream.empty();
+    }
+    return _firestore.collection('users').doc(userId).snapshots();
+  }
+
+  @override
+  Future<void> setUserOffline(String? userId) async {
+    if (userId == null) {
+      return;
+    }
+    await _firestore.collection('users').doc(userId).update({
+      'isOnline': false,
+      'lastSeen': FieldValue.serverTimestamp(),
+    });
+  }
+
+  @override
+  Future<void> setUserOnline(String? userId) async {
+    if (userId == null) {
+      return;
+    }
+    await _firestore.collection('users').doc(userId).update({
+      'isOnline': true,
+      'lastSeen': FieldValue.serverTimestamp(),
+    });
+  }
 }

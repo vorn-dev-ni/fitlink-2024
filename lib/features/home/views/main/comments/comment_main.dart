@@ -196,7 +196,7 @@ class _CommentMainState extends ConsumerState<CommentMain> {
                     children: [
                       PostPanel(
                         post: data!,
-                        isComment: true,
+                        isComment: false,
                         url: data.imageUrl,
                         showHeader: false,
                         twoFingersOn: () => setState(() => blockScroll = true),
@@ -223,7 +223,6 @@ class _CommentMainState extends ConsumerState<CommentMain> {
   }
 
   Widget renderPaging() {
-    // final async = ref.watch(singlePostControllerProvider(post.postId!));
     final pagingLoading = ref.watch(commentPagingLoadingProvider);
     return Container(
         alignment: Alignment.topCenter,
@@ -241,9 +240,9 @@ class _CommentMainState extends ConsumerState<CommentMain> {
         child: Column(
           children: [
             PostPanel(
-              post: Post(imageUrl: "exampe"),
-              isComment: true,
-              url: "",
+              post: Post(),
+              isComment: false,
+              url: "loading",
               showHeader: false,
               twoFingersOn: () => setState(() => blockScroll = true),
               twoFingersOff: () => Future.delayed(

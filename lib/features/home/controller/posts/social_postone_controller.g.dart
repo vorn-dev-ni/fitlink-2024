@@ -7,7 +7,7 @@ part of 'social_postone_controller.dart';
 // **************************************************************************
 
 String _$socialPostoneControllerHash() =>
-    r'cb021fd32ce75d06a65fa48602aad5db987d34ef';
+    r'1bbad5d45bbb35af149b1e0216a379882fd21aac';
 
 /// See also [SocialPostoneController].
 @ProviderFor(SocialPostoneController)

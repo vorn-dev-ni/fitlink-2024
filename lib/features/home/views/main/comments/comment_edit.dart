@@ -2,7 +2,6 @@ import 'package:demo/common/widget/app_input.dart';
 import 'package:demo/common/widget/backdrop_loading.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/features/home/controller/comment/comment_controller.dart';
-import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/device/device_utils.dart';

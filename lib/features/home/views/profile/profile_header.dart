@@ -9,6 +9,9 @@ import 'package:demo/common/widget/image_modal_viewer.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/features/home/views/single_profile/controller/media_tag_conroller.dart';
 import 'package:demo/features/home/views/profile/user_media.dart';
+import 'package:demo/features/home/views/single_profile/controller/notification_badge.dart';
+import 'package:demo/features/home/views/single_profile/model/media_count.dart';
+import 'package:demo/features/notifications/controller/notification_user_controller.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
@@ -18,6 +21,7 @@ import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,6 +44,11 @@ class ProfileHeader extends ConsumerStatefulWidget {
 }
 
 class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     final asyncUser = ref.watch(profileUserControllerProvider);
@@ -375,8 +384,19 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                   IconButton(
                       padding: const EdgeInsets.all(0),
                       onPressed: () {
+                        ref
+                            .read(notificationBadgeProvider.notifier)
+                            .clearNotificationBadge();
+
+                        // ref
+                        //     .read(notificationUserControllerProvider(
+                        //             FirebaseAuth.instance.currentUser?.uid)
+                        //         .notifier)
+                        //     .refreshState();
+                        // ref.invalidate(notificationUserControllerProvider);
+
                         HelpersUtils.navigatorState(context)
-                            .pushNamed(AppPage.NotificationPath);
+                            .pushNamed(AppPage.notificationListing);
                       },
                       icon: const Icon(
                         Icons.notifications,
@@ -385,16 +405,7 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                       )),
                   if (data?.notificaitonCount != null &&
                       data!.notificaitonCount! > 0)
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: Badge(
-                        label: Text('${data!.notificaitonCount}'),
-                        backgroundColor: AppColors.errorColor,
-                        textColor: AppColors.backgroundLight,
-                        smallSize: 20,
-                      ),
-                    ),
+                    renderBadge(data),
                 ],
               );
             },
@@ -433,6 +444,23 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
             },
           )),
     );
+  }
+
+  Widget renderBadge(MediaCount data) {
+    final badgeCount = ref.watch(notificationBadgeProvider);
+    // Fluttertoast.showToast(msg: 'sds ${badgeCount}');
+    return badgeCount > 0
+        ? Positioned(
+            top: 0,
+            right: 0,
+            child: Badge(
+              label: Text('$badgeCount'),
+              backgroundColor: AppColors.errorColor,
+              textColor: AppColors.backgroundLight,
+              smallSize: 20,
+            ),
+          )
+        : const SizedBox();
   }
 
   Widget RenderMediaStatus(AuthModel? currentUser) {
@@ -686,7 +714,6 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
   }
 
   void _openBottomSheet(BuildContext context, String? oldImage) {
-    debugPrint('Bottom sheet open ${oldImage}');
     showModalBottomSheet(
         context: context,
         backgroundColor: AppColors.backgroundLight,

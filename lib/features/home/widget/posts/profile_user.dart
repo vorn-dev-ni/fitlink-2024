@@ -155,7 +155,6 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
               widget.post?.user?.id == FirebaseAuth.instance.currentUser?.uid)
             IconButton(
               onPressed: () {
-                debugPrint("Rn");
                 widget.onPressThreeDot != null
                     ? widget.onPressThreeDot!()
                     : null;

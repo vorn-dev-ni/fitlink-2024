@@ -37,7 +37,6 @@ class FirestoreService {
     if (auth != null) {
       try {
         String userId = auth.currentUser!.uid;
-
         await _firestore.collection('users').doc(userId).set({
           'fullName': fullName,
           'provider': authprovider,
@@ -45,6 +44,8 @@ class FirestoreService {
           'role': 'normal',
           'bio': '',
           'cover_feature': '',
+          'isOnline': true,
+          'lastSeen': Timestamp.now(),
           'createdAt': Timestamp.now(),
           'avatar': socialAvatar
         }, SetOptions(merge: true));

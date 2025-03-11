@@ -47,7 +47,6 @@ class ActivitiesRepository {
         payload.putIfAbsent('endTime', () => activities?.endTime ?? "");
         payload.putIfAbsent('startTime', () => activities?.startTime ?? "");
       }
-      debugPrint("payload is ${payload}");
       await baseService.updateUserWorkout(payload);
     } catch (e) {
       rethrow;

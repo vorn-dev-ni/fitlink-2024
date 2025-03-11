@@ -185,8 +185,6 @@ class _MyAppState extends ConsumerState<MyApp> {
           ref.invalidate(commentControllerProvider);
           ref.invalidate(profilePostControllerProvider);
           ref.invalidate(activitiesControllerProvider);
-          // ref.invalidate(workoutControllerProvider);
-          // ref.invalidate(workoutDateControllerProvider);
 
           ref.invalidate(profileUserControllerProvider);
           ref.read(appLoadingStateProvider.notifier).setState(false);

@@ -51,8 +51,6 @@ class PostPanel extends ConsumerStatefulWidget {
 class _PostPanelState extends ConsumerState<PostPanel>
     with TickerProviderStateMixin {
   late FirebaseAuthService _firebaseAuthService;
-
-  Timer? _debounceTimer;
   bool isLiking = false;
   late FirestoreService firestoreService;
   int likeCounterTemp = 0;
@@ -63,8 +61,6 @@ class _PostPanelState extends ConsumerState<PostPanel>
   bool hasClick = false;
   StreamSubscription? _likeStreamSubscription;
   late final AnimationController _lottieController;
-  late AnimationController _scaleController;
-  late final Animation<double> _scaleAnimation;
   StreamSubscription<User?>? streamAuthState;
 
   final likeAnimationKey = GlobalKey<LikeButtonState>();
@@ -88,13 +84,6 @@ class _PostPanelState extends ConsumerState<PostPanel>
         FirestoreService(firebaseAuthService: FirebaseAuthService());
     _lottieController = AnimationController(vsync: this);
     checkUserLiked();
-    _scaleController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.2)
-        .chain(CurveTween(curve: Curves.easeInOut))
-        .animate(_scaleController);
 
     super.initState();
   }
@@ -130,6 +119,15 @@ class _PostPanelState extends ConsumerState<PostPanel>
           renderImageSection(),
         if (widget.url == "loading")
           Assets.app.artOne.image(width: 100.w, fit: BoxFit.cover, height: 300),
+        if (widget.post.imageUrl == null)
+          Column(
+            children: [
+              const SizedBox(
+                height: Sizes.lg,
+              ),
+              postDescription(desc: widget.post.caption ?? ""),
+            ],
+          ),
         if (widget.url != "loading")
           SocialMediaLikeComment(
             postId: widget.post.postId ?? "",
@@ -137,14 +135,15 @@ class _PostPanelState extends ConsumerState<PostPanel>
             animationKey: likeAnimationKey,
             post: widget.post,
           ),
-        Column(
-          children: [
-            postDescription(desc: widget.post.caption ?? ""),
-            const SizedBox(
-              height: Sizes.lg,
-            ),
-          ],
-        ),
+        if (widget.post.imageUrl != null)
+          Column(
+            children: [
+              postDescription(desc: widget.post.caption ?? ""),
+              const SizedBox(
+                height: Sizes.lg,
+              ),
+            ],
+          ),
         const Divider(
           color: AppColors.neutralColor,
         )

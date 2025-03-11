@@ -32,7 +32,7 @@ class FirebaseRemoteConfigService {
   Future activateRemoteConfig() async {
     try {
       bool? isfetch = await _firebaseRemoteConfig.fetchAndActivate();
-      debugPrint("remote config is inital ${isfetch}");
+      // debugPrint("remote config is inital ${isfetch}");
     } catch (e) {
       debugPrint("Error fetching Remote Config: $e");
     }

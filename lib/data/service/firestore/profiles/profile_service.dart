@@ -38,26 +38,43 @@ class ProfileService implements BaseUserService {
   }
 
   @override
-  Future followUser(String followedUserId) async {
+  Future<void> followUser(String followedUserId) async {
     try {
-      final currentUserId = firebaseAuthService.currentUser!.uid;
-      await _firestore
+      final currentUserId = firebaseAuthService.currentUser?.uid;
+
+      final docSnapshot = await _firestore
           .collection('users')
           .doc(currentUserId)
           .collection('following')
           .doc(followedUserId)
-          .set({
-        'followedAt': FieldValue.serverTimestamp(),
-      });
+          .get();
 
-      await _firestore
-          .collection('users')
-          .doc(followedUserId)
-          .collection('followers')
-          .doc(currentUserId)
-          .set({
-        'followedAt': FieldValue.serverTimestamp(),
-      });
+      if (docSnapshot.exists) {
+        debugPrint("User is already following $followedUserId");
+        return;
+      }
+
+      WriteBatch batch = _firestore.batch();
+
+      batch.set(
+        _firestore
+            .collection('users')
+            .doc(currentUserId)
+            .collection('following')
+            .doc(followedUserId),
+        {'followedAt': FieldValue.serverTimestamp()},
+      );
+
+      batch.set(
+        _firestore
+            .collection('users')
+            .doc(followedUserId)
+            .collection('followers')
+            .doc(currentUserId),
+        {'followedAt': FieldValue.serverTimestamp()},
+      );
+
+      await batch.commit();
     } catch (e) {
       rethrow;
     }
@@ -135,6 +152,19 @@ class ProfileService implements BaseUserService {
   }
 
   @override
+  Stream<int> getNotificationCount(String? userId) {
+    if (userId == null) {
+      return Stream.value(0);
+    }
+    return _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('notifications')
+        .snapshots()
+        .map((snapshot) => snapshot.size);
+  }
+
+  @override
   Future<bool> isFollowingUser(String followedUserId) async {
     try {
       final currentUserId = firebaseAuthService.currentUser!.uid;
@@ -144,9 +174,6 @@ class ProfileService implements BaseUserService {
           .collection('following')
           .doc(followedUserId)
           .get();
-
-      debugPrint(
-          'following user ${followedUserId} ${followingDoc.exists ? 'true' : 'false'}');
 
       return followingDoc.exists;
     } catch (e) {
@@ -182,5 +209,38 @@ class ProfileService implements BaseUserService {
       'isOnline': true,
       'lastSeen': FieldValue.serverTimestamp(),
     });
+  }
+
+  @override
+  Stream<QuerySnapshot<Map<String, dynamic>>> listenUserCollections() {
+    return FirebaseFirestore.instance.collection('users').snapshots();
+  }
+
+  @override
+  Future<DocumentSnapshot<Object?>> getUserDetailById(String userId) async {
+    try {
+      final followingDoc =
+          await _firestore.collection('users').doc(userId).get();
+
+      return followingDoc;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Stream<QuerySnapshot<Map<String, dynamic>>> getUserFriendsList() {
+    return _firestore.collection('users').snapshots();
+  }
+
+  @override
+  Future<QuerySnapshot<Map<String, dynamic>>> getUserFollowings() {
+    return _firestore.collection('users').get();
+  }
+
+  @override
+  Future<DocumentSnapshot<Map<String, dynamic>>> getUserOnlineStatus(
+      String? userId) async {
+    return _firestore.collection('users').doc(userId).get();
   }
 }

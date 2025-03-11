@@ -1,6 +1,5 @@
 import 'package:demo/common/widget/error_fallback.dart';
 import 'package:demo/core/riverpod/app_setting.dart';
-import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/device/device_utils.dart';
 import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';

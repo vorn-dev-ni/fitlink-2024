@@ -16,7 +16,6 @@ class SocialPostService extends BaseSocialMediaService {
   }
   Future<List<DocumentReference>> getFollowedUsers(
       String currentUserId, int pageSize) async {
-    // Step 1: Fetch followed user IDs from the 'following' collection
     final followingSnapshot = await _firestore
         .collection('users')
         .doc(currentUserId)
@@ -24,26 +23,19 @@ class SocialPostService extends BaseSocialMediaService {
         .limit(pageSize)
         .get();
 
-    // Step 2: Extract userIds (doc.id) from the followingSnapshot
-    final followedUserIds = followingSnapshot.docs
-        .map((doc) => doc.id) // Extract the userId (doc.id)
-        .toList();
+    final followedUserIds =
+        followingSnapshot.docs.map((doc) => doc.id).toList();
 
-    // Step 3: Query the 'users' collection to get DocumentReferences
     List<DocumentReference> userRefs = [];
     for (var userId in followedUserIds) {
-      final userDocSnapshot = await _firestore
-          .collection('users')
-          .doc(userId) // Fetch the user document using the userId
-          .get();
+      final userDocSnapshot =
+          await _firestore.collection('users').doc(userId).get();
 
-      // Step 4: If the user document exists, add the DocumentReference to the list
       if (userDocSnapshot.exists) {
         userRefs.add(userDocSnapshot.reference);
       }
     }
 
-    // Return the list of DocumentReferences
     return userRefs;
   }
 
@@ -77,33 +69,10 @@ class SocialPostService extends BaseSocialMediaService {
         .snapshots();
   }
 
-  // Stream<QuerySnapshot<Map<String, dynamic>>> _getTrendingPosts(int pageSize) {
-  //   final now = DateTime.now();
-  //   final tenDayAgo = now.subtract(const Duration(days: 14));
-  //   final startOfToday = DateTime(now.year, now.month, now.day);
-
-  //   // Query for today's posts (prioritize today’s posts)
-  //   final todayPostsQuery = _firestore
-  //       .collection('posts')
-  //       .where('createdAt', isGreaterThanOrEqualTo: tenDayAgo)
-  //       .orderBy('likesCount', descending: true) // Order by likes first
-  //       .orderBy('createdAt', descending: true)
-  //       .limit(pageSize);
-
-  //   return todayPostsQuery.snapshots();
-  // }
-
   Stream<QuerySnapshot<Map<String, dynamic>>> _getTrendingPosts(int pageSize) {
     final now = DateTime.now();
-    final tenDayAgo = now.subtract(const Duration(days: 14));
-    return _firestore
-        .collection('posts')
-        .where('createdAt', isGreaterThanOrEqualTo: tenDayAgo)
-        .orderBy('createdAt', descending: true)
-        .orderBy('likesCount', descending: true)
-        .orderBy('commentsCount', descending: true)
-        .limit(pageSize)
-        .snapshots();
+    final twoWeekAgo = now.subtract(const Duration(days: 14));
+    return Stream.empty();
   }
 
   Stream<List<DocumentSnapshot>> getPosts(int pageSize) {
@@ -252,7 +221,6 @@ class SocialPostService extends BaseSocialMediaService {
 
   @override
   Future editPost(String postId, Map<String, dynamic> payload) {
-    // TODO: implement editPost
     throw UnimplementedError();
   }
 
@@ -263,7 +231,6 @@ class SocialPostService extends BaseSocialMediaService {
         return;
       }
 
-      debugPrint("UPdate post with ${payload} ${postId}");
       await _firestore.collection('posts').doc(postId).update(payload);
       return false;
     } catch (e) {
@@ -280,26 +247,11 @@ class SocialPostService extends BaseSocialMediaService {
       return _getTrendingPosts(pageSize);
     }
 
-    // If a user is logged in, fetch posts from followed users
     return getFollowedUsers(currentUserId, 10)
         .asStream()
         .asyncMap((followedUserIds) async {
       if (followedUserIds.isNotEmpty) {
-        // debugPrint("Following ids ${followedUserIds}");
-        // Fetch posts for followed users (using snapshots for real-time)
-        // final postsQuery = _firestore
-        //     .collection('posts')
-        //     .where('userId', whereIn: followedUserIds)
-        //     .limit(pageSize);
-
-        // final followedPostsStream = postsQuery.snapshots(); // Real-time updates
-        // debugPrint('followedPostsStream ${followedPostsStream.first}');
-        // Trending posts stream
-        final trendingPostsStream =
-            _getTrendingPosts(pageSize); // Trending posts
-
-        // return Rx.merge([followedPostsStream, trendingPostsStream]);
-
+        final trendingPostsStream = _getTrendingPosts(pageSize);
         return trendingPostsStream;
       } else {
         return _getTrendingPosts(pageSize);
@@ -323,12 +275,14 @@ class SocialPostService extends BaseSocialMediaService {
   @override
   Future<QuerySnapshot<Map<String, dynamic>>> getAllPostOneTime(
       int pageSize) async {
+    debugPrint("Page size is ${pageSize}");
     final now = DateTime.now();
     final weeksAgo = now.subtract(const Duration(days: 14));
     return await _firestore
         .collection('posts')
         .where('createdAt', isGreaterThanOrEqualTo: weeksAgo)
         .orderBy('likesCount', descending: true)
+        .orderBy('commentsCount', descending: true)
         .orderBy('createdAt', descending: true)
         .limit(pageSize)
         .get();
@@ -337,5 +291,18 @@ class SocialPostService extends BaseSocialMediaService {
   @override
   Stream<DocumentSnapshot<Map<String, dynamic>>> getPostSocial(String postId) {
     return _firestore.collection('posts').doc(postId).snapshots();
+  }
+
+  @override
+  Future<QuerySnapshot<Map<String, dynamic>>> getLatestPosts(pageSize) async {
+    final now = DateTime.now();
+    final twoWeeksAgo = now.subtract(const Duration(days: 14));
+
+    return await _firestore
+        .collection('posts')
+        .where('createdAt', isGreaterThanOrEqualTo: twoWeeksAgo)
+        .orderBy('createdAt', descending: true)
+        .limit(4)
+        .get();
   }
 }

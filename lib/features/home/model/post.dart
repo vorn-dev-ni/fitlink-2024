@@ -122,14 +122,20 @@ class UserData {
   String? email;
   Timestamp? updatedAt;
   Timestamp? createdAt;
+  bool? isOnline;
+  Timestamp? lastSeen;
+  DocumentSnapshot? documentSnapshot;
 
   UserData(
       {this.avatar,
       this.coverFeature,
       this.id,
       this.provider,
+      this.documentSnapshot,
       this.bio,
       this.role,
+      this.isOnline = false,
+      this.lastSeen,
       this.fullName,
       this.email,
       this.followerCount = 0,
@@ -138,13 +144,14 @@ class UserData {
       this.updatedAt,
       this.createdAt});
 
-  UserData.fromJson(Map<String, dynamic> json) {
+  UserData.fromJson(Map<String, dynamic> json, {DocumentSnapshot? doc}) {
     id = json['id'];
     avatar = json['avatar'];
     coverFeature = json['coverFeature'];
     provider = json['provider'];
     bio = json['bio'];
     id = json['id'];
+    doc = json['doc'];
     followerCount = json['followerCount'];
     followingCount = json['followingCount'];
     notificationCount = json['notificationCount'];
@@ -153,6 +160,8 @@ class UserData {
     email = json['email'];
     updatedAt = json['updatedAt'];
     createdAt = json['createdAt'];
+    lastSeen = json['lastSeen'];
+    isOnline = json['isOnline'] ?? false;
   }
 
   Map<String, dynamic> toJson() {

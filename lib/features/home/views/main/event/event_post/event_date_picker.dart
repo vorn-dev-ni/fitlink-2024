@@ -10,7 +10,15 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class EventDatePickerCustom extends ConsumerStatefulWidget {
   DateRangePickerSelectionMode selectionMode;
-  EventDatePickerCustom({super.key, required this.selectionMode});
+  DateTime? minDate;
+  DateTime? maxDate;
+  bool? enablePastDates;
+  EventDatePickerCustom(
+      {super.key,
+      required this.selectionMode,
+      this.minDate,
+      this.maxDate,
+      this.enablePastDates = false});
 
   @override
   ConsumerState<EventDatePickerCustom> createState() =>
@@ -102,14 +110,15 @@ class _EventDatePickerCustomState extends ConsumerState<EventDatePickerCustom> {
         height: 100.h,
         child: SfDateRangePicker(
             controller: _datePickerController,
-            enablePastDates: false,
+            enablePastDates: widget.enablePastDates ?? false,
             monthViewSettings: DateRangePickerMonthViewSettings(
                 viewHeaderStyle: DateRangePickerViewHeaderStyle(
                     textStyle: AppTextTheme.lightTextTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.normal,
                         color: AppColors.secondaryColor))),
             headerHeight: 100,
-            minDate: DateTime.now(),
+            minDate: widget.minDate,
+            maxDate: widget.maxDate,
             startRangeSelectionColor: AppColors.secondaryColor,
             endRangeSelectionColor: AppColors.secondaryColor,
             rangeSelectionColor: AppColors.secondaryColor.withOpacity(0.5),
@@ -120,7 +129,8 @@ class _EventDatePickerCustomState extends ConsumerState<EventDatePickerCustom> {
             monthCellStyle: DateRangePickerMonthCellStyle(
               textStyle: AppTextTheme.lightTextTheme.bodyMedium
                   ?.copyWith(color: AppColors.secondaryColor),
-              todayTextStyle: const TextStyle(color: AppColors.primaryColor),
+              todayTextStyle:
+                  const TextStyle(color: Color.fromARGB(255, 65, 161, 203)),
               todayCellDecoration: const BoxDecoration(
                 color: AppColors.backgroundDark,
                 shape: BoxShape.circle,

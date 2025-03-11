@@ -5,6 +5,10 @@ import 'package:demo/core/riverpod/navigation_state.dart';
 import 'package:demo/features/authentication/controller/auth_controller.dart';
 import 'package:demo/features/authentication/controller/login_controller.dart';
 import 'package:demo/features/authentication/controller/register_controller.dart';
+import 'package:demo/features/home/controller/chat/following_friend_controller.dart';
+import 'package:demo/features/home/controller/chat/message_detail_controller.dart';
+import 'package:demo/features/home/controller/chat/user_following_search.dart';
+import 'package:demo/features/home/controller/chat/user_header_controller.dart';
 import 'package:demo/features/home/controller/chat/user_status_controller.dart';
 import 'package:demo/features/home/controller/logout_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
@@ -13,11 +17,13 @@ import 'package:demo/features/home/controller/posts/user_like_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_post_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/features/home/views/single_profile/controller/media_tag_conroller.dart';
+import 'package:demo/features/home/views/single_profile/controller/notification_badge.dart';
 import 'package:demo/features/home/views/single_profile/controller/single_user_controller.dart';
 import 'package:demo/features/home/views/profile/post/post_profile.dart';
 import 'package:demo/features/home/views/profile/profile_header.dart';
 import 'package:demo/features/home/views/profile/video/video_profile.dart';
 import 'package:demo/features/home/views/profile/workout/workout_profile.dart';
+import 'package:demo/features/notifications/controller/notification_user_controller.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/sizes.dart';
@@ -214,6 +220,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
             timeInSecForIosWeb: 3,
             toastLength: Toast.LENGTH_SHORT);
         LocalStorageUtils().setKeyString('email', '');
+        LocalStorageUtils().setKeyString('notificationCount', '');
         ref.invalidate(navbarControllerProvider);
         ref.invalidate(singleUserControllerProvider);
         ref.invalidate(navigationStateProvider);
@@ -225,11 +232,19 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
         await authController.logout();
         // ref.invalidate(activitiesControllerProvider);
         String uid = LocalStorageUtils().getKey('uid') ?? '';
+        // ref.invalidate(userNotificationControllerProvider);
         ref.read(userStatusControllerProvider.notifier).setUserOffline(uid);
         ref.read(logoutControllerProvider.notifier).logout();
+        ref.invalidate(notificationBadgeProvider);
+        ref.invalidate(notificationUserControllerProvider);
         LocalStorageUtils().setKeyString('uid', '');
         ref.invalidate(profileUserControllerProvider);
         ref.invalidate(profilePostControllerProvider);
+        // ref.invalidate(messageDetailControllerProvider);
+        // ref.invalidate(followingFriendControllerProvider);
+
+        // ref.invalidate(userFollowingSearchProvider);
+        // ref.invalidate(userHeaderControllerProvider);
       }
     } catch (e) {
       LocalStorageUtils().setKeyString('uid', '');

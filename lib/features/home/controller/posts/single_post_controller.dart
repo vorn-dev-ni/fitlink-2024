@@ -2,6 +2,7 @@ import 'package:demo/data/repository/firebase/post_social_repo.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/posts/social_post_service.dart';
 import 'package:demo/features/home/model/post.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'single_post_controller.g.dart';
 
@@ -21,6 +22,7 @@ class SinglePostController extends _$SinglePostController {
       final stream = postSocialRepo.getSinglePost(postId);
       yield* stream;
     } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
       rethrow;
     }
   }

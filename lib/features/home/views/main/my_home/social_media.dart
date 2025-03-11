@@ -1,7 +1,6 @@
 import 'package:demo/common/widget/app_loading.dart';
 import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/features/home/controller/posts/post_loading_paging.dart';
-import 'package:demo/features/home/controller/posts/social_post_controller.dart';
 import 'package:demo/features/home/controller/posts/social_postone_controller.dart';
 import 'package:demo/features/home/controller/tab/home_scroll_controller.dart';
 import 'package:demo/features/home/model/post.dart';
@@ -84,11 +83,12 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
                     );
             },
             error: (error, stackTrace) {
-              debugPrint(error.toString());
-              return SizedBox(
-                  height: 600,
-                  child:
-                      emptyContent(title: error.toString().substring(0, 200)));
+              debugPrint('Error Post New Feeds: ${error.toString()}');
+              String errorMessage = error.toString();
+              if (errorMessage.length > 100) {
+                errorMessage = errorMessage.substring(0, 100);
+              }
+              return emptyContent(title: errorMessage);
             },
             loading: () {
               return _build_loading();
@@ -146,6 +146,17 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
     );
   }
 
+  // void _scrollListener() {
+  //   final scrollController = ref.read(homeScrollControllerProvider);
+  //   final maxScroll = scrollController.position.maxScrollExtent;
+  //   final currentScroll = scrollController.position.pixels;
+
+  //   if (currentScroll >= maxScroll * 0.95) {
+  //     // Load when scrolled 50% down
+  //     // debugPrint("Scrolled halfway, loading more...");
+  //     ref.read(socialPostoneControllerProvider.notifier).loadNextPage();
+  //   }
+  // }
   void _scrollListener() {
     final scrollController = ref.read(homeScrollControllerProvider);
     if (scrollController.position.atEdge) {

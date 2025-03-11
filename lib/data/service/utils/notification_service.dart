@@ -2,6 +2,7 @@ import 'package:demo/common/model/notification_payload.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/global_key.dart';
+import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -63,7 +64,8 @@ class NotificationService {
     }
   }
 
-  static void _onDidReceiveNotificationResponse(NotificationResponse response) {
+  static void _onDidReceiveNotificationResponse(
+      NotificationResponse response) async {
     // debugPrint('Notification clicked with payload: ${response.}');
     NotificationData? result;
     debugPrint('_onDidReceiveNotificationResponse cl icked with payload');
@@ -87,6 +89,17 @@ class NotificationService {
         navigatorKey.currentState?.pushNamed(AppPage.viewProfile,
             arguments: {'userId': result?.postID});
       }
+      if (FirebaseAuth.instance.currentUser != null && result?.type == 'chat') {
+        navigatorKey.currentState?.pushNamed(AppPage.ChatDetails, arguments: {
+          'receiverId': result?.senderID,
+          'chatId': result?.postID
+        });
+      }
+      // int previousCount =
+      //     int.parse(LocalStorageUtils().getKey('notificationCount') ?? '0');
+      // previousCount = previousCount + 1;
+      // await LocalStorageUtils()
+      //     .setKeyString('notificationCount', previousCount.toString());
       // debugPrint('Notification clicked with payload: ${navigatorKey}');
     }
   }
@@ -133,7 +146,12 @@ class NotificationService {
     String channelDesc = 'This is the channel',
   }) async {
     try {
-      debugPrint("Run notificaiton ${id} ${title} ${body}");
+      int previousCount =
+          int.parse(LocalStorageUtils().getKey('notificationCount') ?? '0');
+      previousCount = previousCount + 1;
+      await LocalStorageUtils()
+          .setKeyString('notificationCount', previousCount.toString());
+
       await _notificationsPlugin?.show(
         id,
         title,

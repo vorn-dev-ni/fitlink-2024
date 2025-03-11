@@ -30,7 +30,6 @@ class RegisterController extends _$RegisterController {
   }
 
   bool checkRegisterState() {
-    debugPrint("Check register recevived ${state.toString()}");
     if (state.email == null ||
         state.password == null ||
         state.lastname == null ||

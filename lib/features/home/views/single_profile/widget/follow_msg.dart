@@ -20,7 +20,7 @@ class FollowMessageWidget extends ConsumerStatefulWidget {
 }
 
 class _FollowMessageWidgetState extends ConsumerState<FollowMessageWidget> {
-  bool? isFollowing = null;
+  bool? isFollowing;
   bool isDisabled = false;
 
   void toggleFollow() {
@@ -101,7 +101,10 @@ class _FollowMessageWidgetState extends ConsumerState<FollowMessageWidget> {
                           borderRadius: BorderRadius.circular(Sizes.lg))),
                   onPressed: () {
                     HelpersUtils.navigatorState(context)
-                        .pushNamed(AppPage.NOTFOUND);
+                        .pushNamed(AppPage.ChatDetails, arguments: {
+                      'receiverId': widget.userId,
+                      'chatId': null
+                    });
                   },
                   child: Text(
                     'Message',

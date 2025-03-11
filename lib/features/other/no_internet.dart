@@ -19,6 +19,7 @@ class NoInternet extends StatelessWidget {
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: AppColors.backgroundLight,
           ),
           backgroundColor: AppColors.backgroundLight,

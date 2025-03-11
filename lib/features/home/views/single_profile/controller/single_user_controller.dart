@@ -6,6 +6,7 @@ import 'package:demo/data/service/firebase/storage_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
 import 'package:demo/data/service/firestore/notification/notification_service.dart';
 import 'package:demo/data/service/firestore/profiles/profile_service.dart';
+import 'package:demo/features/home/controller/chat/following_friend_controller.dart';
 import 'package:demo/features/home/views/single_profile/controller/media_tag_conroller.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -69,6 +70,7 @@ class SingleUserController extends _$SingleUserController {
       if (FirebaseAuth.instance.currentUser?.uid != null) {
         await profileRepository.unfollowingUser(receiverID);
         ref.invalidate(mediaTagConrollerProvider);
+        ref.invalidate(followingFriendControllerProvider);
       }
     } catch (e) {
       if (kDebugMode) {
@@ -91,8 +93,9 @@ class SingleUserController extends _$SingleUserController {
       if (FirebaseAuth.instance.currentUser?.uid != null) {
         await profileRepository.followingUser(receiverID);
         ref.invalidate(mediaTagConrollerProvider);
-        await notificationRepo.sentFollowingNotification(
-            senderID: senderId, receiverID: receiverID, userId: senderId);
+        ref.invalidate(followingFriendControllerProvider);
+        // await notificationRepo.sentFollowingNotification(
+        //     senderID: senderId, receiverID: receiverID, userId: senderId);
       }
     } catch (e) {
       if (kDebugMode) {

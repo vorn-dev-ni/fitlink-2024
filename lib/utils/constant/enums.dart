@@ -6,6 +6,27 @@ enum ActivityTag { gym, food }
 
 enum StatusSnackbar { success, failed }
 
+enum MessageType { video, text, image, delete, delivered, seen, sending }
+
+enum NotificationType { like, comment, following, chat, commentLike }
+
+class NotificationTypeMapper {
+  static const Map<String, NotificationType> _map = {
+    'like': NotificationType.like,
+    'comment': NotificationType.comment,
+    'following': NotificationType.following,
+    'chat': NotificationType.chat,
+    'commentLike': NotificationType.commentLike,
+    'comment-liked': NotificationType.commentLike,
+  };
+
+  static NotificationType? fromString(String value) {
+    return _map[value];
+  }
+}
+
+enum FriendStatus { online, offline }
+
 enum AppTheme { dark, light }
 
 enum NutritionFactsType { calories, fat, protein, sugar, carbohydrate }

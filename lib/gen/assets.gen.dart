@@ -67,6 +67,9 @@ class $AssetsAudioGen {
   /// File path: assets/audio/bye.mp3
   String get bye => 'assets/audio/bye.mp3';
 
+  /// File path: assets/audio/chat_sent.mp3
+  String get chatSent => 'assets/audio/chat_sent.mp3';
+
   /// File path: assets/audio/good_job.mp3
   String get goodJob => 'assets/audio/good_job.mp3';
 
@@ -104,6 +107,7 @@ class $AssetsAudioGen {
   List<String> get values => [
         bgGym,
         bye,
+        chatSent,
         goodJob,
         notification,
         ohGod,

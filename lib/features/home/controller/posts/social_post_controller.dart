@@ -7,7 +7,6 @@ import 'package:demo/features/home/controller/posts/post_loading_paging.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'social_post_controller.g.dart';
 
@@ -26,8 +25,6 @@ class SocialPostController extends _$SocialPostController {
         baseSocialMediaService:
             SocialPostService(firebaseAuthService: firebaseService));
 
-    debugPrint('re render post again');
-
     return getAllPosts();
   }
 
@@ -35,7 +32,6 @@ class SocialPostController extends _$SocialPostController {
     try {
       final stream = postSocialRepo.getAllPostV2(
           FirebaseAuth.instance.currentUser?.uid, _pageSizes);
-
       await for (var posts in stream) {
         yield posts;
       }

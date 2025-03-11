@@ -43,48 +43,23 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
   String? avatarImageUrl;
   late AudioPlayer playAudioUpload;
   final textcaptionController = TextEditingController();
+
   final List<String> chipLabels = [
-    "Event",
+    "Workout",
+    "Diet",
+    "Mental well being",
+    "Fitness",
     "Gym",
     "Workout",
-    "Fun",
-    "Activity",
-    "Engagement",
-    "Creative",
     "Outdoor",
-    "Normal",
-    "Travel",
     "Food",
-    "Lifestyle",
-    "Entertainment",
-    "Selfie",
-    "Fashion",
-    "Beauty",
-    "Photography",
-    "Pets",
-    "Music",
     "Sports",
-    "Gaming",
     "Motivation",
     "Fitness",
-    "Technology",
     "Health",
-    "Education",
-    "Business",
-    "Family",
-    "Friends",
-    "Relationship",
     "Trending",
     "Challenge",
-    "Meme",
     "Inspiration",
-    "Vlog",
-    "Nature",
-    "Art",
-    "Shopping",
-    "Celebration",
-    "News",
-    "Random",
   ];
 
   @override
@@ -125,20 +100,10 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
         return DraggableScrollableSheet(
           initialChildSize: 0.5,
           minChildSize: 0.3,
-          maxChildSize: 0.8,
+          maxChildSize: 0.5,
           expand: false,
-          snap: true,
+          snap: false,
           builder: (context, scrollController) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (_selectedChipIndex != -1) {
-                double offset = _selectedChipIndex * 10.0;
-                scrollController.animateTo(
-                  offset,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              }
-            });
             return renderChipItem(context, scrollController);
           },
         );
@@ -294,20 +259,77 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
                         height: Sizes.md,
                       ),
                       if (previewImages != null)
-                        Image.file(
-                          previewImages!,
-                          width: 100.w,
-                          height: 400,
-                          fit: BoxFit.cover,
+                        Stack(
+                          children: [
+                            Image.file(
+                              previewImages!,
+                              width: 100.w,
+                              height: 400,
+                              fit: BoxFit.cover,
+                            ),
+                            Positioned(
+                              top: 10,
+                              right: 10,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    previewImages = null;
+                                  });
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.5),
+                                    shape: BoxShape
+                                        .circle, // Makes the container round
+                                  ),
+                                  child: const Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
                         ),
                       if (avatarImageUrl != null &&
                           avatarImageUrl != "" &&
                           previewImages == null)
-                        FancyShimmerImage(
-                          imageUrl: avatarImageUrl!,
-                          boxFit: BoxFit.cover,
-                          width: 100.w,
-                          height: 400,
+                        Stack(
+                          children: [
+                            FancyShimmerImage(
+                              imageUrl: avatarImageUrl!,
+                              boxFit: BoxFit.cover,
+                              width: 100.w,
+                              height: 400,
+                            ),
+                            Positioned(
+                              top: 10,
+                              right: 10,
+                              child: GestureDetector(
+                                onTap: () {
+                                  ref
+                                      .read(
+                                          postMediaControllerProvider.notifier)
+                                      .updateImageUrl('');
+
+                                  avatarImageUrl = null;
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.5),
+                                    shape: BoxShape
+                                        .circle, // Makes the container round
+                                  ),
+                                  child: const Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         )
                     ],
                   ),
@@ -563,7 +585,6 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
             .read(postMediaControllerProvider.notifier)
             .handlePost(previewImages, isUpdate);
         ref.invalidate(socialPostoneControllerProvider);
-
         Future.delayed(const Duration(milliseconds: 500), () {
           if (mounted) {
             Fluttertoast.showToast(

@@ -214,12 +214,15 @@ end
 
 🚀 Fix Bug Features & Updates:
 
-Refactor new feeds algorith with paging priotize likes, created_at, comment count first posting only show recent up to 14 days ago !!!
-New feeds are now ranking by likes count and comment count
-Post new feeds will be re ordering every time you open app 
-Older post will show first and then recent Post will be show as you scroll bottom
-Comments can be edit or delete once your press on user profile that belongs to you
-Other Profile user can be view 
+Notificaiton Listing History
+Count badge notification will be real time
+Count badge will be clear when user click 
+Count badge will reset state if user logout
+User now can view their previous notificaiton
+Notificaition is clickable meaning they can click and do action on it
+For now notification is not real time will be fetch everytime user navigate
+
+Fix some minior issues 
 
 ⚠ Known Issues:
 
@@ -243,12 +246,14 @@ deploy_message =  "📢 New Android Build Available on Firebase App Distribution
 
 🚀 Fix Bug Features & Updates:
 
-Refactor new feeds algorith with paging priotize likes, created_at, comment count first posting only show recent up to 14 days ago !!!
-New feeds are now ranking by likes count and comment count
-Post new feeds will be re ordering every time you open app 
-Older post will show first and then recent Post will be show as you scroll bottom
-Comments can be edit or delete once your press on user profile that belongs to you
-Other Profile user can be view 
+Notificaiton Listing History
+Count badge notification will be real time
+Count badge will be clear when user click 
+Count badge will reset state if user logout
+User now can view their previous notificaiton
+Notificaition is clickable meaning they can click and do action on it
+For now notification is not real time will be fetch everytime user navigate
+
 
 Facebook (Dev Mode) → The app may not retrieve the user’s profile name when logged in under Facebook’s Dev Mode, causing the user to appear as annouymous on both Android and iOS. This issue is not present in the production version.
 

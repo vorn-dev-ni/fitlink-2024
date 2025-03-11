@@ -3,7 +3,6 @@ import 'package:demo/features/home/controller/logout_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
 import 'package:demo/core/riverpod/navigation_state.dart';
 import 'package:demo/features/home/views/chat/chat_tab.dart';
-import 'package:demo/features/home/views/daily_workout/main_workout.dart';
 import 'package:demo/features/home/views/main/home_tab.dart';
 import 'package:demo/features/home/views/main/work_out/workout_tab.dart';
 import 'package:demo/features/home/views/profile/profile_tab.dart';
@@ -20,9 +19,6 @@ List<Widget> tabScreens = [
   const ChatTab(),
   const NoInternet(),
   const WorkoutTab(),
-
-  // const MainWorkoutScreen(),
-
   ProfileTab(key: UniqueKey()),
 ];
 

@@ -5,9 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AppLifecycleObserver extends ConsumerStatefulWidget {
   final Widget child;
-
   const AppLifecycleObserver({required this.child, Key? key}) : super(key: key);
-
   @override
   _AppLifecycleObserverState createState() => _AppLifecycleObserverState();
 }
@@ -26,6 +24,8 @@ class _AppLifecycleObserverState extends ConsumerState<AppLifecycleObserver>
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
+
+  // State = dead, state = resume, state = pauces
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {

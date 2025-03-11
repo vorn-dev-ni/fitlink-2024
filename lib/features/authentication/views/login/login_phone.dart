@@ -169,6 +169,7 @@ class _PhoneNumberTabState extends ConsumerState<PhoneNumberTab> {
                       .read(loginControllerProvider.notifier)
                       .checkLoginPhoneState();
                   if (isValid == false) {
+                    ScaffoldMessenger.of(context).removeCurrentSnackBar();
                     HelpersUtils.showErrorSnackbar(
                         duration: 3000,
                         context,

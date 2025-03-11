@@ -130,8 +130,8 @@ class _WorkoutActivitiesState extends ConsumerState<WorkoutActivities> {
             ),
             timelineOptions:
                 const TimelineOptions(height: 100, padding: EdgeInsets.all(0)),
-            firstDate: DateTime(2024, 3, 18),
-            lastDate: DateTime(2050, 3, 18),
+            firstDate: DateTime(2020, 3, 18),
+            lastDate: DateTime.now(),
             onDateChange: (date) {
               setState(() {
                 _selectedDate = date;

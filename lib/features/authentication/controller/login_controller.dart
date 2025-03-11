@@ -146,7 +146,7 @@ class LoginController extends _$LoginController {
     }
 
     bool isEmailPasswordValid = ValidationUtils.isPasswordEmptyOrLessThen(
-            password: state.password ?? "", length: 12) &&
+            password: state.password ?? "", length: 13) &&
         ValidationUtils.isValidEmail(state.email!);
     if (!isEmailPasswordValid) {
       Fluttertoast.showToast(

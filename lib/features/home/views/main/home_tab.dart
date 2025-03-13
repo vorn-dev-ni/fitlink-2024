@@ -10,7 +10,9 @@ import 'package:demo/features/home/views/main/event/event.dart';
 import 'package:demo/features/home/views/main/my_home/social_media.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
+import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/sizes.dart';
+import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -123,7 +125,10 @@ class _HomeTabState extends ConsumerState<HomeTab>
             Padding(
               padding: const EdgeInsets.only(right: Sizes.sm),
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  HelpersUtils.navigatorState(context)
+                      .pushNamed(AppPage.searchTikTok);
+                },
                 icon: const Icon(
                   Icons.search,
                   size: Sizes.iconMd,

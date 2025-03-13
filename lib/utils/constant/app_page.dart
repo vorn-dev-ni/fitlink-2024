@@ -33,6 +33,11 @@ class AppPage {
   //HOME
   static const home = 'Welcome';
 
+  //SEARCH TIKTOK
+  static const singleVideoTiktok = 'SingleVideoTiktok';
+  static const searchTikTok = 'SearchTikTok';
+
+  static const searchResult = 'SearchResultScreen';
   //Events
 
   static const eventDetail = 'EventDetail';

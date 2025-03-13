@@ -40,6 +40,10 @@ class $AssetsAppGen {
   AssetGenImage get noInternetCat =>
       const AssetGenImage('assets/app/no_internet_cat.jpg');
 
+  /// File path: assets/app/share-option.png
+  AssetGenImage get shareOption =>
+      const AssetGenImage('assets/app/share-option.png');
+
   /// File path: assets/app/workout_appbar_bg.png
   AssetGenImage get workoutAppbarBg =>
       const AssetGenImage('assets/app/workout_appbar_bg.png');
@@ -54,6 +58,7 @@ class $AssetsAppGen {
         gymBackground,
         noImgAvailable,
         noInternetCat,
+        shareOption,
         workoutAppbarBg
       ];
 }
@@ -242,6 +247,9 @@ class $AssetsIconSvgGen {
   /// File path: assets/icon/svg/share.svg
   String get share => 'assets/icon/svg/share.svg';
 
+  /// File path: assets/icon/svg/share_tiktok.svg
+  String get shareTiktok => 'assets/icon/svg/share_tiktok.svg';
+
   /// File path: assets/icon/svg/tiktok.svg
   String get tiktok => 'assets/icon/svg/tiktok.svg';
 
@@ -265,6 +273,7 @@ class $AssetsIconSvgGen {
         plus,
         plus20,
         share,
+        shareTiktok,
         tiktok
       ];
 }

@@ -143,16 +143,17 @@ class _CommentMainState extends ConsumerState<CommentMain> {
             : AppBar(
                 centerTitle: false,
                 elevation: 0,
+                toolbarHeight: 60,
                 scrolledUnderElevation: 0,
                 backgroundColor: Colors.white,
                 leadingWidth: 100.w,
                 leading: ProfileHeader(
                     context: context,
-                    user: data?.user ?? UserData(),
-                    desc: data?.tag,
+                    user: data.user ?? UserData(),
+                    desc: data.tag,
                     post: data,
-                    postId: data?.postId,
-                    imageUrl: data?.user?.avatar ?? "",
+                    postId: data.postId,
+                    imageUrl: data.user?.avatar ?? "",
                     type: ProfileType.header,
                     showBackButton: true),
               );

@@ -30,11 +30,10 @@ class _TiktokCommentState extends State<TiktokComment> {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            shape: BoxShape.circle, // Ensures a circular shape
+            shape: BoxShape.circle,
             border: Border.all(
-              color: const Color.fromARGB(
-                  255, 194, 195, 197), // Customize border color
-              width: 1, // Customize border width
+              color: const Color.fromARGB(255, 194, 195, 197),
+              width: 1,
             ),
           ),
           child: ClipOval(

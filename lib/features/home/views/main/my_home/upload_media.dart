@@ -10,6 +10,7 @@ import 'package:demo/features/home/model/post.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
+import 'package:demo/utils/constant/constant_data.dart';
 import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/device/device_utils.dart';
@@ -43,24 +44,6 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
   String? avatarImageUrl;
   late AudioPlayer playAudioUpload;
   final textcaptionController = TextEditingController();
-
-  final List<String> chipLabels = [
-    "Workout",
-    "Diet",
-    "Mental well being",
-    "Fitness",
-    "Gym",
-    "Workout",
-    "Outdoor",
-    "Food",
-    "Sports",
-    "Motivation",
-    "Fitness",
-    "Health",
-    "Trending",
-    "Challenge",
-    "Inspiration",
-  ];
 
   @override
   void didChangeDependencies() {

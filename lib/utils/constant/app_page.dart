@@ -35,6 +35,7 @@ class AppPage {
 
   //SEARCH TIKTOK
   static const singleVideoTiktok = 'SingleVideoTiktok';
+  static const previewVideo = 'PreviewVideo';
   static const searchTikTok = 'SearchTikTok';
 
   static const searchResult = 'SearchResultScreen';

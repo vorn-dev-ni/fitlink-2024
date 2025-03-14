@@ -1,4 +1,3 @@
-import 'package:demo/common/widget/error_image_placeholder.dart';
 import 'package:demo/features/home/views/main/work_out/tiktok_comment.dart';
 import 'package:demo/features/home/views/main/work_out/user_caption.dart';
 import 'package:demo/features/home/views/main/work_out/user_tiktok_avatar.dart';
@@ -8,8 +7,6 @@ import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:like_button/like_button.dart';
 import 'package:sizer/sizer.dart';
 
@@ -32,15 +29,8 @@ class _VideoTiktokItemState extends State<VideoTiktokItem> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        FancyShimmerImage(
-          errorWidget: errorImgplaceholder(),
-          imageUrl: widget.img,
-          boxFit: BoxFit.cover,
-          width: double.infinity,
-          height: double.infinity,
-        ),
         Positioned(
-          bottom: 20,
+          bottom: -85,
           right: 20,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -57,7 +47,7 @@ class _VideoTiktokItemState extends State<VideoTiktokItem> {
                           fontWeight: FontWeight.w400,
                           shadows: [
                             const Shadow(
-                              offset: Offset(2, 2),
+                              offset: Offset(0, 2),
                               blurRadius: 4.0,
                               color: Colors.black, // Black shadow
                             ),
@@ -72,6 +62,12 @@ class _VideoTiktokItemState extends State<VideoTiktokItem> {
                     likeCountAnimationDuration:
                         const Duration(milliseconds: 300),
                     likeBuilder: (bool isLiked) => Icon(
+                      shadows: [
+                        Shadow(
+                            color: AppColors.neutralBlack.withOpacity(0.5),
+                            blurRadius: 19,
+                            offset: const Offset(0, 0))
+                      ],
                       isLiked
                           ? CupertinoIcons.heart_fill
                           : CupertinoIcons.heart_fill,
@@ -85,7 +81,13 @@ class _VideoTiktokItemState extends State<VideoTiktokItem> {
               }),
               // const SizedBox(height: 20),
               _buildIcon(
-                  const Icon(
+                  Icon(
+                    shadows: [
+                      Shadow(
+                          color: AppColors.neutralBlack.withOpacity(0.5),
+                          blurRadius: 19,
+                          offset: const Offset(0, 0))
+                    ],
                     CupertinoIcons.chat_bubble_fill,
                     color: AppColors.backgroundLight,
                     size: Sizes.iconLg,
@@ -95,13 +97,23 @@ class _VideoTiktokItemState extends State<VideoTiktokItem> {
               }),
               const SizedBox(height: 20),
               _buildIcon(
-                  Assets.app.shareOption.image(
-                    fit: BoxFit.cover,
-                    width: 33,
-                    height: 33,
-                    color: AppColors.backgroundLight,
+                  Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                            color: AppColors.neutralBlack.withOpacity(0.3),
+                            blurRadius: 19,
+                            offset: const Offset(0, 0))
+                      ],
+                    ),
+                    child: Assets.app.shareOption.image(
+                      fit: BoxFit.cover,
+                      width: 33,
+                      height: 33,
+                      color: AppColors.backgroundLight,
+                    ),
                   ),
-                  "Share",
+                  "0",
                   () {}),
               SizedBox(height: 20.h),
             ],
@@ -110,7 +122,7 @@ class _VideoTiktokItemState extends State<VideoTiktokItem> {
         Positioned(
             left: 20,
             right: 0,
-            bottom: 15.h,
+            bottom: 10.h,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -122,17 +134,6 @@ class _VideoTiktokItemState extends State<VideoTiktokItem> {
                     'My Journey so far, you can check out my work out plan, My Journey so far, you can check out my work out plan, My Journey so far, you can check out my work out plan.'),
               ],
             )),
-        const Positioned(
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0,
-          child: Icon(
-            Icons.play_arrow,
-            color: Colors.white,
-            size: 100,
-          ),
-        ),
       ],
     );
   }
@@ -159,37 +160,19 @@ class _VideoTiktokItemState extends State<VideoTiktokItem> {
         children: [
           Stack(
             children: [
-              Positioned(
-                top: 2,
-                left: 2,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundDark
-                        .withOpacity(0.5), // Shadow effect
-                    borderRadius:
-                        BorderRadius.circular(10), // Optional rounded corners
-                  ),
-                ),
-              ),
               // Main icon
-              icon,
-              Positioned(
-                  top: 2,
-                  left: 2,
-                  child: Container(
-                    color: AppColors.backgroundDark.withOpacity(0.5),
-                  )),
+              icon
             ],
           ),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
               shadows: [
                 Shadow(
-                  offset: Offset(2, 2),
-                  blurRadius: 4.0,
-                  color: Colors.black, // Black shadow
+                  offset: const Offset(0, 2),
+                  blurRadius: 10.0,
+                  color: Colors.black.withOpacity(1),
                 ),
               ],
             ),

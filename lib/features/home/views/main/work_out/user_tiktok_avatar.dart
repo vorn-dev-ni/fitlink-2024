@@ -44,9 +44,9 @@ class UserProfile extends StatelessWidget {
             fontSize: 16,
             shadows: [
               Shadow(
-                offset: const Offset(2, 2),
-                blurRadius: 5.0,
-                color: Colors.black.withOpacity(0.2),
+                offset: const Offset(0, 2),
+                blurRadius: 10.0,
+                color: Colors.black.withOpacity(0.5),
               ),
             ],
           ),

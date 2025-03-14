@@ -62,6 +62,7 @@ class _MyHomeScreenState extends ConsumerState<MyHomeScreen> {
       child: Scaffold(
         extendBody: true,
         backgroundColor: AppColors.backgroundLight,
+        // body: tabScreens[tabIndex],
         body: IndexedStack(
           index: tabIndex,
           children: tabScreens,

@@ -1,3 +1,4 @@
+import 'package:demo/common/widget/app_loading.dart';
 import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/features/home/views/single_profile/controller/single_user_controller.dart';
@@ -13,7 +14,6 @@ import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class NotificationMain extends ConsumerStatefulWidget {
@@ -239,13 +239,8 @@ class _NotificationMainState extends ConsumerState<NotificationMain> {
     final isFetching = ref.watch(notificationLoadingProvider);
     return Padding(
         padding: const EdgeInsets.all(Sizes.md),
-        child: isFetching
-            ? const Center(
-                child: CircularProgressIndicator(
-                  color: AppColors.secondaryColor,
-                ),
-              )
-            : const SizedBox());
+        child:
+            isFetching ? Center(child: appLoadingSpinner()) : const SizedBox());
   }
 
   String _getNotificationMessage(
@@ -260,7 +255,7 @@ class _NotificationMainState extends ConsumerState<NotificationMain> {
       case NotificationType.chat:
         return '${fullName ?? "Someone"} sent you a message.';
       case NotificationType.commentLike:
-        return '${fullName ?? "Someone"} liked your comment.';
+        return '${fullName ?? "Someone"} liked your comment on post.';
       default:
         return '${fullName ?? "Someone"} sent you a notification.';
     }

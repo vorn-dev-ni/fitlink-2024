@@ -11,9 +11,9 @@ Widget captionText(String caption) {
         fontSize: 14.sp,
         shadows: [
           Shadow(
-            offset: const Offset(2, 2),
-            blurRadius: 5.0,
-            color: Colors.black.withOpacity(0.2),
+            offset: const Offset(0, 0),
+            blurRadius: 8.0,
+            color: Colors.black.withOpacity(1),
           ),
         ],
       ),

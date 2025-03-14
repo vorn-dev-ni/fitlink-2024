@@ -1,5 +1,6 @@
 import 'package:demo/common/model/route_app.dart';
 import 'package:demo/common/model/screen_app.dart';
+import 'package:demo/common/widget/video_preview.dart';
 import 'package:demo/features/authentication/auth.dart';
 import 'package:demo/features/authentication/views/forget_password/forget_password.dart';
 import 'package:demo/features/authentication/views/forget_password/forget_password_success.dart';
@@ -40,6 +41,9 @@ class AppRoutes {
   AppRoutes._();
 
   static final List<RoutesApp> mainStacks = [
+    RoutesApp(
+        routeName: AppPage.previewVideo,
+        builder: (context) => const VideoPreview()),
     RoutesApp(
         routeName: AppPage.singleVideoTiktok,
         builder: (context) => const MainSingleVideo()),

@@ -46,7 +46,9 @@ class AppRoutes {
         builder: (context) => const VideoPreview()),
     RoutesApp(
         routeName: AppPage.singleVideoTiktok,
-        builder: (context) => const MainSingleVideo()),
+        builder: (context) => const MainSingleVideo(
+              videoId: "",
+            )),
     RoutesApp(
         routeName: AppPage.searchResult,
         builder: (context) => const SearchResultScreen()),

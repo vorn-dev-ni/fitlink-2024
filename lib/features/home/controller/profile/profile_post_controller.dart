@@ -23,8 +23,6 @@ class ProfilePostController extends _$ProfilePostController {
         baseSocialMediaService:
             SocialPostService(firebaseAuthService: firebaseService));
 
-    debugPrint("user received is ${uid}");
-
     if (FirebaseAuth.instance.currentUser == null) {
       debugPrint("User is null");
       return const Stream.empty();

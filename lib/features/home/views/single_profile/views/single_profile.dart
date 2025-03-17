@@ -41,7 +41,9 @@ class _SingleProfileState extends ConsumerState<SingleProfile> {
         userId: uid ?? "",
         currentUser: false,
       ),
-      const VideoProfile(),
+      VideoProfile(
+        userId: uid ?? "",
+      ),
       WorkoutProfile(
         userId: uid ?? "",
       ),
@@ -182,7 +184,9 @@ class _SingleProfileState extends ConsumerState<SingleProfile> {
               userId: data['userId'],
               currentUser: false,
             ),
-            const VideoProfile(),
+            VideoProfile(
+              userId: uid,
+            ),
             WorkoutProfile(
               userId: data['userId'],
             ),

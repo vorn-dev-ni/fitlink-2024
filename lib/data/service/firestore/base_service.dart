@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:demo/common/widget/video_tiktok.dart';
 import 'package:demo/features/home/model/chat.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/features/home/views/single_profile/model/media_count.dart';
@@ -109,6 +110,33 @@ abstract class NotificationBaseService {
   Future sendChatBetweenUsers(
       String senderID, String receiverID, String chatId, String text);
   Future deleteNotification(String uid, String docId);
+}
+
+abstract class VideoBaseService {
+  Future<QuerySnapshot<Map<String, dynamic>>> searchVideo(
+      {required String search, List<String>? tag});
+  Future<QuerySnapshot<Map<String, dynamic>>> fetchVideos(
+      {required int page, DocumentSnapshot? startAfter});
+  Stream<QuerySnapshot<Map<String, dynamic>>> fetchCommentVideo(
+    String videoId, {
+    int limit = 10,
+    DocumentSnapshot? startAfter,
+  });
+  Future<QuerySnapshot<Map<String, dynamic>>> fetchCommentOneTime(
+    String videoId, {
+    int limit = 10,
+    DocumentSnapshot? startAfter,
+  });
+  Future<void> createVideo(Map<String, dynamic> videoData);
+  Future<void> likeVideo(String videoId, String userId);
+
+  Future<void> shareVideo(String videoId, String userId);
+
+  Future<void> commentOnVideo(String videoId, String userId, String comment);
+
+  Future<void> trackView(String videoId, String? userId);
+
+  Future getVideoById(String videoId);
 }
 
 abstract class ChatBaseService {

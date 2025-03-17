@@ -9,7 +9,6 @@ import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:async';
 import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
@@ -46,7 +45,10 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
     _cameras = await availableCameras();
     if (_cameras.isNotEmpty) {
       _controller = CameraController(
-          _isFrontCamera ? _cameras[1] : _cameras[0], ResolutionPreset.high);
+          enableAudio: true,
+          fps: 60,
+          _isFrontCamera ? _cameras[1] : _cameras[0],
+          ResolutionPreset.high);
       await _controller?.initialize();
       if (mounted) setState(() {});
     }
@@ -123,9 +125,7 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
       maxDuration: const Duration(seconds: 60),
     );
     if (pickedFile != null && mounted) {
-      // You can handle the picked image here
       debugPrint("Image picked: ${pickedFile.path}");
-
       HelpersUtils.navigatorState(context)
           .pushNamed(AppPage.previewVideo, arguments: pickedFile.path);
     }
@@ -160,7 +160,15 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
 
     return Stack(
       children: [
-        Positioned.fill(child: CameraPreview(_controller!)),
+        // Positioned.fill(child: CameraPreview(_controller!)),
+        Positioned.fill(
+          child: AspectRatio(
+            aspectRatio: 9 / 16,
+            child: CameraPreview(
+              _controller!,
+            ),
+          ),
+        ),
         if (!_isRecording)
           Positioned(
             top: 20,

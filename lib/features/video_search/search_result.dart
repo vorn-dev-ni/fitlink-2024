@@ -1,63 +1,50 @@
+import 'package:demo/common/widget/empty_content.dart';
+import 'package:demo/common/widget/video_tiktok.dart';
 import 'package:demo/features/video_search/widget/video_grid_item.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
+import 'package:demo/features/video_search/controller/video_search_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sizer/sizer.dart';
 
-class SearchResultScreen extends StatefulWidget {
+class SearchResultScreen extends ConsumerStatefulWidget {
   const SearchResultScreen({Key? key}) : super(key: key);
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchResultScreen> {
-  String selectedCategory = '';
-  late List<String> recentSearches;
-  final List<String> categories = [
-    "Workout",
-    "Diet",
-    "Mental Wellness",
-    "Event"
-  ];
-  final List<Map<String, dynamic>> videos = List.generate(20, (index) {
-    return {
-      "thumbnail":
-          "https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?q=80&w=3360&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "caption": "Awesome video #$index",
-      "likes": (1000 + index * 23).toString(),
-      "views": (5000 + index * 57).toString(),
-    };
-  });
+class _SearchScreenState extends ConsumerState<SearchResultScreen> {
+  String searchQuery = '';
+  List<String> tags = [];
+
   @override
-  void initState() {
-    super.initState();
-    recentSearches = [
-      "Bicep workout guide",
-      "This is search history",
-      "Vorn is Jesus, my king",
-      "Bro Nha idol",
-      "Jamel faker profile",
-      "Bicep workout guide",
-      "This is search history",
-      "Vorn is Jesus, my king",
-      "Bro Nha idol",
-      "Jamel faker profile",
-    ];
-  }
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-  void _deleteSearch(String search) {
-    setState(() {
-      recentSearches.remove(search);
-    });
-  }
+    // Get arguments from Navigator
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final text = args?['text'] as String?;
+    final tagList = args?['tag'] as List<String>?; // Get list of selected tags
 
-  void _selectSearch(String search) {
-    debugPrint("Selected search: $search");
+    if (text != null) {
+      setState(() {
+        searchQuery = text;
+        tags = tagList ?? []; // Default to empty list if no tags
+      });
+
+      ref.invalidate(videoSearchControllerProvider);
+      ref.read(videoSearchControllerProvider(searchQuery, tags).notifier);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final videoSearchState =
+        ref.watch(videoSearchControllerProvider(searchQuery, tags));
     return Scaffold(
       appBar: AppBar(
         leading: _buildSearchBar(),
@@ -66,39 +53,43 @@ class _SearchScreenState extends State<SearchResultScreen> {
         backgroundColor: AppColors.backgroundLight,
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Divider(
-                color: AppColors.neutralColor,
-                height: 2,
-              ),
-              _buildVideoListing(),
-            ],
-          ),
+        child: videoSearchState.when(
+          data: (videos) => _buildVideoListing(videos),
+          loading: () => const Center(
+              child: CircularProgressIndicator(
+            color: AppColors.secondaryColor,
+          )),
+          error: (error, _) {
+            String errorMessage = error.toString();
+            debugPrint(error.toString());
+            if (errorMessage.length > 100) {
+              errorMessage = '${errorMessage.substring(0, 100)}...';
+            }
+            return Center(child: emptyContent(title: errorMessage));
+          },
         ),
       ),
     );
   }
 
-  Widget _buildVideoListing() {
-    return GridView.builder(
-      padding: const EdgeInsets.all(8),
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-        childAspectRatio: 9 / 16,
-      ),
-      itemCount: videos.length,
-      itemBuilder: (context, index) {
-        return VideoItem(video: videos[index]);
-      },
-    );
+  Widget _buildVideoListing(List<VideoTikTok> videos) {
+    return videos.isEmpty
+        ? Center(child: emptyContent(title: 'No video search result is found.'))
+        : GridView.builder(
+            padding: const EdgeInsets.all(8),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+              childAspectRatio: 9 / 16,
+            ),
+            itemCount: videos.length,
+            itemBuilder: (context, index) {
+              return VideoItem(video: videos[index]);
+            },
+          );
   }
 
   Widget _buildSearchBar() {
@@ -116,7 +107,7 @@ class _SearchScreenState extends State<SearchResultScreen> {
           SizedBox(
             width: 80.w,
             child: Text(
-              'User Search Result',
+              searchQuery.isNotEmpty ? searchQuery : 'User Search Result',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: AppTextTheme.lightTextTheme.bodyLarge?.copyWith(
@@ -129,27 +120,4 @@ class _SearchScreenState extends State<SearchResultScreen> {
       ),
     );
   }
-
-  /// 🔍 **Search Bar**
-  // Widget _buildSearchBar() {
-  //   return TextField(
-  //     style: AppTextTheme.lightTextTheme.bodyLarge?.copyWith(
-  //       color: AppColors.backgroundDark,
-  //       fontWeight: FontWeight.w500,
-  //     ),
-  //     decoration: const InputDecoration(
-  //       hintText: "Search...",
-  //       hintStyle: TextStyle(color: Colors.grey),
-  //       focusedBorder: UnderlineInputBorder(
-  //         borderSide: BorderSide(color: AppColors.backgroundDark, width: 1),
-  //       ),
-  //       enabledBorder: UnderlineInputBorder(
-  //         borderSide: BorderSide(color: Colors.grey, width: 1),
-  //       ),
-  //       disabledBorder: UnderlineInputBorder(
-  //         borderSide: BorderSide(color: Colors.grey, width: 1),
-  //       ),
-  //     ),
-  //   );
-  // }
 }

@@ -5,7 +5,6 @@ import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/comments/comment_service.dart';
 import 'package:demo/data/service/firestore/notification/notification_service.dart';
 import 'package:demo/features/home/controller/comment/comment_loading.dart';
-import 'package:demo/features/home/controller/posts/social_like_controller.dart';
 import 'package:demo/features/home/controller/posts/social_postone_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/features/home/model/comment.dart';

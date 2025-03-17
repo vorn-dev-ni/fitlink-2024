@@ -86,6 +86,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.25"
+  audio_video_progress_bar:
+    dependency: "direct main"
+    description:
+      name: audio_video_progress_bar
+      sha256: "552b1f73c56c4c88407999e0a8507176f60c56de3e6d63bc20a0eab48467d4c9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.3"
   boolean_selector:
     dependency: transitive
     description:
@@ -1458,6 +1466,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  modal_bottom_sheet:
+    dependency: "direct main"
+    description:
+      name: modal_bottom_sheet
+      sha256: eac66ef8cb0461bf069a38c5eb0fa728cee525a531a8304bd3f7b2185407c67e
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
   nested:
     dependency: transitive
     description:

@@ -18,8 +18,7 @@ Widget excercise_item(BuildContext context, int index, Exercises? excercise) {
         : FancyShimmerImage(
             width: 120,
             height: 120,
-            imageUrl:
-                'https://cdn.shopify.com/s/files/1/0269/5551/3900/files/Dumbbell-Bent-Over-Row-_Single-Arm_49867db3-f465-4fbc-b359-29cbdda502e2_600x600.png?v=1612138069',
+            imageUrl: excercise.imageUrl ?? "",
             boxFit: BoxFit.cover,
           ),
     title: SizedBox(

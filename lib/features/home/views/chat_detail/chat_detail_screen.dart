@@ -1026,8 +1026,10 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
   void _tapUserProfile(String? id) {
     _focusNode.unfocus();
     Future.delayed(const Duration(milliseconds: 40), () {
-      HelpersUtils.navigatorState(context)
-          .pushNamed(AppPage.viewProfile, arguments: {'userId': id});
+      if (mounted) {
+        HelpersUtils.navigatorState(context)
+            .pushNamed(AppPage.viewProfile, arguments: {'userId': id});
+      }
     });
   }
 }

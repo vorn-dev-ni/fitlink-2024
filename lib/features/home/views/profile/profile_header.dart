@@ -91,25 +91,6 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                           )),
                     ),
                   ),
-                  Skeletonizer(
-                    enabled: showLoading,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.backgroundDark.withOpacity(0.4),
-                      ),
-                      margin:
-                          const EdgeInsets.only(right: Sizes.lg, top: Sizes.md),
-                      child: const IconButton(
-                          padding: EdgeInsets.all(0),
-                          onPressed: null,
-                          icon: Icon(
-                            Icons.more_vert,
-                            size: Sizes.xxl,
-                            color: AppColors.backgroundLight,
-                          )),
-                    ),
-                  )
                 ]
               : null,
           stretch: true,
@@ -388,13 +369,6 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                             .read(notificationBadgeProvider.notifier)
                             .clearNotificationBadge();
 
-                        // ref
-                        //     .read(notificationUserControllerProvider(
-                        //             FirebaseAuth.instance.currentUser?.uid)
-                        //         .notifier)
-                        //     .refreshState();
-                        // ref.invalidate(notificationUserControllerProvider);
-
                         HelpersUtils.navigatorState(context)
                             .pushNamed(AppPage.notificationListing);
                       },
@@ -448,7 +422,6 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
 
   Widget renderBadge(MediaCount data) {
     final badgeCount = ref.watch(notificationBadgeProvider);
-    // Fluttertoast.showToast(msg: 'sds ${badgeCount}');
     return badgeCount > 0
         ? Positioned(
             top: 0,

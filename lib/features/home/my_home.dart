@@ -18,7 +18,7 @@ List<Widget> tabScreens = [
   const HomeTab(),
   const ChatTab(),
   const NoInternet(),
-  const WorkoutTab(),
+  WorkoutTab(),
   ProfileTab(key: UniqueKey()),
 ];
 
@@ -60,7 +60,9 @@ class _MyHomeScreenState extends ConsumerState<MyHomeScreen> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-        extendBody: true,
+        extendBody: false,
+        extendBodyBehindAppBar: false,
+
         backgroundColor: AppColors.backgroundLight,
         // body: tabScreens[tabIndex],
         body: IndexedStack(

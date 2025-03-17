@@ -5,10 +5,6 @@ import 'package:demo/core/riverpod/navigation_state.dart';
 import 'package:demo/features/authentication/controller/auth_controller.dart';
 import 'package:demo/features/authentication/controller/login_controller.dart';
 import 'package:demo/features/authentication/controller/register_controller.dart';
-import 'package:demo/features/home/controller/chat/following_friend_controller.dart';
-import 'package:demo/features/home/controller/chat/message_detail_controller.dart';
-import 'package:demo/features/home/controller/chat/user_following_search.dart';
-import 'package:demo/features/home/controller/chat/user_header_controller.dart';
 import 'package:demo/features/home/controller/chat/user_status_controller.dart';
 import 'package:demo/features/home/controller/logout_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
@@ -66,7 +62,9 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
         currentUser: true,
         userId: uid ?? "",
       ),
-      const VideoProfile(),
+      VideoProfile(
+        userId: FirebaseAuth.instance.currentUser?.uid,
+      ),
       WorkoutProfile(
         key: UniqueKey(),
         userId: uid ?? "",
@@ -163,7 +161,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     );
   }
 
-  Skeletonizer build_loading() {
+  Widget build_loading() {
     return Skeletonizer(
       enabled: true,
       ignorePointers: true,

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:chewie/chewie.dart';
+import 'package:demo/common/widget/app_loading.dart';
 import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -35,16 +36,22 @@ class _VideoPreviewState extends State<VideoPreview> {
           _chewieController = ChewieController(
             videoPlayerController: _videoController,
             autoPlay: true,
-            looping: false,
-            autoInitialize: true,
-            allowFullScreen: false,
-            showControlsOnInitialize: false,
+            bufferingBuilder: (context) => appLoadingSpinner(),
+            aspectRatio: 0.55,
+            looping: true,
             showControls: true,
-            allowMuting: true,
             draggableProgressBar: true,
-
-            aspectRatio: _videoController.value.aspectRatio,
+            allowFullScreen: false,
+            allowedScreenSleep: false,
+            zoomAndPan: true,
+            allowMuting: false,
+            controlsSafeAreaMinimum:
+                const EdgeInsets.only(bottom: 30, left: 7, right: 7),
+            maxScale: 2,
             allowPlaybackSpeedChanging: false,
+            autoInitialize: true,
+            showControlsOnInitialize: false,
+            showOptions: false,
             // progressIndicatorDelay: null,
             errorBuilder: (context, errorMessage) {
               return emptyContent(title: errorMessage);
@@ -53,7 +60,6 @@ class _VideoPreviewState extends State<VideoPreview> {
                 bufferedColor: const Color.fromARGB(255, 154, 158, 163)),
             materialProgressColors: ChewieProgressColors(
                 bufferedColor: const Color.fromARGB(255, 154, 158, 163)),
-            showOptions: false,
           );
         });
       }
@@ -89,37 +95,55 @@ class _VideoPreviewState extends State<VideoPreview> {
     }
 
     return Scaffold(
+        extendBody: false,
+        extendBodyBehindAppBar: false,
         backgroundColor: AppColors.backgroundDark,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          foregroundColor: AppColors.backgroundLight,
-        ),
         body: Stack(
           fit: StackFit.expand,
           children: [
-            buildFullScreen(
-              controller: _chewieController,
-              child: Chewie(
-                controller: _chewieController,
+            Positioned.fill(
+              child: buildFullScreen(
+                controller: _chewieController!,
+                child: Chewie(controller: _chewieController!),
               ),
             ),
           ],
         ));
   }
 
+  Widget buildVideoPlayer() {
+    if (_chewieController == null || !_videoController.value.isInitialized) {
+      return Container();
+    }
+
+    final chewieController = _chewieController;
+
+    return buildFullScreen(
+      controller: chewieController,
+      child: Chewie(controller: chewieController),
+    );
+  }
+
   Widget buildFullScreen(
       {required ChewieController controller, required child}) {
     final size = controller.videoPlayerController.value.size;
-    final width = size.width;
-    final height = size.height;
-    // controller.videoPlayerController.play();
+    final videoWidth = size.width;
+    final videoHeight = size.height;
 
-    return FittedBox(
-      fit: BoxFit.cover,
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    final widthScale = screenWidth / videoWidth;
+    final heightScale = screenHeight / videoHeight;
+
+    final scaleFactor = widthScale > heightScale ? widthScale : heightScale;
+
+    return Transform.scale(
+      scale: scaleFactor,
       child: SizedBox(
+        width: videoWidth,
+        height: videoHeight,
         child: child,
-        width: width,
-        height: height,
       ),
     );
   }

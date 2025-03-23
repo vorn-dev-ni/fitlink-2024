@@ -20,7 +20,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class ChatTab extends ConsumerStatefulWidget {
   const ChatTab({super.key});
@@ -121,6 +120,7 @@ class _ChatTabState extends ConsumerState<ChatTab> {
       ),
       child: Scaffold(
         backgroundColor: AppColors.backgroundLight,
+        extendBody: true,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           foregroundColor: AppColors.backgroundLight,

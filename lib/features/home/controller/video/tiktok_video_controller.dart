@@ -5,12 +5,13 @@ import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/video/video_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:video_player/video_player.dart';
 part 'tiktok_video_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 class TiktokVideoController extends _$TiktokVideoController {
   late VideoRepository videoRepository;
-  int _limit = 3;
+  int _limit = 4;
   DocumentSnapshot? _lastDoc;
 
   @override
@@ -18,11 +19,26 @@ class TiktokVideoController extends _$TiktokVideoController {
     videoRepository = VideoRepository(
       videoService: VideoService(firebaseAuthService: FirebaseAuthService()),
     );
-    return fetchVideo(); // Fetch initial set of videos
+    clearState();
+    return fetchVideo();
+  }
+
+  void disposeVideoControllers() {
+    if (state is AsyncData<List<VideoTikTok>>) {
+      for (var controller in state!.value!) {
+        controller.videoplayer?.dispose();
+      }
+      ref.invalidateSelf();
+      state = const AsyncLoading();
+    }
+  }
+
+  void refresh() {
+    disposeVideoControllers();
   }
 
   void clearState() {
-    _limit = 3;
+    _limit = 4;
     _lastDoc = null;
   }
 
@@ -36,28 +52,50 @@ class TiktokVideoController extends _$TiktokVideoController {
 
   FutureOr<List<VideoTikTok>> fetchVideo({bool loadMore = false}) async {
     try {
+      List<VideoTikTok> videos;
+
       if (loadMore && _lastDoc != null) {
-        final videos = await videoRepository.fetchVideos(
-            page: _limit, startAfter: _lastDoc);
-        if (videos.isNotEmpty) {
-          _lastDoc = videos.last.lastDoc;
-        }
-        return videos;
+        videos = await videoRepository.fetchVideos(
+          page: _limit,
+          startAfter: _lastDoc,
+        );
       } else {
-        final videos = await videoRepository.fetchVideos(page: _limit);
-        if (videos.isNotEmpty) {
-          _lastDoc = videos.last.lastDoc;
-        }
-        return videos;
+        videos = await videoRepository.fetchVideos(page: _limit);
       }
+
+      if (videos.isNotEmpty) {
+        _lastDoc = videos.last.lastDoc;
+      }
+
+      final updatedVideos = await Future.wait(
+        videos.map((video) async {
+          final videoController = VideoPlayerController.networkUrl(
+              Uri.parse(video.videoUrl ?? ""),
+              videoPlayerOptions: VideoPlayerOptions());
+
+          await videoController.initialize();
+          ref.read(
+              socialInteractonVideoControllerProvider(video.documentID ?? "")
+                  .future);
+
+          return video.copyWith(videoplayer: videoController);
+        }),
+        eagerError: true,
+      );
+
+      if (loadMore && state.value != null) {
+        state = AsyncData([...state.value!, ...updatedVideos]);
+      }
+
+      return updatedVideos;
     } catch (e) {
-      Fluttertoast.showToast(msg: 'fetchVideo ${e.toString()}');
+      Fluttertoast.showToast(msg: 'Error fetching video ${e.toString()}');
       rethrow;
     }
   }
 
   FutureOr<List<VideoTikTok>> loadMore() async {
-    return fetchVideo(loadMore: true);
+    return await fetchVideo(loadMore: true);
   }
 
   void setLastDoc(DocumentSnapshot doc) {
@@ -75,21 +113,44 @@ class SocialInteractonVideoController
     videoRepository = VideoRepository(
       videoService: VideoService(firebaseAuthService: FirebaseAuthService()),
     );
+
     return fetchInteractionData();
   }
 
-  Stream<VideoTikTok> fetchInteractionData() {
+  Stream<VideoTikTok> fetchInteractionData() async* {
     try {
       if (videoId == "") {
-        return const Stream.empty();
+        yield* const Stream.empty();
       }
-      return videoRepository.getVideoCounts(videoId);
+
+      yield* videoRepository.getVideoCounts(videoId);
     } catch (e) {
       throw Exception("Failed to fetch interaction data: $e");
     }
   }
 
   Future checkUserLiked(videoId) async {
+    try {
+      return await videoRepository.checkIfUserLiked(videoId);
+    } catch (e) {
+      throw Exception("Failed to fetch interaction data: $e");
+    }
+  }
+}
+
+@Riverpod(keepAlive: false)
+class CheckUserLikedController extends _$CheckUserLikedController {
+  late VideoRepository videoRepository;
+
+  @override
+  Future<bool> build(String videoId) async {
+    videoRepository = VideoRepository(
+      videoService: VideoService(firebaseAuthService: FirebaseAuthService()),
+    );
+    return checkUserLiked(videoId);
+  }
+
+  FutureOr<bool> checkUserLiked(String videoId) async {
     try {
       return await videoRepository.checkIfUserLiked(videoId);
     } catch (e) {

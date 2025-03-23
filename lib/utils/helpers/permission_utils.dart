@@ -76,9 +76,9 @@ class PermissionUtils {
   }
 
   /// Show permission dialog
-  static void showPermissionDialog(
+  static Future showPermissionDialog(
       BuildContext context, String title, String message, bool canPop) {
-    showDialog(
+    return showDialog(
       context: context,
       barrierDismissible: canPop,
       builder: (context) => AlertDialog(

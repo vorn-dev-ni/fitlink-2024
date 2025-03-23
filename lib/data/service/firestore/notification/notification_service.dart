@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:demo/utils/constant/enums.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -222,6 +223,30 @@ class NotificationRemoteService extends NotificationBaseService {
 
       return await query.get();
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future sendVideoLikeOrComment(String senderID, String receiverID,
+      String postID, VideoTypeLike type) async {
+    try {
+      if (FirebaseAuth.instance.currentUser?.uid == null) {
+        return;
+      }
+      final HttpsCallable callable = FirebaseFunctions.instance
+          .httpsCallable('sendNotificationToSpecificUser');
+      final response = await callable.call({
+        'eventType':
+            type == VideoTypeLike.like ? 'videoLiked' : 'videoCommentLiked',
+        'senderID': senderID,
+        'receiverID': receiverID,
+        'postID': postID,
+        'text': ''
+      });
+      debugPrint('Notification chat sent: ${response.data}');
+    } catch (e) {
+      debugPrint('Error sendChatBetweenUsers notification: $e');
       rethrow;
     }
   }

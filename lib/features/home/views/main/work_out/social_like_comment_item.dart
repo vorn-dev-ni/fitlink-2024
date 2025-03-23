@@ -18,9 +18,14 @@ class SocialLikeCommentItem extends ConsumerStatefulWidget {
   bool isLiked;
   VideoTikTok data;
   VoidCallback onCommentPressed;
+  VoidCallback onShare;
+  String? receiverID;
+
   SocialLikeCommentItem(
       {super.key,
       required this.videoId,
+      required this.onShare,
+      this.receiverID,
       required this.isLiked,
       required this.onCommentPressed,
       required this.data});
@@ -33,12 +38,12 @@ class SocialLikeCommentItem extends ConsumerStatefulWidget {
 class _SocialLikeCommentItemState extends ConsumerState<SocialLikeCommentItem> {
   Timer? _debounceTimer;
   bool? hasLiked;
+
   @override
   void initState() {
     super.initState();
-    setState(() {
-      hasLiked = widget.isLiked;
-    });
+
+    hasLiked = widget.data.isUserliked;
   }
 
   @override
@@ -85,11 +90,10 @@ class _SocialLikeCommentItemState extends ConsumerState<SocialLikeCommentItem> {
                   size: Sizes.iconLg,
                   color: isLiked ? Colors.red : AppColors.backgroundLight,
                 ),
-                onTap: _onTapLiked,
+                onTap: (isLiked) => _onTapLiked(isLiked, widget.receiverID),
               ),
-              "", () {
-            // _showCommentBottomSheet();
-          }),
+              "",
+              () {}),
           // const SizedBox(height: 20),
           _buildIcon(
               Icon(
@@ -104,6 +108,9 @@ class _SocialLikeCommentItemState extends ConsumerState<SocialLikeCommentItem> {
                 size: Sizes.iconLg,
               ),
               widget.data.commentCount?.toString() ?? '0', () {
+            if (!HelpersUtils.isAuthenticated(context)) {
+              return;
+            }
             widget.onCommentPressed();
           }),
           const SizedBox(height: 20),
@@ -124,15 +131,19 @@ class _SocialLikeCommentItemState extends ConsumerState<SocialLikeCommentItem> {
                   color: AppColors.backgroundLight,
                 ),
               ),
-              widget.data.shareCount?.toString() ?? '0',
-              () {}),
+              widget.data.shareCount?.toString() ?? '0', () {
+            if (!HelpersUtils.isAuthenticated(context)) {
+              return;
+            }
+            widget.onShare();
+          }),
           SizedBox(height: 20.h),
         ],
       ),
     );
   }
 
-  Future<bool?> _onTapLiked(bool isCurrentlyLiked) async {
+  Future<bool?> _onTapLiked(bool isCurrentlyLiked, String? receiverID) async {
     if (!HelpersUtils.isAuthenticated(context)) {
       return false;
     }
@@ -140,22 +151,13 @@ class _SocialLikeCommentItemState extends ConsumerState<SocialLikeCommentItem> {
       return isCurrentlyLiked;
     }
 
-    _debounceTimer = Timer(const Duration(milliseconds: 300), () {});
-    hasLiked = !isCurrentlyLiked;
-
-    if (isCurrentlyLiked) {
-      ref
-          .read(tiktokCommentControllerProvider(
-            widget.videoId,
-          ).notifier)
-          .toggleLike();
-    } else {
-      ref
-          .read(tiktokCommentControllerProvider(
-            widget.videoId,
-          ).notifier)
-          .toggleLike();
-    }
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {});
+    ref
+        .read(tiktokCommentControllerProvider(
+          widget.videoId,
+        ).notifier)
+        .toggleLike(alreadyLiked: isCurrentlyLiked, receiverID: receiverID);
+    // hasLiked = !isCurrentlyLiked;
 
     return !isCurrentlyLiked;
   }

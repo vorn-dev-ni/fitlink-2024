@@ -1,4 +1,5 @@
 import 'package:demo/common/widget/app_loading.dart';
+import 'package:demo/common/widget/video/progress_uploading.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
 import 'package:demo/features/home/controller/posts/social_postone_controller.dart';
@@ -72,6 +73,7 @@ class _HomeTabState extends ConsumerState<HomeTab>
 
   Widget build(BuildContext context) {
     return SafeArea(
+      bottom: false,
       child: Column(
         children: [
           tabBarHeader(),

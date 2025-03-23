@@ -11,7 +11,6 @@ import 'package:demo/features/home/views/single_profile/controller/media_tag_con
 import 'package:demo/features/home/views/profile/user_media.dart';
 import 'package:demo/features/home/views/single_profile/controller/notification_badge.dart';
 import 'package:demo/features/home/views/single_profile/model/media_count.dart';
-import 'package:demo/features/notifications/controller/notification_user_controller.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
@@ -21,7 +20,6 @@ import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

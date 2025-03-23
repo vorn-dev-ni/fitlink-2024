@@ -32,6 +32,10 @@ class $AssetsAppGen {
   AssetGenImage get gymBackground =>
       const AssetGenImage('assets/app/gym_background.png');
 
+  /// File path: assets/app/no-comment.png
+  AssetGenImage get noComment =>
+      const AssetGenImage('assets/app/no-comment.png');
+
   /// File path: assets/app/no_img_available.png
   AssetGenImage get noImgAvailable =>
       const AssetGenImage('assets/app/no_img_available.png');
@@ -56,6 +60,7 @@ class $AssetsAppGen {
         catGym,
         defaultAvatar,
         gymBackground,
+        noComment,
         noImgAvailable,
         noInternetCat,
         shareOption,

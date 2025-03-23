@@ -4,7 +4,7 @@ import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
-Widget emptyContent({required String title}) {
+Widget emptyContent({required String title, AssetGenImage? assets}) {
   return SizedBox(
     width: 90.w,
     height: 50.h,
@@ -14,7 +14,9 @@ Widget emptyContent({required String title}) {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Assets.app.catGym.image(height: 250, fit: BoxFit.cover),
+          assets == null
+              ? Assets.app.catGym.image(height: 250, fit: BoxFit.cover)
+              : assets.image(height: 250, fit: BoxFit.cover),
           // SvgPicture.asset(
           //   Assets.icon.svg.notFound,
           //   height: 300,

@@ -87,7 +87,7 @@ class ProfileRepository {
 
         return userDocs.where((doc) => doc.exists).map((doc) {
           final result = doc.data() as Map<String, dynamic>;
-          return UserData.fromJson(result);
+          return UserData.fromJson({...result, 'id': doc.id});
         }).toList();
       },
     );

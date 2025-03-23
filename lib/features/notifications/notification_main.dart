@@ -2,6 +2,7 @@ import 'package:demo/common/widget/app_loading.dart';
 import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/features/home/views/single_profile/controller/single_user_controller.dart';
+import 'package:demo/features/home/views/single_video/main_single_video.dart';
 import 'package:demo/features/notifications/controller/notification_loading.dart';
 import 'package:demo/features/notifications/controller/notification_user_controller.dart';
 import 'package:demo/features/notifications/views/notification_item.dart';
@@ -14,6 +15,7 @@ import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class NotificationMain extends ConsumerStatefulWidget {
@@ -154,6 +156,7 @@ class _NotificationMainState extends ConsumerState<NotificationMain> {
                       child: ListView.builder(
                         padding: const EdgeInsets.all(8.0),
                         shrinkWrap: true,
+                        cacheExtent: 100,
                         physics: _isRefreshing
                             ? const NeverScrollableScrollPhysics()
                             : const AlwaysScrollableScrollPhysics(),
@@ -245,6 +248,7 @@ class _NotificationMainState extends ConsumerState<NotificationMain> {
 
   String _getNotificationMessage(
       NotificationType type, String? fullName, String? avatar) {
+    // Fluttertoast.showToast(msg: 'type is ${type}');
     switch (type) {
       case NotificationType.like:
         return '${fullName ?? "Someone"} liked your post.';
@@ -256,6 +260,10 @@ class _NotificationMainState extends ConsumerState<NotificationMain> {
         return '${fullName ?? "Someone"} sent you a message.';
       case NotificationType.commentLike:
         return '${fullName ?? "Someone"} liked your comment on post.';
+      case NotificationType.videoLiked:
+        return '${fullName ?? "Someone"} liked your video.';
+      case NotificationType.videoCommentLiked:
+        return '${fullName ?? "Someone"} comment on your video.';
       default:
         return '${fullName ?? "Someone"} sent you a notification.';
     }
@@ -281,13 +289,27 @@ class _NotificationMainState extends ConsumerState<NotificationMain> {
         HelpersUtils.navigatorState(context).pushNamed(AppPage.ChatDetails,
             arguments: {'receiverId': senderId, 'chatId': postId});
         break;
-      case NotificationType.commentLike:
-        HelpersUtils.navigatorState(context).pushNamed(AppPage.commentListings,
-            arguments: {'post': Post(postId: postId)});
+      case NotificationType.videoCommentLiked:
+        HelpersUtils.navigatorState(context).push(MaterialPageRoute(
+          builder: (context) {
+            return MainSingleVideo(
+              videoId: postId ?? "",
+              isShowCommeet: true,
+            );
+          },
+        ));
+        break;
+      case NotificationType.videoLiked:
+        HelpersUtils.navigatorState(context).push(MaterialPageRoute(
+          builder: (context) {
+            return MainSingleVideo(
+              videoId: postId ?? "",
+              isShowCommeet: false,
+            );
+          },
+        ));
         break;
       default:
-        HelpersUtils.navigatorState(context).pushNamed(AppPage.commentListings,
-            arguments: {'post': Post(postId: postId)});
         break;
     }
   }

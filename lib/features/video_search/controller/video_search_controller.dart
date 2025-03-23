@@ -2,7 +2,6 @@ import 'package:demo/common/widget/video_tiktok.dart';
 import 'package:demo/data/repository/firebase/video_repo.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/video/video_service.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 part 'video_search_controller.g.dart';

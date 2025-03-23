@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/common/widget/video_tiktok.dart';
 import 'package:demo/features/home/controller/video/comment/comment_video_controller.dart';
 import 'package:demo/features/home/controller/video/single_video_controller.dart';
@@ -11,16 +12,14 @@ import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
 import 'package:sizer/sizer.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:video_player/video_player.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:video_player/video_player.dart';
 
 class MainSingleVideo extends ConsumerStatefulWidget {
   final String videoId;
+  bool? isShowCommeet;
 
-  const MainSingleVideo({
-    Key? key,
-    required this.videoId, // Accept the videoId
-  }) : super(key: key);
+  MainSingleVideo({super.key, required this.videoId, this.isShowCommeet});
 
   @override
   ConsumerState<MainSingleVideo> createState() => _MainSingleVideoState();
@@ -28,11 +27,13 @@ class MainSingleVideo extends ConsumerStatefulWidget {
 
 class _MainSingleVideoState extends ConsumerState<MainSingleVideo> {
   Timer? _debounce;
-
+  VideoPlayerController? videoPageController;
   @override
   void initState() {
     super.initState();
-    // _initializeVideoPlayer();
+    // bindingController();
+    addViewCountWithDebounce(widget.videoId);
+    checkState();
   }
 
   void addViewCountWithDebounce(String videoId) {
@@ -40,6 +41,11 @@ class _MainSingleVideoState extends ConsumerState<MainSingleVideo> {
     _debounce = Timer(const Duration(milliseconds: 500), () {
       ref.read(tiktokVideoControllerProvider.notifier).trackViewCount(videoId);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   @override
@@ -51,22 +57,30 @@ class _MainSingleVideoState extends ConsumerState<MainSingleVideo> {
   Widget build(BuildContext context) {
     final videoAsync = ref.watch(singleVideoControllerProvider(widget.videoId));
     return Scaffold(
-      extendBody: false,
-      extendBodyBehindAppBar: false,
-      backgroundColor: AppColors.backgroundDark,
+      backgroundColor: Colors.black,
       body: videoAsync.when(
         data: (data) {
           return Stack(
+            fit: StackFit.expand,
             children: [
-              VideoPlayerTikTok(videoUrl: data?.videoUrl ?? ""),
+              VideoPlayerTikTok(
+                videoUrl: data?.videoUrl ?? "",
+                videoPlayerController: data?.videoplayer,
+              ),
               VideoTiktokItem(
-                caption: data?.caption ?? "",
+                caption: data!.caption ?? "",
                 videoId: widget.videoId,
-                userdata: data!.userRef,
+                userdata: data.userRef,
+                isUserliked: data.isUserliked,
                 commentCount: data.commentCount,
+                date: data.createdAt ?? Timestamp.now(),
+                tags: data.tag ?? [],
                 img: data.thumbnailUrl ?? "",
                 onCommentPressed: () {
-                  _showCommentBottomSheet(widget.videoId);
+                  _showCommentBottomSheet(
+                    data.userRef?.id ?? "",
+                    widget.videoId,
+                  );
                 },
               ),
             ],
@@ -85,9 +99,8 @@ class _MainSingleVideoState extends ConsumerState<MainSingleVideo> {
                 videoId: widget.videoId,
                 commentCount: 0,
                 img: '',
-                onCommentPressed: () {
-                  _showCommentBottomSheet(widget.videoId);
-                },
+                date: Timestamp.now(),
+                onCommentPressed: () {},
               ),
             ],
           ),
@@ -127,7 +140,7 @@ class _MainSingleVideoState extends ConsumerState<MainSingleVideo> {
     );
   }
 
-  void _showCommentBottomSheet(String videoId) {
+  void _showCommentBottomSheet(String userId, String videoId) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -149,7 +162,11 @@ class _MainSingleVideoState extends ConsumerState<MainSingleVideo> {
 
             return commentAsync.when(
               data: (data) {
-                return CommentsSection(videoId: videoId, data: data);
+                return CommentsSection(
+                  videoId: videoId,
+                  data: data,
+                  receiverID: userId,
+                );
               },
               error: (error, stackTrace) {
                 return Center(child: Text('Error: $error'));
@@ -157,7 +174,9 @@ class _MainSingleVideoState extends ConsumerState<MainSingleVideo> {
               loading: () {
                 return Skeletonizer(
                     child: CommentsSection(
-                        videoId: videoId, data: generateDummyComments));
+                        receiverID: '',
+                        videoId: videoId,
+                        data: generateDummyComments));
               },
             );
           },
@@ -165,4 +184,25 @@ class _MainSingleVideoState extends ConsumerState<MainSingleVideo> {
       },
     );
   }
+
+  void checkState() async {
+    final videos = await ref.read(tiktokVideoControllerProvider.future);
+
+    if (videos.isNotEmpty && widget.isShowCommeet == true) {
+      Future.delayed(const Duration(seconds: 1), () {
+        _showCommentBottomSheet(
+          videos.first.userRef?.id ?? "",
+          videos.first.documentID ?? "",
+        );
+      });
+    }
+  }
+
+  // void bindingController() async {
+  //   final videoUrl =
+  //       await ref.read(singleVideoControllerProvider(widget.videoId).future);
+
+  //   videoPageController = VideoPlayerController.networkUrl(Uri.parse(videoUrl))
+  //     ..initialize();
+  // }
 }

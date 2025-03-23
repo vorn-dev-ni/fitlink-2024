@@ -18,7 +18,6 @@ class LastChatController extends _$LastChatController {
     try {
       userChatRepository = UserChatRepository(
           baseService: ChatService(firebaseAuthService: FirebaseAuthService()));
-      debugPrint("User id is ${userId} ${currentId}");
       return getData(userId, currentId);
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
@@ -39,6 +38,9 @@ class LastChatController extends _$LastChatController {
 
   Stream<Chat?> getData(String userId, String currentId) async* {
     try {
+      if (userId.isEmpty || currentId.isEmpty) {
+        return;
+      }
       final currentRef = firestore.collection('users').doc(currentId);
       final receiverRef = firestore.collection('users').doc(userId);
 

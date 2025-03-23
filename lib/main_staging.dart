@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:demo/app_cycle.dart';
 import 'package:demo/common/model/user_model.dart';
+import 'package:demo/common/widget/video/progress_uploading.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/core/riverpod/app_setting.dart';
 import 'package:demo/core/riverpod/connectivity_state.dart';
@@ -16,6 +17,7 @@ import 'package:demo/features/home/controller/navbar_controller.dart';
 import 'package:demo/features/home/controller/posts/social_post_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_post_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
+import 'package:demo/features/home/controller/video/tiktok_video_controller.dart';
 import 'package:demo/features/home/controller/workouts/activities_controller.dart';
 import 'package:demo/features/home/views/single_profile/controller/notification_badge.dart';
 import 'package:demo/l10n/I10n.dart';
@@ -178,8 +180,9 @@ class _MyAppState extends ConsumerState<MyApp> {
         }
         if (mounted) {
           // ref.invalidate(navbarControllerProvider);
-
+          ref.invalidate(socialInteractonVideoControllerProvider);
           ref.invalidate(userNotificationControllerProvider);
+          // ref.invalidate(tiktokVideoControllerProvider);
           ref
               .read(navbarControllerProvider.notifier)
               .updateProfileTab(authModel.avatar ?? "");
@@ -188,7 +191,6 @@ class _MyAppState extends ConsumerState<MyApp> {
           ref.invalidate(commentControllerProvider);
           ref.invalidate(profilePostControllerProvider);
           ref.invalidate(activitiesControllerProvider);
-
           ref.invalidate(profileUserControllerProvider);
           ref.read(appLoadingStateProvider.notifier).setState(false);
         }

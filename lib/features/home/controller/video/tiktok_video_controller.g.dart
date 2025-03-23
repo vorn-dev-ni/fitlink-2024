@@ -7,7 +7,7 @@ part of 'tiktok_video_controller.dart';
 // **************************************************************************
 
 String _$tiktokVideoControllerHash() =>
-    r'd7082f98d4661b8122e8f7fab4a356f5062e65a7';
+    r'6bbcd63b68922def44722596663059287eee3941';
 
 /// See also [TiktokVideoController].
 @ProviderFor(TiktokVideoController)
@@ -24,7 +24,7 @@ final tiktokVideoControllerProvider =
 
 typedef _$TiktokVideoController = AsyncNotifier<List<VideoTikTok>>;
 String _$socialInteractonVideoControllerHash() =>
-    r'9e299076b4e1d867ce75e38071adea54659dc2eb';
+    r'991b44880a354ce9ea0364d9da70bbe1b7872106';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -195,6 +195,155 @@ class _SocialInteractonVideoControllerProviderElement
   @override
   String get videoId =>
       (origin as SocialInteractonVideoControllerProvider).videoId;
+}
+
+String _$checkUserLikedControllerHash() =>
+    r'ce782a7da224d478174127a63096d1ca5eec7c6d';
+
+abstract class _$CheckUserLikedController
+    extends BuildlessAutoDisposeAsyncNotifier<bool> {
+  late final String videoId;
+
+  FutureOr<bool> build(
+    String videoId,
+  );
+}
+
+/// See also [CheckUserLikedController].
+@ProviderFor(CheckUserLikedController)
+const checkUserLikedControllerProvider = CheckUserLikedControllerFamily();
+
+/// See also [CheckUserLikedController].
+class CheckUserLikedControllerFamily extends Family<AsyncValue<bool>> {
+  /// See also [CheckUserLikedController].
+  const CheckUserLikedControllerFamily();
+
+  /// See also [CheckUserLikedController].
+  CheckUserLikedControllerProvider call(
+    String videoId,
+  ) {
+    return CheckUserLikedControllerProvider(
+      videoId,
+    );
+  }
+
+  @override
+  CheckUserLikedControllerProvider getProviderOverride(
+    covariant CheckUserLikedControllerProvider provider,
+  ) {
+    return call(
+      provider.videoId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'checkUserLikedControllerProvider';
+}
+
+/// See also [CheckUserLikedController].
+class CheckUserLikedControllerProvider
+    extends AutoDisposeAsyncNotifierProviderImpl<CheckUserLikedController,
+        bool> {
+  /// See also [CheckUserLikedController].
+  CheckUserLikedControllerProvider(
+    String videoId,
+  ) : this._internal(
+          () => CheckUserLikedController()..videoId = videoId,
+          from: checkUserLikedControllerProvider,
+          name: r'checkUserLikedControllerProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$checkUserLikedControllerHash,
+          dependencies: CheckUserLikedControllerFamily._dependencies,
+          allTransitiveDependencies:
+              CheckUserLikedControllerFamily._allTransitiveDependencies,
+          videoId: videoId,
+        );
+
+  CheckUserLikedControllerProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.videoId,
+  }) : super.internal();
+
+  final String videoId;
+
+  @override
+  FutureOr<bool> runNotifierBuild(
+    covariant CheckUserLikedController notifier,
+  ) {
+    return notifier.build(
+      videoId,
+    );
+  }
+
+  @override
+  Override overrideWith(CheckUserLikedController Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: CheckUserLikedControllerProvider._internal(
+        () => create()..videoId = videoId,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        videoId: videoId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeAsyncNotifierProviderElement<CheckUserLikedController, bool>
+      createElement() {
+    return _CheckUserLikedControllerProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CheckUserLikedControllerProvider &&
+        other.videoId == videoId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, videoId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin CheckUserLikedControllerRef on AutoDisposeAsyncNotifierProviderRef<bool> {
+  /// The parameter `videoId` of this provider.
+  String get videoId;
+}
+
+class _CheckUserLikedControllerProviderElement
+    extends AutoDisposeAsyncNotifierProviderElement<CheckUserLikedController,
+        bool> with CheckUserLikedControllerRef {
+  _CheckUserLikedControllerProviderElement(super.provider);
+
+  @override
+  String get videoId => (origin as CheckUserLikedControllerProvider).videoId;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -1,23 +1,22 @@
-import 'package:demo/common/widget/video_tiktok.dart';
+import 'package:demo/common/widget/video/share_bottom_sheet.dart';
 import 'package:demo/features/home/controller/video/tiktok_video_controller.dart';
 import 'package:demo/features/home/views/main/work_out/social_like_comment_item.dart';
-import 'package:demo/gen/assets.gen.dart';
-import 'package:demo/utils/constant/app_colors.dart';
-import 'package:demo/utils/constant/sizes.dart';
-import 'package:demo/utils/theme/text/text_theme.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:like_button/like_button.dart';
-import 'package:sizer/sizer.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class SocialInteractonVideo extends ConsumerStatefulWidget {
   final VoidCallback onCommentPressed;
   String videoId;
+  String? receiverID;
+  bool? isUserliked;
 
   SocialInteractonVideo(
-      {super.key, required this.onCommentPressed, required this.videoId});
+      {super.key,
+      required this.onCommentPressed,
+      required this.videoId,
+      this.receiverID,
+      this.isUserliked});
 
   @override
   ConsumerState<SocialInteractonVideo> createState() =>
@@ -34,11 +33,22 @@ class _SocialInteractonVideoState extends ConsumerState<SocialInteractonVideo> {
   Widget build(BuildContext context) {
     final async =
         ref.watch(socialInteractonVideoControllerProvider(widget.videoId));
+
     return async.when(
       data: (data) {
         return SocialLikeCommentItem(
             videoId: widget.videoId,
-            isLiked: data.isUserliked ?? true,
+            receiverID: widget.receiverID,
+            key: UniqueKey(),
+            onShare: () => showShareBottomSheet(
+                context,
+                widget.videoId,
+                data.thumbnailUrl ?? "",
+                data.videoUrl ?? "",
+                data.userRef?.id ?? "",
+                data.userRef?.avatar ?? "",
+                data.userRef?.fullName ?? ""),
+            isLiked: widget.isUserliked ?? false,
             onCommentPressed: widget.onCommentPressed,
             data: data);
       },
@@ -50,7 +60,7 @@ class _SocialInteractonVideoState extends ConsumerState<SocialInteractonVideo> {
   }
 
   Widget _buildLoading() {
-    return Skeletonizer(enabled: true, child: SizedBox());
+    return const Skeletonizer(enabled: true, child: SizedBox());
   }
 
   Widget _buildIcon(Widget icon, String label, VoidCallback onTap) {

@@ -37,15 +37,16 @@ class TiktokCommentController extends _$TiktokCommentController {
     _isFetching = false;
   }
 
-  Future toggleLike() async {
+  Future toggleLike({bool? alreadyLiked, String? receiverID}) async {
     try {
-      await videoRepository.likeOrUnlike(videoId);
+      await videoRepository.likeOrUnlike(videoId, alreadyLiked, receiverID);
+      // ref.invalidate(socialInteractonVideoControllerProvider(videoId));
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
     }
   }
 
-  Future writeComment(String newComment) async {
+  Future writeComment(String newComment, String? receiverID) async {
     try {
       final currentState = state.value ?? [];
       final user = await ref.read(profileUserControllerProvider.future);
@@ -64,7 +65,8 @@ class TiktokCommentController extends _$TiktokCommentController {
         ...currentState,
       ]);
 
-      final resultId = await videoRepository.addComment(videoId, newComment);
+      final resultId =
+          await videoRepository.addComment(videoId, newComment, receiverID);
 
       state = AsyncData([
         CommentTikTok(

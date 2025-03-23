@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
+import 'package:demo/data/service/firestore/notification/notification_service.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/utils/constant/enums.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,10 +12,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 class ChatService extends ChatBaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late FirebaseAuthService firebaseAuthService;
+  late NotificationRemoteService notificationRemoteService;
 
   ChatService({
     required this.firebaseAuthService,
-  });
+  }) {
+    NotificationRemoteService(firebaseAuthService: firebaseAuthService);
+  }
 
   @override
   Stream<QuerySnapshot<Map<String, dynamic>>> getAllUserChats(
@@ -34,11 +38,77 @@ class ChatService extends ChatBaseService {
   }
 
   @override
-  Future<void> shareVideo(
-      {required String senderID,
-      required String receiverID,
-      required String chatId}) {
-    throw UnimplementedError();
+  Future<void> shareVideo({
+    required String senderID,
+    required String receiverID,
+    required String videoId,
+    required String videoUrl,
+    required String thumbnailUrl,
+    required String videoUserName,
+    required String videoAvatarUser,
+    String? text,
+  }) async {
+    try {
+      String chatId;
+      final chatResult = await checkIfChatExists(senderID, receiverID);
+      if (chatResult['chatId'] != false) {
+        chatId = chatResult['chatId'];
+      } else {
+        final newChatRef = _firestore.collection('chats').doc();
+        chatId = newChatRef.id;
+        final userDoc = _firestore.collection('users');
+        final senderRef = userDoc.doc(senderID);
+        final receiverRef = userDoc.doc(receiverID);
+        await newChatRef.set({
+          "lastMessage": text ?? "Shared a video.",
+          "lastMessageTimestamp": FieldValue.serverTimestamp(),
+          "participants": [senderRef, receiverRef],
+          'createdAt': Timestamp.now(),
+          "senderId": senderID,
+          "last_read": {}
+        });
+      }
+
+      final chatRef = _firestore.collection('chats').doc(chatId);
+      final messageRef = chatRef.collection('messages').doc();
+      final Timestamp timestamp = Timestamp.now();
+      final bool hasText = text != null && text.trim().isNotEmpty;
+      final String lastMessage = hasText ? text : "Shared a video.";
+
+      final messageData = Message(
+        content: text ?? "video",
+        senderId: senderID,
+        timestamp: timestamp,
+        type: MessageType.video,
+        videoUrl: videoUrl,
+        videoAvatarUser: videoAvatarUser,
+        videoUserName: videoUserName,
+        videoId: videoId,
+        thumbnailUrl: thumbnailUrl,
+      ).toMap();
+
+      WriteBatch batch = _firestore.batch();
+      batch.set(
+        chatRef,
+        {
+          "senderId": senderID,
+          "lastMessage": lastMessage,
+          "lastMessageTimestamp": timestamp,
+        },
+        SetOptions(merge: true),
+      );
+
+      batch.set(messageRef, messageData);
+      Fluttertoast.showToast(msg: 'Video shared successfully.');
+      //Unable later after testing
+      // notificationRemoteService.sendChatBetweenUsers(senderID, receiverID,
+      //     chatId, hasText ? text : 'Share a video to you');
+      await batch.commit();
+      debugPrint("Video shared successfully.");
+    } catch (e, stackTrace) {
+      debugPrint("Error sharing video: $e\n$stackTrace");
+      rethrow;
+    }
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'package:demo/common/widget/app_loading.dart';
 import 'package:demo/common/widget/empty_content.dart';
+import 'package:demo/core/riverpod/upload_progress.dart';
 import 'package:demo/features/home/controller/posts/post_loading_paging.dart';
 import 'package:demo/features/home/controller/posts/social_postone_controller.dart';
 import 'package:demo/features/home/controller/tab/home_scroll_controller.dart';
@@ -55,8 +56,6 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
     super.initState();
   }
 
-  // This function will be triggered when scrolling
-
   @override
   Widget build(BuildContext context) {
     final asyncValues = ref.watch(socialPostoneControllerProvider);
@@ -73,6 +72,7 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
               return data!.isEmpty
                   ? emptyContent(title: 'Oop, No post for today yet!!!')
                   : ListView.builder(
+                      cacheExtent: 500,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: data.length,

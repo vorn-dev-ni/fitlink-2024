@@ -8,7 +8,17 @@ enum StatusSnackbar { success, failed }
 
 enum MessageType { video, text, image, delete, delivered, seen, sending }
 
-enum NotificationType { like, comment, following, chat, commentLike }
+enum VideoTypeLike { like, comment }
+
+enum NotificationType {
+  like,
+  comment,
+  following,
+  chat,
+  commentLike,
+  videoLiked,
+  videoCommentLiked
+}
 
 class NotificationTypeMapper {
   static const Map<String, NotificationType> _map = {
@@ -18,6 +28,8 @@ class NotificationTypeMapper {
     'chat': NotificationType.chat,
     'commentLike': NotificationType.commentLike,
     'comment-liked': NotificationType.commentLike,
+    'videoCommentLiked': NotificationType.videoCommentLiked,
+    'videoLiked': NotificationType.videoLiked
   };
 
   static NotificationType? fromString(String value) {

@@ -1,23 +1,24 @@
 import 'package:demo/common/widget/video_tiktok.dart';
+import 'package:demo/features/home/controller/video/single_video_controller.dart';
 import 'package:demo/features/home/views/single_video/main_single_video.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
-import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class VideoItem extends StatefulWidget {
+class VideoItem extends ConsumerStatefulWidget {
   final VideoTikTok video;
 
   const VideoItem({Key? key, required this.video}) : super(key: key);
 
   @override
-  State<VideoItem> createState() => _VideoItemState();
+  ConsumerState<VideoItem> createState() => _VideoItemState();
 }
 
-class _VideoItemState extends State<VideoItem> {
+class _VideoItemState extends ConsumerState<VideoItem> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -77,8 +78,7 @@ class _VideoItemState extends State<VideoItem> {
               children: [
                 SizedBox(
                   width: 180,
-                  child: Text(
-                      '${widget.video.caption} ${widget.video.caption}' ?? "",
+                  child: Text('${widget.video.caption}',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: AppTextTheme.lightTextTheme.bodySmall

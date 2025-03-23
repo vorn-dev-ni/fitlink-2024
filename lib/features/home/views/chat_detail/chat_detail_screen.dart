@@ -9,6 +9,7 @@ import 'package:demo/features/home/controller/chat/message_detail_controller.dar
 import 'package:demo/features/home/controller/chat/user_header_controller.dart';
 import 'package:demo/features/home/model/chat.dart';
 import 'package:demo/features/home/views/chat/widget/custom_msg_input.dart';
+import 'package:demo/features/home/views/single_video/main_single_video.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
@@ -30,6 +31,7 @@ import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:sizer/sizer.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class ChatDetailScreen extends ConsumerStatefulWidget {
   const ChatDetailScreen({super.key});
@@ -38,7 +40,8 @@ class ChatDetailScreen extends ConsumerStatefulWidget {
   ConsumerState<ChatDetailScreen> createState() => _ChatDetailScreenState();
 }
 
-class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
+class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen>
+    with WidgetsBindingObserver {
   late FocusNode _focusNode;
   bool _isEditingMode = false;
   String? receiverId;
@@ -51,6 +54,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
   bool _isLongPressed = false;
   bool _hasPressDelete = false;
   int _selectedIndex = -1;
+  bool _isChatVisible = true;
   final List<GlobalKey> messageKeys = [];
   double _positionIndex = 0.0;
   String? mutateChatId;
@@ -63,6 +67,8 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
     isInChat = true;
     bindingAudio();
     _focusNode = FocusNode();
@@ -74,6 +80,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     _isListenerSetUp = false;
     stopListening();
     scrollController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     disposeAudio();
     super.dispose();
   }
@@ -101,8 +108,6 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
 
   void listenForNewMessages() {
     final currentUser = FirebaseAuth.instance.currentUser;
-    // debugPrint('mjutate chat ${mutateChatId}');
-    // Fluttertoast.showToast(msg: 'Listen again listen');
 
     if (currentUser == null && mutateChatId == null) return;
 
@@ -134,9 +139,17 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
         .listen((snapshot) async {
       if (snapshot.docs.isNotEmpty) {
         // final latestMessage = snapshot.docs.first;
-        await chatRef.update({
-          'last_read.${currentUser?.uid}': FieldValue.serverTimestamp(),
-        });
+        bool isUseronline = await ref
+            .read(userHeaderControllerProvider(
+                    FirebaseAuth.instance.currentUser?.uid ?? "")
+                .notifier)
+            .isUserOnline();
+
+        if (isUseronline) {
+          await chatRef.update({
+            'last_read.${currentUser?.uid}': FieldValue.serverTimestamp(),
+          });
+        }
       }
     });
   }
@@ -184,6 +197,13 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
         chatId: chatId));
     return PopScope(
       canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          setState(() {
+            _isChatVisible = false;
+          });
+        } else {}
+      },
       child: Scaffold(
           body: async.when(
         data: (data) {
@@ -277,103 +297,119 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                         : 0,
                     child: Container(
                       padding: const EdgeInsets.all(10),
-                      height: 300,
+                      height: 500,
                       width: 210,
-                      child: Column(
+                      child: Stack(
+                        // mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          _buildChatBubble(
-                            timestamp: data[_selectedIndex].timestamp,
-                            msgType: data[_selectedIndex].type,
-                            senderId: data[_selectedIndex].senderId ?? "",
-                            isSender: FirebaseAuth.instance.currentUser?.uid ==
-                                data[_selectedIndex].senderId,
-                            message: data[_selectedIndex].content,
-                            time: FormatterUtils.formatChatTimeStamp(
-                                data[_selectedIndex].timestamp),
-                            index: _selectedIndex,
-                            profileImage:
-                                data[_selectedIndex].otherUserInfo!['avatar'] ??
-                                    null,
-                          ),
-                          Container(
-                              width: 210,
-                              decoration: BoxDecoration(
-                                  color: AppColors.backgroundLight,
-                                  borderRadius:
-                                      BorderRadius.circular(Sizes.md)),
-                              child: Column(
-                                children: [
-                                  _customActionTile(
-                                    icon: Icons.copy,
-                                    text: 'Copy',
-                                    onTap: () {
-                                      setState(() {
-                                        copyToClipboard(
-                                            data[_selectedIndex].content);
-                                        _isLongPressed = false;
-                                      });
-                                    },
-                                  ),
-                                  if (FirebaseAuth.instance.currentUser?.uid !=
-                                      data[_selectedIndex].senderId)
-                                    Column(
-                                      children: [
-                                        const Divider(
-                                          color: AppColors.neutralColor,
-                                        ),
-                                        _customActionTile(
-                                          icon: CupertinoIcons.person_circle,
-                                          text: 'View Profile',
-                                          onTap: () {
-                                            setState(() {
-                                              _tapUserProfile(
-                                                  data[_selectedIndex]
-                                                      .otherUserInfo!['id']);
-                                              _isLongPressed = false;
-                                            });
-                                          },
-                                        ),
-                                      ],
-                                    ),
+                          if (_selectedIndex >= 0)
+                            _buildChatBubble(
+                              timestamp: data[_selectedIndex].timestamp,
+                              msgType: data[_selectedIndex].type,
+                              senderId: data[_selectedIndex].senderId ?? "",
+                              isSender:
                                   FirebaseAuth.instance.currentUser?.uid ==
-                                          data[_selectedIndex].senderId
-                                      ? Column(
-                                          children: [
-                                            const Divider(
-                                              color: AppColors.neutralColor,
-                                            ),
-                                            _customActionTile(
-                                              icon: Icons.edit,
-                                              text: 'Edit',
-                                              onTap: () {
-                                                _focusNode.requestFocus();
-                                                _controller.text =
+                                      data[_selectedIndex].senderId,
+                              message: data[_selectedIndex].content,
+                              time: FormatterUtils.formatChatTimeStamp(
+                                  data[_selectedIndex].timestamp),
+                              index: _selectedIndex,
+                              showInfo: false,
+                              profileImage:
+                                  data[_selectedIndex].otherUserInfo!['avatar'],
+                              videoId: data[_selectedIndex].videoId,
+                              thumbnailUrl: data[_selectedIndex].thumbnailUrl,
+                              videoAvatar: data[_selectedIndex].videoAvatarUser,
+                              videoUserName: data[_selectedIndex].videoUserName,
+                            ),
+                          Positioned(
+                            // bottom: 0,
+                            right: 0,
+                            top: 80,
+                            // right: 0,
+                            child: Container(
+                                // alignment: Alignment.topCenter,
+                                width: 210,
+                                // height: 100,
+                                decoration: BoxDecoration(
+                                    color: AppColors.backgroundLight,
+                                    borderRadius:
+                                        BorderRadius.circular(Sizes.md)),
+                                child: Column(
+                                  children: [
+                                    _customActionTile(
+                                      icon: Icons.copy,
+                                      text: 'Copy',
+                                      onTap: () {
+                                        setState(() {
+                                          copyToClipboard(
+                                              data[_selectedIndex].content);
+                                          _isLongPressed = false;
+                                        });
+                                      },
+                                    ),
+                                    if (FirebaseAuth
+                                            .instance.currentUser?.uid !=
+                                        data[_selectedIndex].senderId)
+                                      Column(
+                                        children: [
+                                          const Divider(
+                                            color: AppColors.neutralColor,
+                                          ),
+                                          _customActionTile(
+                                            icon: CupertinoIcons.person_circle,
+                                            text: 'View Profile',
+                                            onTap: () {
+                                              setState(() {
+                                                _tapUserProfile(
                                                     data[_selectedIndex]
-                                                        .content;
+                                                        .otherUserInfo!['id']);
+                                                _isLongPressed = false;
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    FirebaseAuth.instance.currentUser?.uid ==
+                                            data[_selectedIndex].senderId
+                                        ? Column(
+                                            children: [
+                                              const Divider(
+                                                color: AppColors.neutralColor,
+                                              ),
+                                              _customActionTile(
+                                                icon: Icons.edit,
+                                                text: 'Edit',
+                                                onTap: () {
+                                                  _focusNode.requestFocus();
+                                                  _controller.text =
+                                                      data[_selectedIndex]
+                                                          .content;
 
-                                                setState(() {
-                                                  _isEditingMode = true;
-                                                  _isLongPressed = false;
-                                                });
-                                              },
-                                            ),
-                                            const Divider(
-                                              color: AppColors.neutralColor,
-                                            ),
-                                            _customActionTile(
-                                              icon: Icons.delete,
-                                              text: 'Delete',
-                                              onTap: () {
-                                                setState(() {
-                                                  _hasPressDelete = true;
-                                                });
-                                              },
-                                            ),
-                                          ],
-                                        )
-                                      : const SizedBox()
-                                ],
-                              ))
+                                                  setState(() {
+                                                    _isEditingMode = true;
+                                                    _isLongPressed = false;
+                                                  });
+                                                },
+                                              ),
+                                              const Divider(
+                                                color: AppColors.neutralColor,
+                                              ),
+                                              _customActionTile(
+                                                icon: Icons.delete,
+                                                text: 'Delete',
+                                                onTap: () {
+                                                  setState(() {
+                                                    _hasPressDelete = true;
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          )
+                                        : const SizedBox()
+                                  ],
+                                )),
+                          )
                         ],
                       ),
                     ),
@@ -442,7 +478,6 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                         ?.findRenderObject() as RenderBox?;
                     if (renderBox != null) {
                       final position = renderBox.localToGlobal(Offset.zero);
-                      debugPrint('Message $index position: $position');
                       _positionIndex = position.dy;
                     }
                     _isLongPressed = true;
@@ -466,11 +501,15 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                       msgId: chat.id,
                       index: index,
                       allMessages: data,
+                      thumbnailUrl: chat.thumbnailUrl,
+                      videoId: chat.videoId,
                       isSender: FirebaseAuth.instance.currentUser?.uid ==
                           chat.senderId,
                       message: chat.content,
                       time: FormatterUtils.formatChatTimeStamp(chat.timestamp),
                       profileImage: userInfo!['avatar'],
+                      videoAvatar: chat.videoAvatarUser,
+                      videoUserName: chat.videoUserName,
                       showInfo: showTimelineIndex == index),
                 ),
               ],
@@ -497,7 +536,8 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                   onTap: () {
                     _isEditingMode = false;
                     _controller.clear();
-                    // setState(() {});
+
+                    setState(() {});
                   },
                   child: const Icon(Icons.close),
                 )
@@ -753,21 +793,23 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
   }
 
   // Chat Bubble
-  Widget _buildChatBubble(
-      {required bool isSender,
-      required String message,
-      required String senderId,
-      required String time,
-      required Timestamp timestamp,
-      required MessageType msgType,
-      String? msgId,
-      int? index,
-      String? profileImage,
-      List<Message>? allMessages,
-      bool? showInfo}) {
-    // debugPrint("Sender id ${senderId}");
-    // if (msgType == MessageType.sending) debugPrint('received tyype $msgType');
-
+  Widget _buildChatBubble({
+    required bool isSender,
+    required String message,
+    required String senderId,
+    required String time,
+    required Timestamp timestamp,
+    required MessageType msgType,
+    String? msgId,
+    int? index,
+    String? profileImage,
+    List<Message>? allMessages,
+    bool? showInfo = true,
+    String? thumbnailUrl,
+    String? videoId,
+    String? videoUserName,
+    String? videoAvatar,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: Sizes.sm),
       child: Row(
@@ -791,28 +833,116 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                     radius: 15,
                   ),
           if (!isSender) const SizedBox(width: 8),
+
           renderChatBubble(message, isSender, msgType, senderId, timestamp,
-              profileImage, index, allMessages, showInfo),
+              profileImage, index, allMessages, showInfo,
+              videoAvatar: videoAvatar,
+              videoUserName: videoUserName,
+              thumbnailUrl: thumbnailUrl,
+              videoId: videoId),
           const SizedBox(width: 8),
         ],
       ),
     );
   }
 
+  Widget _image(String thumbnailUrl, String fullName, String? avatar) {
+    return Container(
+      constraints: const BoxConstraints(
+        minHeight: 100.0,
+        maxHeight: 400,
+        minWidth: 130.0,
+      ),
+      child: Stack(
+        // alignment: Alignment.,
+        children: [
+          FancyShimmerImage(
+            width: 130,
+            height: 300,
+            imageUrl: thumbnailUrl,
+            boxFit: BoxFit.cover,
+          ),
+          Positioned.fill(
+              child: Container(
+            color: AppColors.backgroundDark.withOpacity(0.5),
+          )),
+          const Positioned(
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: Icon(
+              Icons.play_circle_fill,
+              size: 50,
+              color: Colors.white,
+            ),
+          ),
+          Positioned(
+              left: 7,
+              bottom: 4,
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.backgroundLight)),
+                      child: avatar == "" || avatar == null
+                          ? Assets.app.defaultAvatar.image(
+                              width: 20,
+                              height: 20,
+                              fit: BoxFit.cover,
+                            )
+                          : FancyShimmerImage(
+                              width: 20,
+                              height: 20,
+                              imageUrl: thumbnailUrl,
+                              boxFit: BoxFit.cover,
+                            ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: Sizes.xs,
+                  ),
+                  SizedBox(
+                    width: 80,
+                    child: Text(
+                      fullName,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: AppTextTheme.lightTextTheme.bodySmall
+                          ?.copyWith(color: AppColors.backgroundLight),
+                    ),
+                  )
+                ],
+              ))
+        ],
+      ),
+    );
+  }
+
   Widget renderChatBubble(
-      String message,
-      bool isSender,
-      MessageType msgType,
-      String senderId,
-      Timestamp timeStamp,
-      String? profileImage,
-      int? index,
-      List<Message>? messages,
-      bool? showInfo) {
+    String message,
+    bool isSender,
+    MessageType msgType,
+    String senderId,
+    Timestamp timeStamp,
+    String? profileImage,
+    int? index,
+    List<Message>? messages,
+    bool? showInfo, {
+    String? thumbnailUrl,
+    String? videoId,
+    String? videoUserName,
+    String? videoAvatar,
+  }) {
     bool hasRead = false;
     bool isLatestRead = false;
 
-    final lastChatStream = ref.watch(LastChatControllerProvider(
+    final lastChatStream = ref.watch(lastChatControllerProvider(
         userId: senderId,
         currentId: FirebaseAuth.instance.currentUser?.uid ?? ""));
     if (lastChatStream.hasValue) {
@@ -837,70 +967,134 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
         }
       }
     }
-    // Fluttertoast.showToast(msg: 'has read ${hasRead ? 'true' : 'false'} ');
-    return Column(
-      children: [
-        BubbleSpecialThree(
-          text: message,
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.6,
-          ),
-          color: isSender ? const Color(0xff94DFFF) : Colors.white,
-          tail: true,
-          delivered: isSender ? hasRead : true,
-          sent: true,
-          isSender: isSender,
-          seen: false,
-          textStyle: TextStyle(
-            color: isSender
-                ? Colors.black
-                : const Color.fromARGB(255, 100, 98, 98),
-          ),
-        ),
-        if (isLatestRead)
-          Container(
-            // alignment: Alignment.bottomLeft,
-            padding: const EdgeInsets.only(
-                left: Sizes.xl, top: Sizes.sm, bottom: Sizes.sm),
-            child: senderId != FirebaseAuth.instance.currentUser?.uid
-                ? profileImage == null
-                    ? CircleAvatar(
-                        backgroundImage:
-                            AssetImage(Assets.app.defaultAvatar.path),
-                        radius: 7,
-                      )
-                    : ClipRRect(
-                        borderRadius: BorderRadius.circular(25),
-                        child: FancyShimmerImage(
-                          imageUrl: profileImage,
-                          cacheKey: profileImage,
-                          width: 13,
-                          height: 13,
-                          boxFit: BoxFit.cover,
+    return ConstrainedBox(
+      constraints:
+          _isLongPressed && _selectedIndex >= 0 && _hasPressDelete == false
+              ? BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.6,
+                  maxHeight: 300)
+              : BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.6,
+                ),
+      child: Column(
+        children: [
+          msgType == MessageType.video
+              ? Column(
+                  children: [
+                    BubbleNormalImage(
+                      id: message,
+                      image: _image(
+                          thumbnailUrl ?? "", videoUserName ?? "", videoAvatar),
+                      onTap: () {
+                        HelpersUtils.navigatorState(context)
+                            .push(MaterialPageRoute(
+                          builder: (context) {
+                            return MainSingleVideo(videoId: videoId ?? "");
+                          },
+                        ));
+                      },
+                      color: isSender ? const Color(0xff94DFFF) : Colors.white,
+                      tail: true,
+                      delivered: isSender ? hasRead : true,
+                      sent: true,
+                      isSender: isSender,
+                      seen: false,
+                    ),
+                    if (message.isNotEmpty && message != 'video')
+                      Padding(
+                        padding: const EdgeInsets.only(left: 0),
+                        child: BubbleSpecialThree(
+                          text: message,
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.3,
+                          ),
+                          color:
+                              isSender ? const Color(0xff94DFFF) : Colors.white,
+                          tail: true,
+                          delivered: isSender ? hasRead : true,
+                          sent: true,
+                          isSender: isSender,
+                          seen: false,
+                          textStyle: TextStyle(
+                            color: isSender
+                                ? Colors.black
+                                : const Color.fromARGB(255, 100, 98, 98),
+                          ),
                         ),
-                      )
-                : const SizedBox(),
-          ),
-        if (showInfo == true)
-          Container(
-            margin: const EdgeInsets.only(top: 6),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              !isSender
-                  ? 'Seen'
-                  : hasRead
-                      ? 'Seen'
-                      : 'Sent',
-              style: AppTextTheme.lightTextTheme.bodySmall?.copyWith(
-                color: Colors.white,
+                      ),
+                  ],
+                )
+              : BubbleSpecialThree(
+                  text: message,
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.6,
+                  ),
+                  color: isSender ? const Color(0xff94DFFF) : Colors.white,
+                  tail: true,
+                  delivered: isSender ? hasRead : true,
+                  sent: true,
+                  isSender: isSender,
+                  seen: false,
+                  textStyle: TextStyle(
+                    color: isSender
+                        ? Colors.black
+                        : const Color.fromARGB(255, 100, 98, 98),
+                  ),
+                ),
+          if (isLatestRead)
+            Container(
+              alignment: Alignment.centerRight,
+              margin: const EdgeInsets.only(top: 6, right: 0),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                child: senderId != FirebaseAuth.instance.currentUser?.uid
+                    ? profileImage == null
+                        ? CircleAvatar(
+                            backgroundImage:
+                                AssetImage(Assets.app.defaultAvatar.path),
+                            radius: 7,
+                          )
+                        : ClipRRect(
+                            borderRadius: BorderRadius.circular(25),
+                            child: FancyShimmerImage(
+                              imageUrl: profileImage,
+                              cacheKey: profileImage,
+                              width: 13,
+                              height: 13,
+                              boxFit: BoxFit.cover,
+                            ),
+                          )
+                    : const SizedBox(),
               ),
             ),
-          )
-      ],
+          if (showInfo == true)
+            Container(
+              alignment: Alignment.centerRight,
+              margin: const EdgeInsets.only(top: 6, right: 0),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                child: Text(
+                  !isSender
+                      ? 'Seen'
+                      : hasRead
+                          ? 'Seen'
+                          : 'Sent',
+                  style: AppTextTheme.lightTextTheme.bodySmall?.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            )
+        ],
+      ),
     );
   }
 
@@ -918,7 +1112,6 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     Timestamp lastReadTimestamp = readStatus[senderId]!;
     DateTime lastReadDateTime = lastReadTimestamp.toDate();
     DateTime messageDateTime = messageTimestamp.toDate();
-    // Fluttertoast.showToast(msg: "Ssender is ${senderId}");
 
     if (lastReadDateTime.isAfter(messageDateTime)) {
       return true;
@@ -1011,7 +1204,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
         });
       }
 
-      if (!_isListenerSetUp) {
+      if (!_isListenerSetUp && _isChatVisible == true) {
         listenForNewMessages();
       }
     } else {

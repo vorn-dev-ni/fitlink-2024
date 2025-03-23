@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
 import 'package:flutter/foundation.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class VideoService extends VideoBaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -43,7 +44,10 @@ class VideoService extends VideoBaseService {
     try {
       Query<Map<String, dynamic>> query = _firestore
           .collection('videos')
+          .orderBy('likeCount', descending: true)
+          .orderBy('viewCount', descending: true)
           .orderBy('createdAt', descending: true)
+          .orderBy('shareCount', descending: true)
           .limit(page);
 
       if (startAfter != null) {
@@ -80,15 +84,23 @@ class VideoService extends VideoBaseService {
   }
 
   @override
-  Future<void> shareVideo(String videoId, String userId) async {
+  Future<void> shareVideo(String videoId, String? userId) async {
     try {
-      // Update the video document to add the user to the shares array
+      if (userId == null) {
+        return;
+      }
       DocumentReference videoRef = _firestore.collection('videos').doc(videoId);
+      final shareRef = videoRef.collection('shares').doc(userId);
+      final previousView = await shareRef.get();
+      if (previousView.exists) {
+        return;
+      }
+      await shareRef.set({'shareAt': Timestamp.now()});
       await videoRef.update({
-        'shares': FieldValue.arrayUnion([userId]),
+        'shareCount': FieldValue.increment(1),
       });
     } catch (e) {
-      throw Exception("Failed to share video: $e");
+      throw Exception("Failed to track view: $e");
     }
   }
 
@@ -164,19 +176,22 @@ class VideoService extends VideoBaseService {
     List<String>? tag,
   }) async {
     try {
-      Query<Map<String, dynamic>> query =
-          _firestore.collection('videos').limit(300);
-
-      if (tag != null && tag.isNotEmpty) {
-        query = query.where('tag', whereIn: tag);
-      }
       String searchTerm = search.toLowerCase();
 
-      query = query
-          .orderBy('caption_lower_case')
-          .startAt([searchTerm]).endAt(['$searchTerm\uf8ff']);
+      Query<Map<String, dynamic>> query =
+          _firestore.collection('videos').limit(300);
+      if (tag != null && tag.isNotEmpty) {
+        query = query.where('tag', arrayContainsAny: tag);
+      }
+
+      if (searchTerm.isNotEmpty) {
+        query = query
+            .orderBy('caption_lower_case')
+            .startAt([searchTerm]).endAt(['$searchTerm\uf8ff']);
+      }
+
+      debugPrint("query is ${query}");
       final data = await query.get();
-      debugPrint("Serach is ${searchTerm} tag ${tag}");
 
       return data;
     } catch (e) {

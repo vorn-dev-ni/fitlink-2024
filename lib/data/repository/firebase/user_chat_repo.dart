@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
 import 'package:demo/features/home/model/chat.dart';
+import 'package:demo/utils/constant/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -18,6 +19,41 @@ class UserChatRepository {
         .collection('messages')
         .doc(messageId)
         .delete();
+  }
+
+  Future<bool> shareVideo({
+    required String senderID,
+    required String receiverID,
+    required String videoUrl,
+    required String thumbnailUrl,
+    required String videoId,
+    String? text,
+    required String videoUserName,
+    required String videoAvatarUser,
+  }) async {
+    try {
+      await baseService.shareVideo(
+          senderID: senderID,
+          receiverID: receiverID,
+          videoUrl: videoUrl,
+          text: text,
+          videoAvatarUser: videoAvatarUser,
+          videoUserName: videoUserName,
+          videoId: videoId,
+          thumbnailUrl: thumbnailUrl);
+
+      return true;
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: e.toString(),
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 4,
+          backgroundColor: AppColors.errorColor,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return false;
+    }
   }
 
   Future updateSeenChat(
@@ -171,6 +207,8 @@ class UserChatRepository {
         } catch (e) {
           debugPrint("Error fetching receiver user info: $e");
         }
+
+        // debugPrint("data ${doc} ");
         return Message.fromMap({
           ...result,
           'id': doc.id,

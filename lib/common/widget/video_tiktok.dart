@@ -1,4 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:video_player/video_player.dart';
 import 'package:demo/features/home/model/post.dart';
 
 List<VideoTikTok> dummyVideos = [
@@ -86,8 +88,10 @@ class VideoTikTok {
   String? caption;
   List<dynamic>? tag;
   bool? isUserliked;
+  VideoPlayerController? videoplayer;
 
   VideoTikTok({
+    this.videoplayer,
     this.documentID,
     this.commentCount,
     this.isUserliked,
@@ -104,7 +108,7 @@ class VideoTikTok {
   });
 
   VideoTikTok.fromFirestore(DocumentSnapshot doc, UserData? userdata,
-      {bool? paramsLiked}) {
+      {bool? paramsLiked, VideoPlayerController? newVideoplayer}) {
     documentID = doc.id;
     isUserliked = paramsLiked ?? false;
     commentCount = doc['commentCount'];
@@ -118,6 +122,7 @@ class VideoTikTok {
     caption = doc['caption'];
     tag = doc['tag'];
     lastDoc = doc;
+    videoplayer = newVideoplayer;
   }
 
   Map<String, dynamic> toJson() {
@@ -134,6 +139,40 @@ class VideoTikTok {
     data['caption'] = caption;
     data['tag'] = tag;
     return data;
+  }
+
+  VideoTikTok copyWith({
+    String? documentID,
+    int? commentCount,
+    int? likeCount,
+    int? shareCount,
+    String? thumbnailUrl,
+    UserData? userRef,
+    String? videoUrl,
+    int? viewCount,
+    Timestamp? createdAt,
+    DocumentSnapshot? lastDoc,
+    String? caption,
+    List<dynamic>? tag,
+    bool? isUserliked,
+    VideoPlayerController? videoplayer,
+  }) {
+    return VideoTikTok(
+      documentID: documentID ?? this.documentID,
+      commentCount: commentCount ?? this.commentCount,
+      likeCount: likeCount ?? this.likeCount,
+      shareCount: shareCount ?? this.shareCount,
+      thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
+      userRef: userRef ?? this.userRef,
+      videoUrl: videoUrl ?? this.videoUrl,
+      viewCount: viewCount ?? this.viewCount,
+      createdAt: createdAt ?? this.createdAt,
+      lastDoc: lastDoc ?? this.lastDoc,
+      caption: caption ?? this.caption,
+      tag: tag ?? this.tag,
+      isUserliked: isUserliked ?? this.isUserliked,
+      videoplayer: videoplayer ?? this.videoplayer,
+    );
   }
 }
 

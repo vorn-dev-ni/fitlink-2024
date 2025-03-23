@@ -3,6 +3,7 @@ import 'package:demo/common/widget/video_tiktok.dart';
 import 'package:demo/features/home/model/chat.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/features/home/views/single_profile/model/media_count.dart';
+import 'package:demo/utils/constant/enums.dart';
 
 abstract class BaseService {
   Future delete({required String uid});
@@ -110,6 +111,8 @@ abstract class NotificationBaseService {
   Future sendChatBetweenUsers(
       String senderID, String receiverID, String chatId, String text);
   Future deleteNotification(String uid, String docId);
+  Future sendVideoLikeOrComment(
+      String senderID, String receiverID, String postID, VideoTypeLike type);
 }
 
 abstract class VideoBaseService {
@@ -175,10 +178,16 @@ abstract class ChatBaseService {
     required String chatId,
     required String messageText,
   });
-  Future<void> shareVideo(
-      {required String senderID,
-      required String receiverID,
-      required String chatId});
+  Future<void> shareVideo({
+    required String senderID,
+    required String receiverID,
+    required String videoUrl,
+    required String videoId,
+    String? text,
+    required String videoUserName,
+    required String videoAvatarUser,
+    required String thumbnailUrl,
+  });
 
   Future updateUserMessage(
       {required String chatId,

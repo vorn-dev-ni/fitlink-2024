@@ -76,9 +76,8 @@ class _SearchScreenState extends ConsumerState<SearchResultScreen> {
     return videos.isEmpty
         ? Center(child: emptyContent(title: 'No video search result is found.'))
         : GridView.builder(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.only(left: 8, right: 8, bottom: 50),
             shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 8,

@@ -1,20 +1,18 @@
-import 'dart:async';
-import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/common/widget/app_loading.dart';
 import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/common/widget/video_tiktok.dart';
-import 'package:demo/core/riverpod/navigation_state.dart';
 import 'package:demo/features/home/controller/video/comment/comment_video_controller.dart';
 import 'package:demo/features/home/controller/video/tiktok_video_controller.dart';
 import 'package:demo/features/home/views/main/work_out/comment_listing_tiktok.dart';
 import 'package:demo/features/home/views/main/work_out/tiktok_video_item.dart';
+import 'package:demo/features/home/views/single_profile/views/video_player_custom.dart';
 import 'package:demo/utils/constant/app_colors.dart';
-import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:video_player/video_player.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class WorkoutTab extends ConsumerStatefulWidget {
   @override
@@ -23,173 +21,134 @@ class WorkoutTab extends ConsumerStatefulWidget {
 
 class _WorkoutTabState extends ConsumerState<WorkoutTab>
     with WidgetsBindingObserver {
-  List<String> videoUrls = [
-    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
-    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-  ];
-  bool _isPaused = false;
-  List<VideoPlayerController> _videoControllers = [];
-  int _stateVideoIndex = 0;
+  final PageController _pageController =
+      PageController(initialPage: 0, keepPage: true);
+
   bool isSliding = false;
   bool isPause = false;
-
-  Future<void> _initializeVideos() async {
-    final videos = await ref.read(tiktokVideoControllerProvider.future);
-
-    if (videos.isNotEmpty) {
-      _initializeVideoControllers(videos);
-    }
-  }
+  PageController? pageController;
+  bool isFetchingMore = false;
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    _initializeVideos();
+
+    _pageController.addListener(_onPageScroll);
+
     super.initState();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    for (var controller in _videoControllers) {
-      controller.dispose();
-    }
+    _pageController.removeListener(_onPageScroll);
+    _pageController.dispose();
     super.dispose();
   }
 
-  void _initializeVideoControllers(List<VideoTikTok> videos) async {
-    List<VideoPlayerController> videoControllers = videos.map((video) {
-      return VideoPlayerController.networkUrl(Uri.parse(video.videoUrl ?? ""));
-    }).toList();
-
-    for (var controller in videoControllers) {
-      controller.initialize().then(
-        (value) {
-          setState(() {});
-        },
-      );
-      controller.setLooping(true);
-      controller.addListener(() {});
-    }
-
-    // await Future.wait(
-    //   videoControllers.map((controller) async {
-    //     await controller.initialize();
-
-    //     setState(() {});
-    //   }),
-    // );
-
-    setState(() {
-      _videoControllers = videoControllers;
-    });
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      // _pauseCurrentVideo(_stateVideoIndex);
-    } else if (state == AppLifecycleState.resumed) {
-      // _playVideo(_stateVideoIndex, "");
+  void _onPageScroll() {
+    if (_pageController.position.haveDimensions) {
+      int currentPage = _pageController.page!.toInt();
+      _onPageChanged(currentPage);
     }
   }
 
-  void _updateStateVideoIndex(int index) {
-    setState(() {
-      _stateVideoIndex = index;
-    });
-  }
-
-  void _pauseCurrentVideo(int index) {
-    if (_videoControllers.isNotEmpty) {
-      final controller = _videoControllers[index];
-      if (isPause) {
-        controller.pause();
-      } else {
-        controller.play();
-      }
+  void _onPageChanged(int index) async {
+    if (index >= 1 && isFetchingMore == false) {
       setState(() {
-        isPause = !isPause;
+        isFetchingMore = true;
       });
-    }
-  }
 
-  void _playVideo(int stateIndex, String docId) {
-    if (_videoControllers.isNotEmpty) {
-      final controller = _videoControllers[stateIndex];
-      // controller.play();
-      addViewCountWithDebounce(docId);
-    }
-  }
+      final data =
+          await ref.read(tiktokVideoControllerProvider.notifier).loadMore();
 
-  Timer? _debounce;
-  void addViewCountWithDebounce(String videoId) {
-    if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      ref.read(tiktokVideoControllerProvider.notifier).trackViewCount(videoId);
-    });
+      if (data != null) {
+        setState(() {
+          isFetchingMore = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentIndex = ref.watch(navigationStateProvider) ?? 0;
-    if (currentIndex != 3) {
-      _pauseCurrentVideo(_stateVideoIndex);
-    }
     final videos = ref.watch(tiktokVideoControllerProvider);
-    final currenIndex = ref.watch(navigationStateProvider);
-    if (currenIndex != 3 && _videoControllers.isNotEmpty) {
-      _videoControllers[_stateVideoIndex].pause();
-    }
 
-    if (currenIndex == 3 && _videoControllers.isNotEmpty) {
-      _videoControllers[_stateVideoIndex].play();
-    }
-    return videos.when(
-      data: (data) {
-        return PageView.builder(
-          scrollDirection: Axis.vertical,
-          itemCount: data.length,
-          pageSnapping: true,
-          onPageChanged: (index) {
-            debugPrint("Change to index $index");
-
-            if (_stateVideoIndex != index && index < data.length) {
-              _videoControllers[_stateVideoIndex].pause();
-              _videoControllers[index].play();
-            }
-
-            if (index < data.length) _updateStateVideoIndex(index);
-          },
-          itemBuilder: (context, index) {
-            final video = data[index];
-            return Stack(
-              fit: StackFit.expand,
-              children: [
-                if (_videoControllers.isNotEmpty)
-                  CustomVideo(
-                      videoIndex: index, controller: _videoControllers[index]),
-                VideoTiktokItem(
-                  caption: video.caption,
-                  videoId: video.documentID,
-                  commentCount: video.commentCount,
-                  likeCount: video.likeCount,
-                  shareCount: video.likeCount,
-                  userdata: video.userRef,
-                  img: video.thumbnailUrl ?? "",
-                  onCommentPressed: () {
-                    _showCommentBottomSheet(video.documentID ?? "");
-                  },
-                ),
-              ],
+    return videos.when(data: (data) {
+      return data.isEmpty
+          ? Center(child: emptyContent(title: 'No Video in FYP.'))
+          : SafeArea(
+              top: false,
+              bottom: false,
+              child: Stack(
+                children: [
+                  Container(
+                    color: AppColors.backgroundDark,
+                    child: PageView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: data.length,
+                      pageSnapping: true,
+                      controller: _pageController,
+                      itemBuilder: (context, index) {
+                        final video = data[index];
+                        return VisibilityDetector(
+                          key: ValueKey(video.documentID),
+                          onVisibilityChanged: (visibilityInfo) async {
+                            if (visibilityInfo.visibleFraction >= 0.7) {
+                              if (!video.videoplayer!.value.isPlaying) {
+                                video.videoplayer!.play();
+                              }
+                            } else {
+                              if (video.videoplayer!.value.isPlaying) {
+                                video.videoplayer!.pause();
+                              }
+                            }
+                          },
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              VideoPlayerTikTok(
+                                  paging: true,
+                                  videoId: video.documentID,
+                                  videoPlayerController: video.videoplayer),
+                              VideoTiktokItem(
+                                caption: video.caption,
+                                videoId: video.documentID,
+                                commentCount: video.commentCount,
+                                likeCount: video.likeCount,
+                                isUserliked: video.isUserliked,
+                                shareCount: video.likeCount,
+                                date: video.createdAt ?? Timestamp.now(),
+                                tags: video.tag ?? [],
+                                userdata: video.userRef,
+                                img: video.thumbnailUrl ?? "",
+                                onCommentPressed: () {
+                                  _showCommentBottomSheet(
+                                    video.userRef?.id ?? "",
+                                    video.documentID ?? "",
+                                  );
+                                },
+                              ),
+                              if (index >= data.length - 1)
+                                renderLoadingBottom()
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             );
-          },
-        );
-      },
-      error: (error, stackTrace) => emptyContent(title: error.toString()),
-      loading: () => Skeletonizer(
+    }, error: (error, stackTrace) {
+      debugPrint(error.toString());
+      if (error.toString().length >= 100) {
+        return Center(
+            child: emptyContent(title: error.toString().substring(0, 150)));
+      }
+      return Center(child: emptyContent(title: error.toString()));
+    }, loading: () {
+      return Skeletonizer(
         enabled: true,
         child: Padding(
           padding: const EdgeInsets.only(bottom: 64),
@@ -207,9 +166,9 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
                       ignoreContainers: true,
                       child: VideoTiktokItem(
                         img: '',
-                        onCommentPressed: () {
-                          _showCommentBottomSheet('');
-                        },
+                        date: Timestamp.now(),
+                        // tags: null,
+                        onCommentPressed: () {},
                       ),
                     ),
                   ],
@@ -218,18 +177,8 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
             },
           ),
         ),
-      ),
-    );
-  }
-
-  Widget buildVideoPlayer(int index) {
-    if (_videoControllers.isEmpty || index >= _videoControllers.length) {
-      return Container();
-    }
-    return buildFullScreen(
-      controller: _videoControllers[index],
-      child: VideoPlayer(_videoControllers[index]),
-    );
+      );
+    });
   }
 
   Widget buildFullScreen({
@@ -250,7 +199,7 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
     );
   }
 
-  void _showCommentBottomSheet(String videoId) async {
+  void _showCommentBottomSheet(String userId, String videoId) async {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -273,6 +222,7 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
               data: (data) {
                 return CommentsSection(
                   videoId: videoId,
+                  receiverID: userId,
                   data: data,
                 );
               },
@@ -285,6 +235,7 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
                 return Skeletonizer(
                   child: CommentsSection(
                     videoId: videoId,
+                    receiverID: '',
                     data: generateDummyComments,
                   ),
                 );
@@ -295,141 +246,10 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
       },
     ).whenComplete(() {});
   }
-}
 
-class CustomVideo extends StatefulWidget {
-  final int videoIndex;
-  final VideoPlayerController controller;
-
-  const CustomVideo({
-    Key? key,
-    required this.videoIndex,
-    required this.controller,
-  }) : super(key: key);
-
-  @override
-  _CustomVideoState createState() => _CustomVideoState();
-}
-
-class _CustomVideoState extends State<CustomVideo> {
-  bool _isPlaying = true;
-  bool _isSeeking = false;
-  bool _isBuffering = false;
-  double _currentPosition = 0.0;
-  double _videoDuration = 0.0;
-  double _bufferedPosition = 0.0;
-
-  @override
-  void initState() {
-    super.initState();
-    widget.controller.play();
-
-    widget.controller.addListener(() {
-      if (mounted) {
-        setState(() {
-          _isBuffering = widget.controller.value.isBuffering;
-          _currentPosition =
-              widget.controller.value.position.inSeconds.toDouble();
-          _videoDuration =
-              widget.controller.value.duration.inSeconds.toDouble();
-
-          if (widget.controller.value.buffered.isNotEmpty) {
-            _bufferedPosition =
-                widget.controller.value.buffered.last.end.inSeconds.toDouble();
-          }
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    widget.controller.pause();
-    super.dispose();
-  }
-
-  void _togglePlayPause() {
-    setState(() {
-      if (_isPlaying) {
-        widget.controller.pause();
-      } else {
-        widget.controller.play();
-      }
-      _isPlaying = !_isPlaying;
-    });
-  }
-
-  Future<void> _seekTo(Duration value) async {
-    widget.controller.setVolume(0);
-    setState(() {
-      _isSeeking = true;
-      _isPlaying = false;
-    });
-
-    await widget.controller.seekTo(value);
-    await widget.controller.play();
-    widget.controller.setVolume(1);
-
-    setState(() {
-      _isSeeking = false;
-      _isPlaying = true;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _togglePlayPause,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          AspectRatio(
-            aspectRatio: 9 / 16,
-            child: VideoPlayer(widget.controller),
-          ),
-          if (!_isBuffering && !_isSeeking && !_isPlaying)
-            Center(
-              child: Container(
-                alignment: Alignment.center,
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  _isPlaying ? Icons.pause : Icons.play_arrow,
-                  color: Colors.white,
-                  size: 40,
-                ),
-              ),
-            ),
-          // Progress Bar
-          Positioned(
-            bottom: 20,
-            left: 14,
-            right: 14,
-            child: ProgressBar(
-              progress: Duration(seconds: _currentPosition.toInt()),
-              buffered: Duration(seconds: _bufferedPosition.toInt()),
-              total: Duration(seconds: _videoDuration.toInt()),
-              progressBarColor: Colors.red,
-              timeLabelTextStyle: AppTextTheme.lightTextTheme.bodyMedium
-                  ?.copyWith(color: AppColors.backgroundLight),
-              baseBarColor: Colors.white.withOpacity(0.24),
-              bufferedBarColor: Colors.white.withOpacity(0.24),
-              thumbColor: Colors.white,
-              barHeight: 3.0,
-              thumbRadius: 5.0,
-              onSeek: (value) {
-                _seekTo(value);
-              },
-            ),
-          ),
-          if (_isBuffering || _isSeeking)
-            Center(child: appLoadingSpinner()), // Buffering Spinner
-        ],
-      ),
-    );
+  Widget renderLoadingBottom() {
+    return isFetchingMore
+        ? Positioned(bottom: 100, left: 0, right: 0, child: appLoadingSpinner())
+        : const SizedBox();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:demo/common/model/notification_payload.dart';
 import 'package:demo/features/home/model/post.dart';
+import 'package:demo/features/home/views/single_video/main_single_video.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/global_key.dart';
 import 'package:demo/utils/local_storage/local_storage_utils.dart';
@@ -70,13 +71,14 @@ class NotificationService {
     NotificationData? result;
     debugPrint('_onDidReceiveNotificationResponse cl icked with payload');
     if (response.payload != null) {
-      // When user click notificaiton in forceground
+      // When user click notificaiton in forceground / background
 
       if (_payload != null) {
         result = NotificationData.fromMap(_payload!);
       }
+
       debugPrint(
-          '_onDidReceiveNotificationResponse cl icked with payload: ${result.toString()}');
+          '_onDidReceiveNotificationResponse clicked with payload: ${result.toString()}');
 
       if (result?.type == 'like' || result?.type == 'comment') {
         navigatorKey.currentState?.pushNamed(
@@ -95,12 +97,25 @@ class NotificationService {
           'chatId': result?.postID
         });
       }
-      // int previousCount =
-      //     int.parse(LocalStorageUtils().getKey('notificationCount') ?? '0');
-      // previousCount = previousCount + 1;
-      // await LocalStorageUtils()
-      //     .setKeyString('notificationCount', previousCount.toString());
-      // debugPrint('Notification clicked with payload: ${navigatorKey}');
+      if (FirebaseAuth.instance.currentUser != null &&
+          result?.type == 'videoLiked') {
+        navigatorKey.currentState?.push(MaterialPageRoute(
+          builder: (context) {
+            return MainSingleVideo(videoId: result?.postID ?? "");
+          },
+        ));
+      }
+      if (FirebaseAuth.instance.currentUser != null &&
+          result?.type == 'videoCommentLiked') {
+        navigatorKey.currentState?.push(MaterialPageRoute(
+          builder: (context) {
+            return MainSingleVideo(
+              videoId: result?.postID ?? "",
+              isShowCommeet: true,
+            );
+          },
+        ));
+      }
     }
   }
 

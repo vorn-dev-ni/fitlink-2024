@@ -42,11 +42,10 @@ class AppRoutes {
 
   static final List<RoutesApp> mainStacks = [
     RoutesApp(
-        routeName: AppPage.previewVideo,
-        builder: (context) => const VideoPreview()),
+        routeName: AppPage.previewVideo, builder: (context) => VideoPreview()),
     RoutesApp(
         routeName: AppPage.singleVideoTiktok,
-        builder: (context) => const MainSingleVideo(
+        builder: (context) => MainSingleVideo(
               videoId: "",
             )),
     RoutesApp(

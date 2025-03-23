@@ -48,8 +48,6 @@ class NotificationUserController extends _$NotificationUserController {
 
   Future<List<NotificationModel>> getData(String uid) async {
     try {
-      debugPrint(" getData ${limit} ${_lastDocument}");
-
       List<NotificationModel> notifications = await notificationRepo
           .getNotificationByUser(uid, limit, _lastDocument);
 

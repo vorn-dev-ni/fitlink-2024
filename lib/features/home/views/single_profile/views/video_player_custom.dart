@@ -1,91 +1,112 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:demo/common/widget/app_loading.dart';
+import 'package:demo/features/home/controller/video/tiktok_video_controller.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
 
-class VideoPlayerTikTok extends StatefulWidget {
-  final String videoUrl;
+class VideoPlayerTikTok extends ConsumerStatefulWidget {
+  final String? videoUrl;
+  final bool? paging;
+  final File? videoFile;
+  final String? videoId;
+  final VideoPlayerController? videoPlayerController;
 
-  const VideoPlayerTikTok({Key? key, required this.videoUrl}) : super(key: key);
+  const VideoPlayerTikTok(
+      {Key? key,
+      this.videoUrl,
+      this.videoFile,
+      this.videoId,
+      this.videoPlayerController,
+      this.paging = false})
+      : super(key: key);
 
   @override
   _VideoPlayerTikTokState createState() => _VideoPlayerTikTokState();
 }
 
-class _VideoPlayerTikTokState extends State<VideoPlayerTikTok> {
-  late VideoPlayerController _videoPlayerController;
+class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
+    with WidgetsBindingObserver {
+  VideoPlayerController? _videoPlayerController;
   bool _isPlaying = true;
   bool _isSeeking = false;
   bool _isBuffering = false;
-  bool _isInitialized = false;
   double _currentPosition = 0.0;
   double _videoDuration = 0.0;
   double _bufferedPosition = 0.0;
 
-  void _togglePlayPause() {
-    setState(() {
-      if (_isPlaying) {
-        _videoPlayerController.pause();
-      } else {
-        _videoPlayerController.play();
+  Timer? _debounce;
+  void addViewCountWithDebounce(String? videoId) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 1000), () {
+      if (videoId != null) {
+        ref
+            .read(tiktokVideoControllerProvider.notifier)
+            .trackViewCount(videoId);
       }
-      _isPlaying = !_isPlaying;
     });
   }
 
   Future<void> _initializeVideoPlayer() async {
-    _videoPlayerController =
-        VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
-          ..initialize().then(
-            (value) {
-              if (mounted) {
-                setState(() {
-                  _isInitialized = true;
-                });
-              }
-            },
-          )
-          ..addListener(() {
-            setState(() {});
-            if (!mounted) return;
-            final isCurrentlyBuffering =
-                _videoPlayerController.value.isBuffering;
-            final currentPos = _videoPlayerController.value.position.inSeconds;
-            setState(() {
-              _isBuffering = isCurrentlyBuffering;
-              if (_videoPlayerController.value.isInitialized) {
-                _currentPosition = currentPos.toDouble();
-                _videoDuration =
-                    _videoPlayerController.value.duration.inSeconds.toDouble();
+    if (_videoPlayerController != null) {
+      return;
+    }
+    if (widget.videoPlayerController != null) {
+      _videoPlayerController = widget.videoPlayerController;
+    } else if (widget.videoFile != null) {
+      _videoPlayerController = VideoPlayerController.file(widget.videoFile!)
+        ..initialize();
+    } else if (widget.videoUrl != null) {
+      final file = await _cacheVideo(widget.videoUrl!);
+      _videoPlayerController = VideoPlayerController.file(file)..initialize();
+    }
 
-                if (_videoPlayerController.value.buffered.isNotEmpty) {
-                  _bufferedPosition = _videoPlayerController
-                      .value.buffered.last.end.inSeconds
-                      .toDouble();
-                }
-              }
-            });
-          });
-    _videoPlayerController.setLooping(true);
+    // if (widget.videoPlayerController?.value.isInitialized == false) {
+    //   await _videoPlayerController?.initialize();
+    //   _videoPlayerController!.play();
+    //   Fluttertoast.showToast(
+    //       msg: 'init is ${widget.videoPlayerController?.value?.isInitialized}');
+    // }
+    _videoPlayerController?.setLooping(true);
 
-    _videoPlayerController.play();
+    if (widget.paging == false) {
+      _videoPlayerController?.play();
+    }
+
+    _videoPlayerController?.addListener(_videoListener);
+  }
+
+  Future<File> _cacheVideo(String url) async {
+    final cacheManager = DefaultCacheManager();
+
+    final file = await cacheManager.getSingleFile(url);
+    return file;
+  }
+
+  void _togglePlayPause() {
+    if (_isPlaying) {
+      _videoPlayerController?.pause();
+    } else {
+      _videoPlayerController?.play();
+    }
   }
 
   void _seekTo(Duration value) async {
-    _videoPlayerController.setVolume(0);
+    _videoPlayerController?.setVolume(0);
     setState(() {
       _isSeeking = true;
       _isPlaying = false;
     });
 
-    await _videoPlayerController.play();
-    await _videoPlayerController.seekTo(value);
-    await Future.delayed(const Duration(milliseconds: 100));
-    await _videoPlayerController.play();
-    await _videoPlayerController.setVolume(1);
+    await _videoPlayerController?.seekTo(value);
+    _videoPlayerController?.play();
+    _videoPlayerController?.setVolume(1);
+
     setState(() {
       _isSeeking = false;
       _isPlaying = true;
@@ -95,66 +116,109 @@ class _VideoPlayerTikTokState extends State<VideoPlayerTikTok> {
   @override
   void initState() {
     super.initState();
+
     _initializeVideoPlayer();
+    addViewCountWithDebounce(widget.videoId);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
-    _videoPlayerController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+    if (widget.videoPlayerController == null) {
+      _videoPlayerController?.dispose();
+      _videoPlayerController?.removeListener(_videoListener);
+    }
+    _debounce?.cancel();
+
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundDark,
-      body: _isInitialized
-          ? GestureDetector(
-              onTap: _togglePlayPause,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  AspectRatio(
-                    aspectRatio: 9 / 16,
-                    child: VideoPlayer(_videoPlayerController),
-                  ),
-                  if (_isBuffering == false &&
-                      _isSeeking == false &&
-                      !_isPlaying)
-                    Center(
-                      child: Container(
-                        alignment: Alignment.center,
-                        // padding: const EdgeInsets.all(20),
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.5),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          _isPlaying ? Icons.pause : Icons.play_arrow,
-                          color: Colors.white,
-                          size: 40,
-                        ),
-                      ),
-                    ),
-                  renderButtonClose(context),
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (_videoPlayerController == null) return;
+    if (state == AppLifecycleState.resumed) {
+      if (_videoPlayerController!.value.isInitialized &&
+          _videoPlayerController!.value.isPlaying) {
+        _videoPlayerController!.play();
+      }
+    } else if (state == AppLifecycleState.paused) {
+      _videoPlayerController!.pause();
+    }
+  }
 
-                  // Buffering indicator
-                  if (_isBuffering || _isSeeking)
-                    Center(child: appLoadingSpinner()),
-                  // Custom Progress Bar
-                  renderProgressVideo(),
-                ],
-              ),
-            )
-          : Center(child: appLoadingSpinner()),
+  @override
+  Widget build(BuildContext context) {
+    return _videoPlayerController?.value.isInitialized != null &&
+            _videoPlayerController?.value.isInitialized == true
+        ? GestureDetector(
+            onTap: _togglePlayPause,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                fullScreen(_videoPlayerController!),
+                if (_isBuffering == false && _isSeeking == false && !_isPlaying)
+                  renderPausePlay(),
+
+                if (widget.paging == false) renderButtonClose(context),
+
+                if (_isBuffering || _isSeeking)
+                  const Center(
+                      child: CircularProgressIndicator(
+                          color: AppColors.primaryColor)),
+                // Custom Progress Bar
+                renderProgressVideo(),
+              ],
+            ),
+          )
+        : Stack(
+            children: [
+              if (widget.paging == false) renderButtonClose(context),
+              const Center(
+                  child:
+                      CircularProgressIndicator(color: AppColors.primaryColor)),
+            ],
+          );
+  }
+
+  Center renderPausePlay() {
+    return Center(
+      child: Container(
+        alignment: Alignment.center,
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.5),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          _isPlaying ? Icons.pause : Icons.play_arrow,
+          color: Colors.white,
+          size: 40,
+        ),
+      ),
+    );
+  }
+
+  Widget fullScreen(VideoPlayerController controller) {
+    return Transform.scale(
+      scaleY: 0.6,
+      scaleX: 0.55,
+      child: FittedBox(
+        fit: BoxFit.cover,
+        child: SizedBox(
+          width: controller.value.size.width,
+          height: controller.value.size.height,
+          child: VideoPlayer(controller),
+        ),
+      ),
     );
   }
 
   Widget renderProgressVideo() {
+    final paddingBottom = MediaQuery.of(context).padding.bottom;
     return Positioned(
-      bottom: 60,
+      bottom: widget.paging == true ? paddingBottom : 60,
       left: 14,
       right: 14,
       child: ProgressBar(
@@ -199,5 +263,32 @@ class _VideoPlayerTikTokState extends State<VideoPlayerTikTok> {
         ),
       ),
     );
+  }
+
+  void _videoListener() {
+    if (!mounted) return;
+    final isCurrentlyBuffering = _videoPlayerController!.value.isBuffering;
+    final currentPos = _videoPlayerController!.value.position.inSeconds;
+
+    setState(() {
+      _isBuffering = isCurrentlyBuffering;
+      if (_videoPlayerController?.value.isPlaying == true) {
+        _isPlaying = true;
+      }
+
+      if (_videoPlayerController?.value?.isPlaying == false) {
+        _isPlaying = false;
+      }
+
+      _currentPosition = currentPos.toDouble();
+      _videoDuration =
+          _videoPlayerController!.value.duration.inSeconds.toDouble();
+
+      if (_videoPlayerController!.value.buffered.isNotEmpty) {
+        _bufferedPosition = _videoPlayerController!
+            .value.buffered.last.end.inSeconds
+            .toDouble();
+      }
+    });
   }
 }

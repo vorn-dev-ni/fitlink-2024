@@ -103,6 +103,8 @@ dependencies:
   chewie: ^1.10.0
   modal_bottom_sheet: ^3.0.0
   audio_video_progress_bar: ^2.0.3
+  flutter_cache_manager: ^3.4.1
+  visibility_detector: ^0.4.0+2
   # flutter_config: ^2.0.2
 
 dev_dependencies:

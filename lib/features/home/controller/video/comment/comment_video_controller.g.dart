@@ -7,7 +7,7 @@ part of 'comment_video_controller.dart';
 // **************************************************************************
 
 String _$tiktokCommentControllerHash() =>
-    r'5e95aecc9876fdd97c608d3bd8ae21c4c97b5d4a';
+    r'7aba7c26a449f8a38361a4b860a4b2a507a5d807';
 
 /// Copied from Dart SDK
 class _SystemHash {

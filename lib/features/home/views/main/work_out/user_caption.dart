@@ -3,7 +3,7 @@ import 'package:sizer/sizer.dart';
 
 Widget captionText(String caption) {
   return SizedBox(
-    width: 60.w,
+    width: 70.w,
     child: Text(
       caption,
       style: TextStyle(
@@ -17,7 +17,7 @@ Widget captionText(String caption) {
           ),
         ],
       ),
-      maxLines: 2,
+      maxLines: 4,
       overflow: TextOverflow.ellipsis,
     ),
   );

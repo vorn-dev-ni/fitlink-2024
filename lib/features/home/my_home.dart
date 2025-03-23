@@ -1,7 +1,12 @@
 import 'dart:ui';
+import 'package:demo/common/widget/video/progress_uploading.dart';
+import 'package:demo/core/riverpod/navigation_stack.dart';
 import 'package:demo/features/home/controller/logout_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
 import 'package:demo/core/riverpod/navigation_state.dart';
+import 'package:demo/features/home/controller/video/comment/comment_video_controller.dart';
+import 'package:demo/features/home/controller/video/tiktok_video_controller.dart';
+import 'package:demo/features/home/controller/video/video_page_controller.dart';
 import 'package:demo/features/home/views/chat/chat_tab.dart';
 import 'package:demo/features/home/views/main/home_tab.dart';
 import 'package:demo/features/home/views/main/work_out/workout_tab.dart';
@@ -13,6 +18,7 @@ import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 List<Widget> tabScreens = [
   const HomeTab(),
@@ -60,14 +66,18 @@ class _MyHomeScreenState extends ConsumerState<MyHomeScreen> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-        extendBody: false,
-        extendBodyBehindAppBar: false,
+        extendBody: true,
 
         backgroundColor: AppColors.backgroundLight,
         // body: tabScreens[tabIndex],
-        body: IndexedStack(
-          index: tabIndex,
-          children: tabScreens,
+        body: Stack(
+          children: [
+            IndexedStack(
+              index: tabIndex,
+              children: tabScreens,
+            ),
+            const UploadOverlay(),
+          ],
         ),
         bottomNavigationBar: ClipRRect(
           child: BackdropFilter(
@@ -83,7 +93,9 @@ class _MyHomeScreenState extends ConsumerState<MyHomeScreen> {
                 selectedItemColor: AppColors.secondaryColor,
                 unselectedItemColor: AppColors.neutralColor,
                 showSelectedLabels: false,
-                onTap: _onTap,
+                onTap: (index) {
+                  _onTap(index, tabIndex);
+                },
                 items: navBars,
               ),
             ),
@@ -93,7 +105,7 @@ class _MyHomeScreenState extends ConsumerState<MyHomeScreen> {
     );
   }
 
-  void _onTap(int index) {
+  void _onTap(int index, int tabIndex) {
     if ([1, 2, 4].contains(index)) {
       bool isAuth = HelpersUtils.isAuthenticated(context);
       if (!isAuth) {
@@ -101,8 +113,22 @@ class _MyHomeScreenState extends ConsumerState<MyHomeScreen> {
       }
     }
     if (index == 2) {
-      HelpersUtils.navigatorState(context).pushNamed(AppPage.uploadingTab);
+      ref.read(navigationStackStateProvider.notifier).setState(true);
+      // ref.read(navigationStateProvider.notifier).changeIndex(index);
+      HelpersUtils.navigatorState(context)
+          .pushNamed(AppPage.uploadingTab)
+          .whenComplete(
+        () {
+          ref.read(navigationStackStateProvider.notifier).setState(false);
+        },
+      );
       return;
+    }
+    if (tabIndex == 3 && index == 3) {
+      // Fluttertoast.showToast(msg: '3');
+
+      ref.read(tiktokVideoControllerProvider.notifier).refresh();
+      ref.read(videoPageControllerProvider.notifier).resetPage();
     }
     ref.read(navigationStateProvider.notifier).changeIndex(index);
   }

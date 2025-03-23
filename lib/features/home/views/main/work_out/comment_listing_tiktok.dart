@@ -25,13 +25,14 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 class CommentsSection extends ConsumerStatefulWidget {
   final String videoId;
-
+  final String receiverID;
   final List<CommentTikTok> data;
 
   const CommentsSection({
     Key? key,
     required this.videoId,
     required this.data,
+    required this.receiverID,
   }) : super(key: key);
 
   @override
@@ -100,11 +101,17 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
         const SizedBox(height: 10),
         const Divider(color: AppColors.neutralColor),
         widget.data.isEmpty
-            ? const Expanded(
+            ? Expanded(
                 child: Center(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("No comments yet"),
+                      Assets.app.noComment
+                          .image(fit: BoxFit.cover, width: 100, height: 100),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      const Text("No comments yet"),
                     ],
                   ),
                 ),
@@ -299,6 +306,7 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
           );
         },
       );
+
       return;
     }
 
@@ -365,7 +373,7 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
                 await ref
                     .read(tiktokCommentControllerProvider(widget.videoId)
                         .notifier)
-                    .writeComment(newComment);
+                    .writeComment(newComment, widget.receiverID ?? "");
               },
               icon: const Icon(
                 Icons.send,

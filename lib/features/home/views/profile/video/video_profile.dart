@@ -35,7 +35,7 @@ class _VideoProfileState extends ConsumerState<VideoProfile> {
                 ),
               )
             : GridView.builder(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.only(left: 8, right: 8, bottom: 120),
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -54,8 +54,13 @@ class _VideoProfileState extends ConsumerState<VideoProfile> {
               );
       },
       error: (error, stackTrace) {
+        debugPrint(error.toString());
         return Center(
-          child: emptyContent(title: error.toString()),
+          child: emptyContent(
+            title: error.toString().length > 100
+                ? error.toString().substring(0, 100)
+                : error.toString(),
+          ),
         );
       },
       loading: () => Skeletonizer(

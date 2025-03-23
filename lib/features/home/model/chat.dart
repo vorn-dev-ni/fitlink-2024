@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/utils/constant/enums.dart';
 
@@ -33,8 +32,13 @@ class Message {
   final String? senderId;
   final MessageType type;
   final String content;
+  final String? videoAvatarUser;
+  final String? videoUserName;
   final Timestamp timestamp;
   final bool? readStatus;
+  final String? videoUrl;
+  final String? videoId;
+  final String? thumbnailUrl;
   final Map<String, dynamic>? otherUserInfo;
   UserData? receiver;
   final DocumentSnapshot<Map<String, dynamic>>? snapshot;
@@ -44,6 +48,11 @@ class Message {
       this.id,
       required this.type,
       required this.content,
+      this.videoUrl,
+      this.videoId,
+      this.thumbnailUrl,
+      this.videoAvatarUser,
+      this.videoUserName,
       required this.timestamp,
       this.receiver,
       this.snapshot,
@@ -65,6 +74,11 @@ class Message {
         receiver: data['receiver'],
         otherUserInfo: otherUserInfo,
         snapshot: snapshot,
+        videoAvatarUser: data['videoAvatarUser'],
+        videoUrl: data['videoUrl'],
+        videoUserName: data['videoUserName'],
+        videoId: data['videoId'],
+        thumbnailUrl: data['thumbnailUrl'],
         id: data['id']);
   }
 
@@ -75,6 +89,11 @@ class Message {
       'type': type.toString().split('.').last,
       'content': content,
       'timestamp': timestamp,
+      'videoUrl': videoUrl,
+      'thumbnailUrl': thumbnailUrl,
+      'videoId': videoId,
+      'videoAvatarUser': videoAvatarUser,
+      'videoUserName': videoUserName,
     };
   }
 
@@ -87,15 +106,21 @@ class Message {
 class Chat {
   final String chatId;
   final String senderId;
+  final String? videoId;
   final List<DocumentReference> participants;
   final String? lastMessage;
   final DateTime? lastMessageTimestamp;
   final List<Message> messages;
   final Map<String, dynamic>? otherParticipantInfo;
+  final String? videoAvatarUser;
+  final String? videoUserName;
   Map<String, dynamic>? last_read;
   Chat({
     required this.chatId,
     this.last_read,
+    this.videoId,
+    this.videoAvatarUser,
+    this.videoUserName,
     required this.senderId,
     required this.participants,
     this.lastMessage,
@@ -107,6 +132,7 @@ class Chat {
   factory Chat.fromDocument(DocumentSnapshot doc,
       {List<Message> messages = const [],
       Map<String, dynamic>? otherParticipantInfo}) {
+    final data = doc.data() as Map<String, dynamic>? ?? {};
     return Chat(
       senderId: doc['senderId'],
       chatId: doc.id,
@@ -118,6 +144,9 @@ class Chat {
       lastMessageTimestamp:
           (doc['lastMessageTimestamp'] as Timestamp?)?.toDate(),
       messages: messages,
+      videoUserName: data['videoUserName'] ?? "",
+      videoAvatarUser: data['videoAvatarUser'] ?? "",
+      videoId: data['videoId'] ?? "",
       otherParticipantInfo: otherParticipantInfo,
     );
   }
@@ -125,6 +154,9 @@ class Chat {
   Map<String, dynamic> toMap() {
     return {
       'chatId': chatId,
+      'videoUserName': videoUserName,
+      'videoAvatarUser': videoAvatarUser,
+      'videoId': videoId,
       'participants': participants,
       'lastMessage': lastMessage ?? '',
       'lastMessageTimestamp': lastMessageTimestamp != null

@@ -7,7 +7,7 @@ part of 'last_chat_controller.dart';
 // **************************************************************************
 
 String _$lastChatControllerHash() =>
-    r'df236fa5022dcc30299cd30a823965edb7407709';
+    r'27176d267866350d8bf26361b11612534652b153';
 
 /// Copied from Dart SDK
 class _SystemHash {

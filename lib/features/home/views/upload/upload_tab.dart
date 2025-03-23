@@ -41,7 +41,7 @@ class _UploadTabState extends ConsumerState<UploadTab>
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.backgroundDark,
       appBar: AppBar(
         backgroundColor: AppColors.backgroundDark,
         foregroundColor: AppColors.backgroundLight,

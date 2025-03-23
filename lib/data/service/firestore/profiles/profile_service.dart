@@ -191,7 +191,7 @@ class ProfileService implements BaseUserService {
 
   @override
   Future<void> setUserOffline(String? userId) async {
-    if (userId == null) {
+    if (userId == null || FirebaseAuth.instance.currentUser == null) {
       return;
     }
     await _firestore.collection('users').doc(userId).update({
@@ -202,7 +202,7 @@ class ProfileService implements BaseUserService {
 
   @override
   Future<void> setUserOnline(String? userId) async {
-    if (userId == null) {
+    if (userId == null || FirebaseAuth.instance.currentUser == null) {
       return;
     }
     await _firestore.collection('users').doc(userId).update({

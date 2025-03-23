@@ -1,16 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/common/widget/video_tiktok.dart';
+import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
+import 'package:demo/data/service/firestore/notification/notification_service.dart';
 import 'package:demo/features/home/model/post.dart';
+import 'package:demo/utils/constant/enums.dart';
+import 'package:demo/utils/helpers/helpers_utils.dart';
+import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class VideoRepository {
   final VideoBaseService videoService;
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   final FirebaseAuth _authUser = FirebaseAuth.instance;
+  late NotificationRemoteService notificationRemoteService;
 
-  VideoRepository({required this.videoService});
+  VideoRepository({required this.videoService}) {
+    notificationRemoteService =
+        NotificationRemoteService(firebaseAuthService: FirebaseAuthService());
+  }
+
   Future<List<VideoTikTok>> searchVideo({
     required String searchQuery,
     List<String>? tag,
@@ -35,17 +47,31 @@ class VideoRepository {
   }
 
   Stream<VideoTikTok> getVideoCounts(String videoId) {
+    // Fluttertoast.showToast(msg: 'videoId ${videoId}');
+
     if (videoId == "") {
       return const Stream.empty();
     }
+
     return _firebaseFirestore
         .collection('videos')
         .doc(videoId)
         .snapshots()
         .asyncMap((snapshot) async {
-      if (snapshot.exists) {
-        final hasLiked = await checkIfUserLiked(videoId);
-        return VideoTikTok.fromFirestore(snapshot, null, paramsLiked: hasLiked);
+      if (snapshot.exists == true) {
+        await Future.delayed(const Duration(milliseconds: 400));
+        var hasLiked = await checkIfUserLiked(videoId);
+        final userRef = snapshot.data()!['userRef'] as DocumentReference?;
+        final userDoc = await userRef!.get();
+        final result = userDoc.data() as Map<String, dynamic>;
+
+        final resultUser = UserData.fromJson({'id': userDoc.id, ...result});
+        if (LocalStorageUtils().getKey('uid') == '' ||
+            LocalStorageUtils().getKey('uid') == null) {
+          hasLiked = false;
+        }
+        return VideoTikTok.fromFirestore(snapshot, resultUser,
+            paramsLiked: hasLiked);
       } else {
         return VideoTikTok(
           documentID: videoId,
@@ -63,6 +89,8 @@ class VideoRepository {
       final doc =
           await _firebaseFirestore.collection('videos').doc(videoId).get();
       if (doc.exists) {
+        await Future.delayed(const Duration(milliseconds: 400));
+
         final hasLiked = await checkIfUserLiked(videoId);
         final userRef = doc.data()!['userRef'] as DocumentReference?;
 
@@ -83,13 +111,13 @@ class VideoRepository {
     final userRef = _firebaseFirestore.collection('users').doc(userId);
     return _firebaseFirestore
         .collection('videos')
+        .orderBy('createdAt', descending: true)
         .where('userRef', isEqualTo: userRef)
         .snapshots()
         .asyncMap((snapshot) async {
       List<VideoTikTok> videos = [];
       for (var doc in snapshot.docs) {
         final hasLiked = await checkIfUserLiked(doc.id);
-
         final userData = await userRef.get();
         final result = UserData.fromJson(userData.data()!);
 
@@ -110,7 +138,8 @@ class VideoRepository {
     return data.size;
   }
 
-  Future<void> likeOrUnlike(String videoId) async {
+  Future<void> likeOrUnlike(
+      String videoId, bool? isLiked, String? receiverID) async {
     try {
       if (_authUser.currentUser == null) {
         throw Exception("User is not authenticated");
@@ -119,15 +148,16 @@ class VideoRepository {
       if (alreadyLiked) {
         await _unlikeVideo(videoId);
       } else {
-        await _likeVideo(videoId);
+        await _likeVideo(videoId, receiverID);
       }
     } catch (e) {
       throw Exception("Failed to like or unlike the video: $e");
     }
   }
 
-  Future<void> _likeVideo(String videoId) async {
+  Future<void> _likeVideo(String videoId, String? receiverID) async {
     final userId = _authUser.currentUser?.uid;
+
     if (userId == null) throw Exception("User is not authenticated");
     final videoRef = _firebaseFirestore.collection('videos').doc(videoId);
     await videoRef.update({
@@ -137,6 +167,13 @@ class VideoRepository {
     await videoRef.collection('likes').doc(userId).set({
       'likeAt': FieldValue.serverTimestamp(),
     });
+
+    if (userId == receiverID) {
+      //Dont send notificaiton to own video
+      return;
+    }
+    await notificationRemoteService.sendVideoLikeOrComment(
+        userId, receiverID ?? "", videoId, VideoTypeLike.like);
   }
 
   Future<void> _unlikeVideo(String videoId) async {
@@ -152,17 +189,26 @@ class VideoRepository {
   }
 
   Future<bool> checkIfUserLiked(String videoId) async {
-    final userId = _authUser.currentUser?.uid;
-    if (userId == null) return false;
+    try {
+      if (FirebaseAuth.instance.currentUser == null) {
+        return false;
+      }
+      if (videoId == "") {
+        return false;
+      }
 
-    final videoDoc = await _firebaseFirestore
-        .collection('videos')
-        .doc(videoId)
-        .collection('likes')
-        .doc(userId)
-        .get();
+      final videoDoc = await _firebaseFirestore
+          .collection('videos')
+          .doc(videoId)
+          .collection('likes')
+          .doc(FirebaseAuth.instance.currentUser?.uid)
+          .get();
 
-    return videoDoc.exists;
+      return videoDoc.exists;
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
+    return false;
   }
 
   Future<void> likeCommentVideo(String videoId, String commentId) async {
@@ -237,7 +283,7 @@ class VideoRepository {
 
   // Add New Comment
   Future<DocumentReference<Map<String, dynamic>>> addComment(
-      String videoId, String commentText) async {
+      String videoId, String commentText, String? receiverID) async {
     try {
       // Ensure the user is logged in (check only if not already authenticated)
       if (_authUser.currentUser == null) {
@@ -271,6 +317,8 @@ class VideoRepository {
 
       // Commit the batch operation
       await batch.commit();
+      notificationRemoteService.sendVideoLikeOrComment(
+          userId, receiverID ?? "", videoId, VideoTypeLike.comment);
 
       return commentRef; // Return the reference of the new comment
     } catch (e) {
@@ -392,13 +440,14 @@ class VideoRepository {
     required int page,
     DocumentSnapshot? startAfter,
   }) async {
+    // Fetch the snapshot from the service
     final snapshot =
         await videoService.fetchVideos(page: page, startAfter: startAfter);
 
     List<VideoTikTok> videos = [];
 
+    // Loop through the documents in the snapshot
     for (var doc in snapshot.docs) {
-      // Get the user reference
       final userRef = doc.data()['userRef'] as DocumentReference?;
 
       UserData? user;
@@ -412,15 +461,59 @@ class VideoRepository {
         }
       }
 
-      videos.add(VideoTikTok.fromFirestore(doc, user));
+      // final videoUrl = doc.data()['videoUrl'] as String? ?? '';
+      // final videoController =
+      //     VideoPlayerController.networkUrl(Uri.parse(videoUrl))
+      //       ..setLooping(true);
+
+      // await videoController.initialize();
+
+      videos.add(VideoTikTok.fromFirestore(doc, user, newVideoplayer: null));
     }
 
     return videos;
   }
 
+  // Future<List<VideoTikTok>> fetchVideos({
+  //   required int page,
+  //   DocumentSnapshot? startAfter,
+  // }) async {
+  //   final snapshot =
+  //       await videoService.fetchVideos(page: page, startAfter: startAfter);
+
+  //   List<VideoTikTok> videos = [];
+
+  //   for (var doc in snapshot.docs) {
+  //     final userRef = doc.data()['userRef'] as DocumentReference?;
+
+  //     UserData? user;
+
+  //     // If userRef exists, fetch user data
+  //     if (userRef != null) {
+  //       final userDoc = await userRef.get();
+  //       if (userDoc.exists) {
+  //         final result = userDoc.data() as Map<String, dynamic>;
+  //         user = UserData.fromJson({'id': userDoc.id, ...result});
+  //       }
+  //     }
+
+  //     videos.add(VideoTikTok.fromFirestore(doc, user));
+  //   }
+
+  //   return videos;
+  // }
+
   Future setViewCount(String videoId) async {
     try {
       await videoService.trackView(videoId, _authUser.currentUser?.uid);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future setShareCount(String videoId) async {
+    try {
+      await videoService.shareVideo(videoId, _authUser.currentUser?.uid ?? "");
     } catch (e) {
       rethrow;
     }
@@ -467,7 +560,6 @@ class VideoRepository {
     DocumentSnapshot? startAfter,
   ) async {
     try {
-      debugPrint('startAfter ${startAfter}');
       final snapshot = await videoService.fetchCommentOneTime(videoId,
           limit: limit, startAfter: startAfter);
 
@@ -499,7 +591,12 @@ class VideoRepository {
 
       return comments;
     } catch (e) {
-      rethrow; // Handle error if needed
+      rethrow;
     }
+  }
+
+  void navigatingBackHome(WidgetRef ref) {
+    HelpersUtils.navigatorState(ref.context).pop();
+    HelpersUtils.navigatorState(ref.context).pop();
   }
 }

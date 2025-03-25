@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:demo/app_cycle.dart';
 import 'package:demo/common/model/user_model.dart';
+import 'package:demo/common/widget/video/progress_uploading.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/core/riverpod/app_setting.dart';
 import 'package:demo/core/riverpod/connectivity_state.dart';
@@ -9,17 +10,16 @@ import 'package:demo/data/service/firebase/firebase_remote_config.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
 import 'package:demo/data/service/firestore/notification/notification_service.dart';
-import 'package:demo/data/service/utils/notification_service.dart';
+import 'package:demo/features/home/controller/chat/following_friend_controller.dart';
 import 'package:demo/features/home/controller/chat/user_status_controller.dart';
 import 'package:demo/features/home/controller/comment/comment_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
 import 'package:demo/features/home/controller/posts/social_post_controller.dart';
-import 'package:demo/features/home/controller/posts/user_like_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_post_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
+import 'package:demo/features/home/controller/video/tiktok_video_controller.dart';
 import 'package:demo/features/home/controller/workouts/activities_controller.dart';
-import 'package:demo/features/home/controller/workouts/workout_controller.dart';
-import 'package:demo/features/home/controller/workouts/workout_date_controller.dart';
+import 'package:demo/features/home/views/single_profile/controller/notification_badge.dart';
 import 'package:demo/l10n/I10n.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
@@ -78,6 +78,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   late FirebaseAuthService _firebaseAuthService;
   bool isNavigating = false;
+  bool hasStore = false;
   late FirestoreService firestoreService;
 
   @override
@@ -170,24 +171,26 @@ class _MyAppState extends ConsumerState<MyApp> {
     try {
       // debugPrint("User is ${FirebaseAuth.instance.currentUser?.uid}");
       if (FirebaseAuth.instance.currentUser?.uid != null) {
+        ref.invalidate(followingFriendControllerProvider(userId: uid));
+
         AuthModel? authModel = await firestoreService.getEmail(uid);
         final fmcToken = await HelpersUtils.getDeviceToken();
         if (fmcToken != null) {
           notificationRemoteService.storeFcmToken(uid, fmcToken);
         }
         if (mounted) {
-          ref.invalidate(navbarControllerProvider);
+          // ref.invalidate(navbarControllerProvider);
+          ref.invalidate(socialInteractonVideoControllerProvider);
+          ref.invalidate(userNotificationControllerProvider);
+          // ref.invalidate(tiktokVideoControllerProvider);
           ref
               .read(navbarControllerProvider.notifier)
               .updateProfileTab(authModel.avatar ?? "");
-          debugPrint("Sync user again tt hz ${uid}");
+          // ref.invalidate(navbarControllerProvider);
           ref.invalidate(socialPostControllerProvider);
           ref.invalidate(commentControllerProvider);
           ref.invalidate(profilePostControllerProvider);
           ref.invalidate(activitiesControllerProvider);
-          // ref.invalidate(workoutControllerProvider);
-          // ref.invalidate(workoutDateControllerProvider);
-
           ref.invalidate(profileUserControllerProvider);
           ref.read(appLoadingStateProvider.notifier).setState(false);
         }
@@ -240,7 +243,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         : ThemeMode.dark;
     return Sizer(builder: (context, orientation, screenType) {
       return MaterialApp(
-        title: 'Flutter Production',
+        title: 'Flutter',
 
         builder: FToastBuilder(),
         debugShowCheckedModeBanner: false,

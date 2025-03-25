@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:video_player/video_player.dart';
 import 'package:demo/features/home/model/post.dart';
 
@@ -89,9 +90,11 @@ class VideoTikTok {
   List<dynamic>? tag;
   bool? isUserliked;
   VideoPlayerController? videoplayer;
+  bool? isInitialized;
 
   VideoTikTok({
     this.videoplayer,
+    this.isInitialized,
     this.documentID,
     this.commentCount,
     this.isUserliked,
@@ -125,6 +128,42 @@ class VideoTikTok {
     videoplayer = newVideoplayer;
   }
 
+  Future<void> initializeVideo() async {
+    if (videoUrl == null) return;
+
+    try {
+      videoplayer = VideoPlayerController.networkUrl(Uri.parse(videoUrl!));
+      await videoplayer!.initialize();
+      await videoplayer!.setLooping(true);
+      isInitialized =
+          true; // Set the initialization status after the video is initialized
+    } catch (e) {
+      Fluttertoast.showToast(msg: 'Error initializing video: $e');
+    }
+  }
+
+  // Future<void> initializeVideo() async {
+  //   if (videoplayer == null) return;
+  //   if (!isInitialized) {
+  //     await videoplayer!.initialize();
+  //     isInitialized = true;
+  //   }
+  // }
+
+  Future disposeVideo() async {
+    await videoplayer?.pause();
+    await videoplayer?.dispose();
+    videoplayer = null;
+    isInitialized = false;
+  }
+
+  // bool isInitialized() {
+  //   if (videoplayer?.value == null) {
+  //     return false;
+  //   }
+  //   return videoplayer!.value!.isInitialized;
+  // }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['documentID'] = documentID;
@@ -150,6 +189,7 @@ class VideoTikTok {
     UserData? userRef,
     String? videoUrl,
     int? viewCount,
+    bool? isInitialized,
     Timestamp? createdAt,
     DocumentSnapshot? lastDoc,
     String? caption,
@@ -159,6 +199,7 @@ class VideoTikTok {
   }) {
     return VideoTikTok(
       documentID: documentID ?? this.documentID,
+      isInitialized: isInitialized ?? this.isInitialized,
       commentCount: commentCount ?? this.commentCount,
       likeCount: likeCount ?? this.likeCount,
       shareCount: shareCount ?? this.shareCount,

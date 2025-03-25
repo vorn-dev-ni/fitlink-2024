@@ -58,12 +58,12 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDulurCIwalUxwEFJtmEbDE7aAYQH5KnvY',
-    appId: '1:77080916809:ios:b2b8404ab78ddb905b2098',
+    apiKey: 'AIzaSyCtCpQ2kINT2V-djabaFol81EirUvgBIpw',
+    appId: '1:77080916809:ios:7bd92e2a00dd5cc85b2098',
     messagingSenderId: '77080916809',
     projectId: 'fitlink-b3d6b',
     storageBucket: 'fitlink-b3d6b.firebasestorage.app',
-    androidClientId: '77080916809-j0gjnfkj651qdogk0irge1mb0jh21lr1.apps.googleusercontent.com',
+    androidClientId: '77080916809-4i6mmvvfm1k9g06eddgq1hcjdc6m367h.apps.googleusercontent.com',
     iosClientId: '77080916809-ghqlqnre1bo9iutsc4mavhptk1h4crk1.apps.googleusercontent.com',
     iosBundleId: 'com.fitlink.app',
   );

@@ -218,9 +218,9 @@
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				FA0B97FF2CD1312D003A99B7 /* Google plist json firebase */,
 				10697F0CB64D6B6CDC3684AF /* [CP] Embed Pods Frameworks */,
-				61873D34E9289EC95D105656 /* FlutterFire: "flutterfire bundle-service-file" */,
-				46AA4459681CD8340D8256FB /* FlutterFire: "flutterfire upload-crashlytics-symbols" */,
 				E45F80CF092540F283E8B517 /* [CP] Copy Pods Resources */,
+				DE5403453C12B4FB01E8F854 /* FlutterFire: "flutterfire bundle-service-file" */,
+				0992E820F51BD537687ECCE3 /* FlutterFire: "flutterfire upload-crashlytics-symbols" */,
 			);
 			buildRules = (
 			);
@@ -284,6 +284,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0992E820F51BD537687ECCE3 /* FlutterFire: "flutterfire upload-crashlytics-symbols" */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "FlutterFire: \"flutterfire upload-crashlytics-symbols\"";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\n#!/bin/bash\nPATH=${PATH}:$FLUTTER_ROOT/bin:$HOME/.pub-cache/bin\nflutterfire upload-crashlytics-symbols --upload-symbols-script-path=$PODS_ROOT/FirebaseCrashlytics/upload-symbols --platform=ios --apple-project-path=${SRCROOT} --env-platform-name=${PLATFORM_NAME} --env-configuration=${CONFIGURATION} --env-project-dir=${PROJECT_DIR} --env-built-products-dir=${BUILT_PRODUCTS_DIR} --env-dwarf-dsym-folder-path=${DWARF_DSYM_FOLDER_PATH} --env-dwarf-dsym-file-name=${DWARF_DSYM_FILE_NAME} --env-infoplist-path=${INFOPLIST_PATH} --build-configuration=${CONFIGURATION}\n";
+		};
 		10697F0CB64D6B6CDC3684AF /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -316,42 +334,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin\n";
-		};
-		46AA4459681CD8340D8256FB /* FlutterFire: "flutterfire upload-crashlytics-symbols" */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "FlutterFire: \"flutterfire upload-crashlytics-symbols\"";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\n#!/bin/bash\nPATH=${PATH}:$FLUTTER_ROOT/bin:$HOME/.pub-cache/bin\nflutterfire upload-crashlytics-symbols --upload-symbols-script-path=$PODS_ROOT/FirebaseCrashlytics/upload-symbols --platform=ios --apple-project-path=${SRCROOT} --env-platform-name=${PLATFORM_NAME} --env-configuration=${CONFIGURATION} --env-project-dir=${PROJECT_DIR} --env-built-products-dir=${BUILT_PRODUCTS_DIR} --env-dwarf-dsym-folder-path=${DWARF_DSYM_FOLDER_PATH} --env-dwarf-dsym-file-name=${DWARF_DSYM_FILE_NAME} --env-infoplist-path=${INFOPLIST_PATH} --build-configuration=${CONFIGURATION}\n";
-		};
-		61873D34E9289EC95D105656 /* FlutterFire: "flutterfire bundle-service-file" */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "FlutterFire: \"flutterfire bundle-service-file\"";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\n#!/bin/bash\nPATH=${PATH}:$FLUTTER_ROOT/bin:$HOME/.pub-cache/bin\nflutterfire bundle-service-file --plist-destination=${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app --build-configuration=${CONFIGURATION} --platform=ios --apple-project-path=${SRCROOT}\n";
 		};
 		68A96D7EA7F546396D9956C9 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -389,6 +371,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
+		};
+		DE5403453C12B4FB01E8F854 /* FlutterFire: "flutterfire bundle-service-file" */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "FlutterFire: \"flutterfire bundle-service-file\"";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\n#!/bin/bash\nPATH=${PATH}:$FLUTTER_ROOT/bin:$HOME/.pub-cache/bin\nflutterfire bundle-service-file --plist-destination=${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app --build-configuration=${CONFIGURATION} --platform=ios --apple-project-path=${SRCROOT}\n";
 		};
 		E45F80CF092540F283E8B517 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -792,7 +792,7 @@
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = XVCWBGAFD7;
 				ENABLE_BITCODE = NO;
-				GOOGLE_CLIENT = "com.googleusercontent.apps.77080916809-ghqlqnre1bo9iutsc4mavhptk1h4crk1";
+				GOOGLE_CLIENT = "com.googleusercontent.apps.77080916809-584bmt7lkfujgjfkbr88v170r69lmf4p";
 				GOOGLE_SERVICE_INFO_PATH = "$(SRCROOT)/Runner/GoogleService-Info-dev.plist";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LAUNCH_SCREEN = "";
@@ -882,7 +882,7 @@
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = XVCWBGAFD7;
 				ENABLE_BITCODE = NO;
-				GOOGLE_CLIENT = "com.googleusercontent.apps.77080916809-ghqlqnre1bo9iutsc4mavhptk1h4crk1";
+				GOOGLE_CLIENT = "com.googleusercontent.apps.77080916809-584bmt7lkfujgjfkbr88v170r69lmf4p";
 				GOOGLE_SERVICE_INFO_PATH = "$(SRCROOT)/Runner/GoogleService-Info-dev.plist";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LAUNCH_SCREEN = "";
@@ -969,7 +969,7 @@
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = XVCWBGAFD7;
 				ENABLE_BITCODE = NO;
-				GOOGLE_CLIENT = "com.googleusercontent.apps.77080916809-ghqlqnre1bo9iutsc4mavhptk1h4crk1";
+				GOOGLE_CLIENT = "com.googleusercontent.apps.77080916809-584bmt7lkfujgjfkbr88v170r69lmf4p";
 				GOOGLE_SERVICE_INFO_PATH = "$(SRCROOT)/Runner/GoogleService-Info-dev.plist";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LAUNCH_SCREEN = "";
@@ -1277,7 +1277,7 @@
 				FA0A04F32CD075AB009A9E42 /* Profile-dev */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Release-staging";
+			defaultConfigurationName = Release;
 		};
 		97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */ = {
 			isa = XCConfigurationList;
@@ -1293,7 +1293,7 @@
 				FA0A04F42CD075AB009A9E42 /* Profile-dev */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Release-staging";
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

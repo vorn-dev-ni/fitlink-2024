@@ -64,14 +64,6 @@ class LoginController extends _$LoginController {
           verificationId: verificationId,
           smsCode: smsCode);
     } catch (e) {
-      Fluttertoast.showToast(
-          msg: e.toString(),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 5,
-          backgroundColor: AppColors.errorColor,
-          textColor: Colors.white,
-          fontSize: 16.0);
       rethrow;
     }
   }

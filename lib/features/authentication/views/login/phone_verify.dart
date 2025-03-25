@@ -177,18 +177,26 @@ class _PhoneOtpVerifyState extends ConsumerState<PhoneOtpVerify> {
       if (mounted) {
         ScaffoldMessenger.of(context).removeCurrentSnackBar();
         if (e is AppException) {
+          String errorMessage = e.toString();
+          String displayMessage = errorMessage.length > 50
+              ? errorMessage.substring(0, 50)
+              : errorMessage;
           HelpersUtils.showErrorSnackbar(
               duration: 4000,
               context,
               e.title,
-              e.message,
+              displayMessage,
               StatusSnackbar.failed);
         } else {
+          String errorMessage = e.toString();
+          String displayMessage = errorMessage.length > 50
+              ? errorMessage.substring(0, 50)
+              : errorMessage;
           HelpersUtils.showErrorSnackbar(
               duration: 4000,
               context,
-              'Something went wrong',
-              e.toString(),
+              'Oop',
+              displayMessage,
               StatusSnackbar.failed);
         }
 

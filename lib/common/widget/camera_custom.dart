@@ -54,7 +54,8 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
   @override
   void initState() {
     super.initState();
-    _checkCameraPermission();
+    // _checkCameraPermission();
+    _initializeCamera();
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -114,9 +115,9 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
 
   Future<void> _checkCameraPermission() async {
     final status = await Permission.camera.status;
-    final audioStatus = await Permission.microphone.status;
+    // final audioStatus = await Permission.microphone.status;
 
-    if (status.isGranted && audioStatus.isGranted) {
+    if (status.isGranted) {
       _initializeCamera();
       return;
     }
@@ -129,18 +130,16 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
       }
     }
 
-    if (!audioStatus.isGranted) {
-      final newAudioStatus = await Permission.microphone.request();
-      if (!newAudioStatus.isGranted) {
-        _showPermissionDialog(
-            title: 'Microphone permission',
-            desc: 'Please open your microphone setting');
-        return;
-      }
-    }
-
-    if (await Permission.camera.isGranted &&
-        await Permission.microphone.isGranted) {
+    // if (!audioStatus.isGranted) {
+    //   final newAudioStatus = await Permission.microphone.request();
+    //   if (!newAudioStatus.isGranted) {
+    //     _showPermissionDialog(
+    //         title: 'Microphone permission',
+    //         desc: 'Please open your microphone setting');
+    //     return;
+    //   }
+    // }
+    if (await Permission.camera.isGranted) {
       setState(() {});
 
       WidgetsBinding.instance.addPostFrameCallback(
@@ -185,7 +184,7 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
       }
       _isInitializing = false;
     } catch (e) {
-      // _showPermissionDialog(title: 'Permission', desc: e.toString());
+      _showPermissionDialog(title: 'Permission Required', desc: e.toString());
 
       // Fluttertoast.showToast(msg: e.toString());
     }

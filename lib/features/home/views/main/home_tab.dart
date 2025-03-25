@@ -127,6 +127,10 @@ class _HomeTabState extends ConsumerState<HomeTab>
               padding: const EdgeInsets.only(right: Sizes.sm),
               child: IconButton(
                 onPressed: () {
+                  final isAuth = HelpersUtils.isAuthenticated(context);
+                  if (isAuth == false) {
+                    return;
+                  }
                   HelpersUtils.navigatorState(context)
                       .pushNamed(AppPage.searchTikTok);
                 },

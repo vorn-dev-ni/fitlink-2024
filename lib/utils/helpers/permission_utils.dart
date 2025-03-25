@@ -102,7 +102,7 @@ class PermissionUtils {
           ),
           TextButton(
             onPressed: () {
-              openAppSettings(); // Open app settings
+              openAppSettings();
               Navigator.pop(context);
             },
             child: Text(

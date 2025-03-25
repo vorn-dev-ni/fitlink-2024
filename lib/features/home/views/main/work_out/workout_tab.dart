@@ -5,14 +5,18 @@ import 'package:demo/common/widget/video_tiktok.dart';
 import 'package:demo/features/home/controller/video/comment/comment_video_controller.dart';
 import 'package:demo/features/home/controller/video/tiktok_video_controller.dart';
 import 'package:demo/features/home/views/main/work_out/comment_listing_tiktok.dart';
+import 'package:demo/features/home/views/main/work_out/social_like_comment_item.dart';
 import 'package:demo/features/home/views/main/work_out/tiktok_video_item.dart';
 import 'package:demo/features/home/views/single_profile/views/video_player_custom.dart';
+import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import 'package:sizer/sizer.dart';
 
 class WorkoutTab extends ConsumerStatefulWidget {
   @override
@@ -28,46 +32,47 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
   bool isPause = false;
   PageController? pageController;
   bool isFetchingMore = false;
+  int _currentIndex = 0;
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
 
-    _pageController.addListener(_onPageScroll);
+    _pageController.addListener(() {
+      final newPage = _pageController.page?.round() ?? 0;
+
+      if (newPage != _currentIndex) {
+        _currentIndex = newPage;
+        _handleVideoPlayback(newPage);
+      }
+    });
 
     super.initState();
+  }
+
+  void _handleVideoPlayback(int index) async {
+    final videoList = ref.read(tiktokVideoControllerProvider).value ?? [];
+
+    // Ensure the current video is loaded
+    if (index >= 0 && index < videoList.length) {
+      // Prevent preloading if the video at index + 2 isn't initialized yet
+      final nextIndex = index + 1;
+      if (nextIndex >= videoList.length - 1 && !isFetchingMore) {
+        setState(() => isFetchingMore = true);
+        final newVideos =
+            await ref.read(tiktokVideoControllerProvider.notifier).loadMore();
+        if (newVideos != null) {
+          setState(() => isFetchingMore = false);
+        }
+      }
+    }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _pageController.removeListener(_onPageScroll);
     _pageController.dispose();
     super.dispose();
-  }
-
-  void _onPageScroll() {
-    if (_pageController.position.haveDimensions) {
-      int currentPage = _pageController.page!.toInt();
-      _onPageChanged(currentPage);
-    }
-  }
-
-  void _onPageChanged(int index) async {
-    if (index >= 1 && isFetchingMore == false) {
-      setState(() {
-        isFetchingMore = true;
-      });
-
-      final data =
-          await ref.read(tiktokVideoControllerProvider.notifier).loadMore();
-
-      if (data != null) {
-        setState(() {
-          isFetchingMore = false;
-        });
-      }
-    }
   }
 
   @override
@@ -88,6 +93,7 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
                       scrollDirection: Axis.vertical,
                       itemCount: data.length,
                       pageSnapping: true,
+                      // onPageChanged: _onPageChanged,
                       controller: _pageController,
                       itemBuilder: (context, index) {
                         final video = data[index];
@@ -95,15 +101,33 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
                           key: ValueKey(video.documentID),
                           onVisibilityChanged: (visibilityInfo) async {
                             if (visibilityInfo.visibleFraction >= 0.7) {
-                              if (!video.videoplayer!.value.isPlaying) {
+                              if (video.videoplayer != null &&
+                                  video.videoplayer!.value.isInitialized) {
                                 video.videoplayer!.play();
                               }
                             } else {
+                              // Pause the video if it's currently playing
                               if (video.videoplayer!.value.isPlaying) {
                                 video.videoplayer!.pause();
                               }
                             }
                           },
+                          // onVisibilityChanged: (visibilityInfo) async {
+                          //   if (visibilityInfo.visibleFraction >= 0.7) {
+                          //     await ref
+                          //         .read(tiktokVideoControllerProvider.notifier)
+                          //         .preloadVideo(index + 2);
+                          //     if (!video.videoplayer!.value.isPlaying &&
+                          //         video.videoplayer != null &&
+                          //         video.videoplayer!.value!.isInitialized) {
+                          //       video.videoplayer!.play();
+                          //     }
+                          //   } else {
+                          //     if (video.videoplayer!.value.isPlaying) {
+                          //       video.videoplayer!.pause();
+                          //     }
+                          //   }
+                          // },
                           child: Stack(
                             fit: StackFit.expand,
                             children: [
@@ -148,37 +172,52 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
       }
       return Center(child: emptyContent(title: error.toString()));
     }, loading: () {
-      return Skeletonizer(
+      return renderLoading();
+    });
+  }
+
+  Widget renderLoading() {
+    return Skeletonizer(
         enabled: true,
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 64),
-          child: PageView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: 1,
-            onPageChanged: (index) {},
-            itemBuilder: (context, index) {
-              return Container(
+            padding: const EdgeInsets.only(bottom: 0),
+            child: Container(
                 color: const Color.fromARGB(255, 188, 195, 204),
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Skeletonizer(
-                      ignoreContainers: true,
-                      child: VideoTiktokItem(
-                        img: '',
-                        date: Timestamp.now(),
-                        // tags: null,
-                        onCommentPressed: () {},
-                      ),
-                    ),
+                    Positioned(
+                        bottom: 22.h,
+                        left: 20,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipOval(
+                              child: Assets.app.defaultAvatar.image(
+                                fit: BoxFit.cover,
+                                width: 50,
+                                height: 50,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text('This is an example...'),
+                            const Text('This...'),
+                          ],
+                        )),
+                    Positioned(
+                      right: 16,
+                      bottom: 0,
+                      child: SocialLikeCommentItem(
+                          videoId: '',
+                          onShare: () {},
+                          isLiked: false,
+                          onCommentPressed: () {},
+                          data: VideoTikTok()),
+                    )
                   ],
-                ),
-              );
-            },
-          ),
-        ),
-      );
-    });
+                ))));
   }
 
   Widget buildFullScreen({

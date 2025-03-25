@@ -7,7 +7,7 @@ part of 'notification_user_controller.dart';
 // **************************************************************************
 
 String _$notificationUserControllerHash() =>
-    r'1cd98ec7e210315b2977dfc54cd558c518ed107f';
+    r'016edd52bb4653c8b2be1da80e732abd484152f4';
 
 /// Copied from Dart SDK
 class _SystemHash {

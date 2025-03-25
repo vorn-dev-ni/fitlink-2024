@@ -440,13 +440,11 @@ class VideoRepository {
     required int page,
     DocumentSnapshot? startAfter,
   }) async {
-    // Fetch the snapshot from the service
     final snapshot =
         await videoService.fetchVideos(page: page, startAfter: startAfter);
 
     List<VideoTikTok> videos = [];
 
-    // Loop through the documents in the snapshot
     for (var doc in snapshot.docs) {
       final userRef = doc.data()['userRef'] as DocumentReference?;
 
@@ -460,13 +458,6 @@ class VideoRepository {
           user = UserData.fromJson({'id': userDoc.id, ...result});
         }
       }
-
-      // final videoUrl = doc.data()['videoUrl'] as String? ?? '';
-      // final videoController =
-      //     VideoPlayerController.networkUrl(Uri.parse(videoUrl))
-      //       ..setLooping(true);
-
-      // await videoController.initialize();
 
       videos.add(VideoTikTok.fromFirestore(doc, user, newVideoplayer: null));
     }

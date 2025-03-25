@@ -7,7 +7,7 @@ part of 'single_video_controller.dart';
 // **************************************************************************
 
 String _$singleVideoControllerHash() =>
-    r'49a9e8d8af944abb419282a002051f752c2af40d';
+    r'8f647c43e22acc0e38b7d2f6bff232acf2074a12';
 
 /// Copied from Dart SDK
 class _SystemHash {

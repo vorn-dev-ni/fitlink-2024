@@ -13,6 +13,7 @@ import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -54,6 +55,7 @@ class _VideoTiktokItemState extends ConsumerState<VideoTiktokItem>
   bool showMore = false;
   @override
   Widget build(BuildContext context) {
+    // Fluttertoast.showToast(msg: 'Re render video tiem ${widget.videoId}');
     return Stack(
       children: [
         SocialInteractonVideo(
@@ -62,13 +64,12 @@ class _VideoTiktokItemState extends ConsumerState<VideoTiktokItem>
           isUserliked: widget.isUserliked,
           receiverID: widget.userdata?.id,
         ),
-        if (widget.userdata != null)
-          MetaDataVideo(
-            caption: widget.caption!,
-            date: widget.date!,
-            tags: widget.tags!,
-            userdata: widget.userdata!,
-          )
+        MetaDataVideo(
+          caption: widget.caption ?? "This is an",
+          date: widget.date,
+          tags: widget.tags!,
+          userdata: widget.userdata!,
+        )
       ],
     );
   }
@@ -110,7 +111,7 @@ class _MetaDataVideoState extends State<MetaDataVideo> {
               height: Sizes.md,
             ),
             _buildCaption(widget.caption ??
-                'My Journey so far, you can check out my work out plan, My Journey so far, you can check out my work out plan, My Journey so far, you can check out my work out plan.'),
+                'My Journey so far, you can check out my work out plan'),
             const SizedBox(
               height: Sizes.md,
             ),

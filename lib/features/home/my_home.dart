@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:demo/common/widget/video/progress_uploading.dart';
+import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/core/riverpod/navigation_stack.dart';
 import 'package:demo/features/home/controller/logout_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
@@ -53,6 +54,7 @@ class _MyHomeScreenState extends ConsumerState<MyHomeScreen> {
     final tabIndex = ref.watch(navigationStateProvider);
     final navBars = ref.watch(navbarControllerProvider);
     final isLoggedOut = ref.watch(logoutControllerProvider);
+    final isLoading = ref.watch(appLoadingStateProvider);
 
     if (isLoggedOut) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -94,6 +96,10 @@ class _MyHomeScreenState extends ConsumerState<MyHomeScreen> {
                 unselectedItemColor: AppColors.neutralColor,
                 showSelectedLabels: false,
                 onTap: (index) {
+                  if (isLoading == true) {
+                    return;
+                  }
+
                   _onTap(index, tabIndex);
                 },
                 items: navBars,

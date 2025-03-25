@@ -44,9 +44,9 @@ class VideoService extends VideoBaseService {
     try {
       Query<Map<String, dynamic>> query = _firestore
           .collection('videos')
+          .orderBy('createdAt', descending: true)
           .orderBy('likeCount', descending: true)
           .orderBy('viewCount', descending: true)
-          .orderBy('createdAt', descending: true)
           .orderBy('shareCount', descending: true)
           .limit(page);
 

@@ -180,96 +180,88 @@ class _UserFollowingVideoShareState
         return emptyContent(title: error.toString());
       },
       loading: () {
-        return Skeletonizer(
-            child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: userId != "" ? 0 : 50),
-                  child: SizedBox(
-                    height: 100,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 10,
-                      cacheExtent: 50,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              userId = index.toString();
-                            });
-                          },
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      width: selectedIndex == index.toString()
-                                          ? 1
-                                          : 1,
-                                      color: selectedIndex == index.toString()
-                                          ? AppColors.errorColor
-                                          : AppColors.neutralColor,
-                                    ),
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(50),
-                                      child: Assets.app.defaultAvatar.image(
-                                        fit: BoxFit.contain,
-                                        width: 300,
-                                        height: 150,
-                                      )),
-                                ),
-                                const SizedBox(height: Sizes.sm),
-                                SizedBox(
-                                  width: 70,
-                                  child: Text(
-                                    'example',
-                                    maxLines: 1,
-                                    textAlign: TextAlign.center,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: AppTextTheme.lightTextTheme.bodySmall
-                                        ?.copyWith(),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                if (userId != null) renderHeader(),
-                const SizedBox(height: 12),
-                if (userId != null)
-                  ElevatedButton(
-                    onPressed: _onShareVideo,
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      minimumSize: const Size(double.infinity, 48),
-                    ),
-                    child: const Text("Share"),
-                  ),
-              ],
-            ),
-          ),
-        ));
+        return renderLoading();
       },
     );
+  }
+
+  Widget renderLoading() {
+    return Skeletonizer(
+        child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: userId != "" ? 0 : 50),
+            child: SizedBox(
+              height: 100,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 10,
+                cacheExtent: 50,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: selectedIndex == index.toString() ? 1 : 1,
+                              color: selectedIndex == index.toString()
+                                  ? AppColors.errorColor
+                                  : AppColors.neutralColor,
+                            ),
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(50),
+                              child: Assets.app.defaultAvatar.image(
+                                fit: BoxFit.contain,
+                                width: 50,
+                                height: 50,
+                              )),
+                        ),
+                        const SizedBox(height: Sizes.sm),
+                        SizedBox(
+                          width: 70,
+                          child: Text(
+                            'example',
+                            maxLines: 1,
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTextTheme.lightTextTheme.bodySmall
+                                ?.copyWith(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (userId != null) renderHeader(),
+          const SizedBox(height: 12),
+          if (userId != null)
+            ElevatedButton(
+              onPressed: _onShareVideo,
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                minimumSize: const Size(double.infinity, 48),
+              ),
+              child: const Text("Share"),
+            ),
+        ],
+      ),
+    ));
   }
 
   Widget renderHeader() {
@@ -344,6 +336,13 @@ class _UserFollowingVideoShareState
         HelpersUtils.navigatorState(context).pop();
       }
     });
+
+    Fluttertoast.showToast(
+        msg: 'Video share is in process...',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 2,
+        fontSize: 16.0);
 
     await ref.read(videoShareControllerProvider.notifier).onShareVideo(
         payload, userId ?? "", widget.videoId,

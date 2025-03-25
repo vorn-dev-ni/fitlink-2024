@@ -127,7 +127,7 @@ class UploadProgressController extends _$UploadProgressController {
   }) async {
     try {
       final path =
-          '${rootDir}/${DateTime.now().millisecondsSinceEpoch}-$fileName'; // Fix timestamp usage
+          '${rootDir}/${DateTime.now().millisecondsSinceEpoch}-$fileName';
       debugPrint('file path is $path');
       final uploadRef = _storage.ref().child(path);
 

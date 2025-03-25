@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/common/widget/video_tiktok.dart';
 import 'package:demo/features/home/controller/video/comment/comment_video_controller.dart';
 import 'package:demo/features/home/controller/video/single_video_controller.dart';
 import 'package:demo/features/home/controller/video/tiktok_video_controller.dart';
 import 'package:demo/features/home/views/main/work_out/comment_listing_tiktok.dart';
+import 'package:demo/features/home/views/main/work_out/social_like_comment_item.dart';
 import 'package:demo/features/home/views/main/work_out/tiktok_video_item.dart';
 import 'package:demo/features/home/views/single_profile/views/video_player_custom.dart';
+import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
@@ -59,54 +62,88 @@ class _MainSingleVideoState extends ConsumerState<MainSingleVideo> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: videoAsync.when(
-        data: (data) {
-          return Stack(
-            fit: StackFit.expand,
-            children: [
-              VideoPlayerTikTok(
-                videoUrl: data?.videoUrl ?? "",
-                videoPlayerController: data?.videoplayer,
-              ),
-              VideoTiktokItem(
-                caption: data!.caption ?? "",
-                videoId: widget.videoId,
-                userdata: data.userRef,
-                isUserliked: data.isUserliked,
-                commentCount: data.commentCount,
-                date: data.createdAt ?? Timestamp.now(),
-                tags: data.tag ?? [],
-                img: data.thumbnailUrl ?? "",
-                onCommentPressed: () {
-                  _showCommentBottomSheet(
-                    data.userRef?.id ?? "",
-                    widget.videoId,
+          data: (data) {
+            return data == null
+                ? const Center(
+                    child: Text(
+                    'This content is not available anymore.',
+                    style: TextStyle(color: AppColors.backgroundLight),
+                  ))
+                : Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      VideoPlayerTikTok(
+                        videoUrl: data?.videoUrl ?? "",
+                        videoPlayerController: data?.videoplayer,
+                      ),
+                      VideoTiktokItem(
+                        caption: data!.caption ?? "",
+                        videoId: widget.videoId,
+                        userdata: data.userRef,
+                        isUserliked: data.isUserliked,
+                        commentCount: data.commentCount,
+                        date: data.createdAt ?? Timestamp.now(),
+                        tags: data.tag ?? [],
+                        img: data.thumbnailUrl ?? "",
+                        onCommentPressed: () {
+                          _showCommentBottomSheet(
+                            data.userRef?.id ?? "",
+                            widget.videoId,
+                          );
+                        },
+                      ),
+                    ],
                   );
-                },
-              ),
-            ],
-          );
-        },
-        error: (error, stackTrace) {
-          return const Text('Error loading video');
-        },
-        loading: () => Skeletonizer(
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              buildVideoPlayer(),
-              VideoTiktokItem(
-                caption: 'Loading...',
-                videoId: widget.videoId,
-                commentCount: 0,
-                img: '',
-                date: Timestamp.now(),
-                onCommentPressed: () {},
-              ),
-            ],
-          ),
-        ),
-      ),
+          },
+          error: (error, stackTrace) {
+            return const Text('Error loading video');
+          },
+          loading: () => renderLoading()),
     );
+  }
+
+  Widget renderLoading() {
+    return Skeletonizer(
+        enabled: true,
+        child: Padding(
+            padding: const EdgeInsets.only(bottom: 0),
+            child: Container(
+                color: const Color.fromARGB(255, 188, 195, 204),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Positioned(
+                        bottom: 22.h,
+                        left: 20,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipOval(
+                              child: Assets.app.defaultAvatar.image(
+                                fit: BoxFit.cover,
+                                width: 50,
+                                height: 50,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text('This is an example...'),
+                            const Text('This...'),
+                          ],
+                        )),
+                    Positioned(
+                      right: 16,
+                      bottom: 0,
+                      child: SocialLikeCommentItem(
+                          videoId: '',
+                          onShare: () {},
+                          isLiked: false,
+                          onCommentPressed: () {},
+                          data: VideoTikTok()),
+                    )
+                  ],
+                ))));
   }
 
   Widget buildVideoPlayer() {

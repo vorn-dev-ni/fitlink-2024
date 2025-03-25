@@ -2,6 +2,7 @@ import 'package:demo/common/widget/video_tiktok.dart';
 import 'package:demo/data/repository/firebase/video_repo.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/video/video_service.dart';
+import 'package:demo/features/home/controller/video/tiktok_video_controller.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:video_player/video_player.dart';
@@ -28,6 +29,8 @@ class SingleVideoController extends _$SingleVideoController {
 
   Future<VideoTikTok?> fetchSingleVideo(String videoId) async {
     try {
+      ref.read(socialInteractonVideoControllerProvider(videoId ?? "").future);
+
       final video = await videoRepository.getVideoByIdOnce(videoId);
 
       return video?.copyWith(videoplayer: null);

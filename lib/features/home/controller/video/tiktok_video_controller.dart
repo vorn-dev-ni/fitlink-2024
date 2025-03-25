@@ -11,7 +11,7 @@ part 'tiktok_video_controller.g.dart';
 @Riverpod(keepAlive: true)
 class TiktokVideoController extends _$TiktokVideoController {
   late VideoRepository videoRepository;
-  int _limit = 4;
+  int _limit = 2;
   DocumentSnapshot? _lastDoc;
 
   @override
@@ -25,21 +25,27 @@ class TiktokVideoController extends _$TiktokVideoController {
 
   void disposeVideoControllers() {
     if (state is AsyncData<List<VideoTikTok>>) {
-      for (var controller in state!.value!) {
+      for (var controller in state.value!) {
         controller.videoplayer?.dispose();
       }
-      ref.invalidateSelf();
-      state = const AsyncLoading();
+      // Fluttertoast.showToast(msg: 'video has been disposed');
+
+      // ref.invalidateSelf();
+      // state = const AsyncLoading();
     }
   }
 
   void refresh() {
-    disposeVideoControllers();
+    state = const AsyncLoading();
+    // disposeVideoControllers();
+    ref.invalidateSelf();
+    // state = const AsyncLoading();
   }
 
   void clearState() {
-    _limit = 4;
+    _limit = 2;
     _lastDoc = null;
+    disposeVideoControllers();
   }
 
   Future trackViewCount(String videoId) async {
@@ -47,6 +53,43 @@ class TiktokVideoController extends _$TiktokVideoController {
       await videoRepository.setViewCount(videoId);
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future preloadVideo(int index) async {
+    try {
+      // Check if index is valid
+      if (state.value == null || index >= state.value!.length) {
+        return;
+      }
+
+      final videoList = state.value ?? [];
+      final video = videoList[index];
+
+      // Skip if the video is already initialized
+      if (video.isInitialized == true) {
+        return;
+      }
+
+      // Check if the video player controller is assigned but not initialized
+      if (!video.videoplayer!.value.isInitialized) {
+        Fluttertoast.showToast(msg: 'Preloading video at index $index');
+
+        // Initialize the video player
+        await video.videoplayer!.initialize();
+
+        // Mark the video as initialized
+
+        // Update the state with the new list containing the initialized video
+        final updatedList = List<VideoTikTok>.from(videoList);
+
+        state = AsyncData(updatedList);
+
+        Fluttertoast.showToast(msg: 'Done preloading video at index $index');
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Error while preloading video: ${e.toString()}');
     }
   }
 
@@ -66,22 +109,48 @@ class TiktokVideoController extends _$TiktokVideoController {
       if (videos.isNotEmpty) {
         _lastDoc = videos.last.lastDoc;
       }
+      final List<VideoTikTok> updatedVideos = [];
 
-      final updatedVideos = await Future.wait(
-        videos.map((video) async {
-          final videoController = VideoPlayerController.networkUrl(
-              Uri.parse(video.videoUrl ?? ""),
-              videoPlayerOptions: VideoPlayerOptions());
+      for (int i = 0; i < videos.length; i++) {
+        final video = videos[i];
+        final videoController = VideoPlayerController.networkUrl(
+          Uri.parse(video.videoUrl ?? ""),
+          videoPlayerOptions: VideoPlayerOptions(),
+        );
 
+        if (i <= 1) {
           await videoController.initialize();
-          ref.read(
-              socialInteractonVideoControllerProvider(video.documentID ?? "")
-                  .future);
+        }
 
-          return video.copyWith(videoplayer: videoController);
-        }),
-        eagerError: true,
-      );
+        ref.read(
+          socialInteractonVideoControllerProvider(video.documentID ?? "")
+              .future,
+        );
+        if (i <= 1) {
+          updatedVideos.add(video.copyWith(
+              videoplayer: videoController, isInitialized: true));
+        } else {
+          updatedVideos.add(video.copyWith(videoplayer: videoController));
+        }
+      }
+
+      // final updatedVideos = await Future.wait(
+      //   videos.map((video) async {
+      //     final videoController = VideoPlayerController.networkUrl(
+      //         Uri.parse(video.videoUrl ?? ""),
+      //         videoPlayerOptions: VideoPlayerOptions());
+      //     if (videoController.value.isInitialized == false) {
+      //       await videoController.initialize();
+      //     }
+
+      //     ref.read(
+      //         socialInteractonVideoControllerProvider(video.documentID ?? "")
+      //             .future);
+
+      //     return video.copyWith(videoplayer: videoController);
+      //   }),
+      //   eagerError: true,
+      // );
 
       if (loadMore && state.value != null) {
         state = AsyncData([...state.value!, ...updatedVideos]);
@@ -89,7 +158,7 @@ class TiktokVideoController extends _$TiktokVideoController {
 
       return updatedVideos;
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error fetching video ${e.toString()}');
+      Fluttertoast.showToast(msg: 'Video is in proessing...');
       rethrow;
     }
   }

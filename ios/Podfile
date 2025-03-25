@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '15.0' # or the minimum version you want to support
+platform :ios, '14.0' # or the minimum version you want to support
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -29,6 +29,7 @@ flutter_ios_podfile_setup
 
 target 'Runner' do
   use_frameworks!
+  # use_frameworks! :linkage => :static
   pod 'Firebase/Core' # Ensure you have the Firebase pod needed
   pod 'FirebaseAppCheck', '~> 11.8.0'
   use_modular_headers! # Optional; keep if needed for other pods
@@ -45,6 +46,14 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
      target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
+      config.build_settings['SWIFT_VERSION'] = '5.0'
+
+      # Set the optimization level for Debug and Release configurations
+    
+      # config.build_settings['SWIFT_OPTIMIZATION_LEVEL'] = '-Onone'
+    
+
       # You can remove unused permissions here
       # for more information: https://github.com/Baseflow/flutter-permission-handler/blob/main/permission_handler_apple/ios/Classes/PermissionHandlerEnums.h
       # e.g. when you don't need camera permission, just add 'PERMISSION_CAMERA=0'

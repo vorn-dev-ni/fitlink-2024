@@ -49,7 +49,7 @@ class _SocialLikeCommentItemState extends ConsumerState<SocialLikeCommentItem> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: -30,
+      bottom: 0,
       right: 10,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -68,7 +68,7 @@ class _SocialLikeCommentItemState extends ConsumerState<SocialLikeCommentItem> {
                         const Shadow(
                           offset: Offset(0, 2),
                           blurRadius: 4.0,
-                          color: Colors.black, // Black shadow
+                          color: Colors.black,
                         ),
                       ],
                     ),
@@ -114,29 +114,72 @@ class _SocialLikeCommentItemState extends ConsumerState<SocialLikeCommentItem> {
             widget.onCommentPressed();
           }),
           const SizedBox(height: 20),
-          _buildIcon(
-              Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                        color: AppColors.neutralBlack.withOpacity(0.3),
-                        blurRadius: 19,
-                        offset: const Offset(0, 0))
-                  ],
-                ),
-                child: Assets.app.shareOption.image(
-                  fit: BoxFit.cover,
-                  width: 33,
-                  height: 33,
-                  color: AppColors.backgroundLight,
-                ),
-              ),
-              widget.data.shareCount?.toString() ?? '0', () {
-            if (!HelpersUtils.isAuthenticated(context)) {
-              return;
-            }
-            widget.onShare();
-          }),
+
+          widget.receiverID == ""
+              ? _buildIcon(
+                  LikeButton(
+                    isLiked: hasLiked,
+                    countPostion: CountPostion.bottom,
+                    countBuilder: (likeCount, isLiked, text) {
+                      return Text(
+                        '$likeCount',
+                        style: AppTextTheme.lightTextTheme.bodyMedium?.copyWith(
+                          color: AppColors.backgroundLight,
+                          fontWeight: FontWeight.w400,
+                          shadows: [
+                            const Shadow(
+                              offset: Offset(0, 2),
+                              blurRadius: 4.0,
+                              color: Colors.black,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    likeCountPadding: const EdgeInsets.only(right: 0),
+                    likeCount: widget.data.likeCount ?? 0,
+                    likeCountAnimationDuration:
+                        const Duration(milliseconds: 300),
+                    likeBuilder: (bool isLiked) => Icon(
+                      shadows: [
+                        Shadow(
+                            color: AppColors.neutralBlack.withOpacity(0.5),
+                            blurRadius: 19,
+                            offset: const Offset(0, 0))
+                      ],
+                      isLiked
+                          ? CupertinoIcons.heart_fill
+                          : CupertinoIcons.heart_fill,
+                      size: Sizes.iconLg,
+                      color: isLiked ? Colors.red : AppColors.backgroundLight,
+                    ),
+                    onTap: (isLiked) => _onTapLiked(isLiked, widget.receiverID),
+                  ),
+                  "",
+                  () {})
+              : _buildIcon(
+                  Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                            color: AppColors.neutralBlack.withOpacity(0.3),
+                            blurRadius: 50,
+                            offset: const Offset(0, 0))
+                      ],
+                    ),
+                    child: Assets.app.shareOption.image(
+                      fit: BoxFit.cover,
+                      width: 33,
+                      height: 33,
+                      color: AppColors.backgroundLight,
+                    ),
+                  ),
+                  widget.data.shareCount?.toString() ?? '0', () {
+                  if (!HelpersUtils.isAuthenticated(context)) {
+                    return;
+                  }
+                  widget.onShare();
+                }),
           SizedBox(height: 20.h),
         ],
       ),

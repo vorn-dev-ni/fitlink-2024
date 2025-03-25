@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:demo/features/home/controller/video/tiktok_video_controller.dart';
 import 'package:demo/utils/constant/app_colors.dart';
+import 'package:demo/utils/device/device_utils.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerTikTok extends ConsumerStatefulWidget {
@@ -68,9 +70,10 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
 
     // if (widget.videoPlayerController?.value.isInitialized == false) {
     //   await _videoPlayerController?.initialize();
-    //   _videoPlayerController!.play();
-    //   Fluttertoast.showToast(
-    //       msg: 'init is ${widget.videoPlayerController?.value?.isInitialized}');
+    //   await _videoPlayerController!.play();
+    //   setState(() {});
+    //   // Fluttertoast.showToast(
+    //   //     msg: 'init is ${widget.videoPlayerController?.value?.isInitialized}');
     // }
     _videoPlayerController?.setLooping(true);
 
@@ -89,6 +92,9 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
   }
 
   void _togglePlayPause() {
+    if (_videoPlayerController?.value?.isInitialized == false) {
+      return;
+    }
     if (_isPlaying) {
       _videoPlayerController?.pause();
     } else {
@@ -138,8 +144,7 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (_videoPlayerController == null) return;
     if (state == AppLifecycleState.resumed) {
-      if (_videoPlayerController!.value.isInitialized &&
-          _videoPlayerController!.value.isPlaying) {
+      if (_videoPlayerController!.value.isInitialized) {
         _videoPlayerController!.play();
       }
     } else if (state == AppLifecycleState.paused) {
@@ -157,6 +162,7 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
               fit: StackFit.expand,
               children: [
                 fullScreen(_videoPlayerController!),
+
                 if (_isBuffering == false && _isSeeking == false && !_isPlaying)
                   renderPausePlay(),
 
@@ -202,8 +208,8 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
 
   Widget fullScreen(VideoPlayerController controller) {
     return Transform.scale(
-      scaleY: 0.6,
-      scaleX: 0.55,
+      scaleY: DeviceUtils.isAndroid() ? 0.6 : 1,
+      scaleX: DeviceUtils.isAndroid() ? 0.55 : 1,
       child: FittedBox(
         fit: BoxFit.cover,
         child: SizedBox(

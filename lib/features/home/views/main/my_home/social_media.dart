@@ -69,7 +69,7 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
         children: [
           asyncValues.when(
             data: (data) {
-              return data!.isEmpty
+              return data == null || data.isEmpty
                   ? emptyContent(title: 'Oop, No post for today yet!!!')
                   : ListView.builder(
                       cacheExtent: 500,

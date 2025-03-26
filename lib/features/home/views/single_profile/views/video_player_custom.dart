@@ -9,7 +9,6 @@ import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerTikTok extends ConsumerStatefulWidget {
@@ -68,13 +67,6 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
       _videoPlayerController = VideoPlayerController.file(file)..initialize();
     }
 
-    // if (widget.videoPlayerController?.value.isInitialized == false) {
-    //   await _videoPlayerController?.initialize();
-    //   await _videoPlayerController!.play();
-    //   setState(() {});
-    //   // Fluttertoast.showToast(
-    //   //     msg: 'init is ${widget.videoPlayerController?.value?.isInitialized}');
-    // }
     _videoPlayerController?.setLooping(true);
 
     if (widget.paging == false) {
@@ -144,10 +136,11 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (_videoPlayerController == null) return;
     if (state == AppLifecycleState.resumed) {
-      if (_videoPlayerController!.value.isInitialized) {
+      if (_videoPlayerController!.value.isInitialized &&
+          widget.paging == false) {
         _videoPlayerController!.play();
       }
-    } else if (state == AppLifecycleState.paused) {
+    } else if (state == AppLifecycleState.paused && widget.paging == false) {
       _videoPlayerController!.pause();
     }
   }

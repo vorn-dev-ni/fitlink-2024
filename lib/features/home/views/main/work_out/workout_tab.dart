@@ -12,7 +12,6 @@ import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -40,7 +39,6 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
 
     _pageController.addListener(() {
       final newPage = _pageController.page?.round() ?? 0;
-
       if (newPage != _currentIndex) {
         _currentIndex = newPage;
         _handleVideoPlayback(newPage);
@@ -53,20 +51,52 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
   void _handleVideoPlayback(int index) async {
     final videoList = ref.read(tiktokVideoControllerProvider).value ?? [];
 
-    // Ensure the current video is loaded
-    if (index >= 0 && index < videoList.length) {
-      // Prevent preloading if the video at index + 2 isn't initialized yet
-      final nextIndex = index + 1;
-      if (nextIndex >= videoList.length - 1 && !isFetchingMore) {
-        setState(() => isFetchingMore = true);
-        final newVideos =
-            await ref.read(tiktokVideoControllerProvider.notifier).loadMore();
-        if (newVideos != null) {
-          setState(() => isFetchingMore = false);
-        }
+    if (index < 0 || index >= videoList.length) return;
+
+    // Dispose video at index - 2
+    final disposeIndex = index - 2;
+    if (disposeIndex >= 0) {
+      ref
+          .read(tiktokVideoControllerProvider.notifier)
+          .disposeVideo(disposeIndex);
+    }
+
+    // Preload video at index + 2
+    final preloadIndex = index + 2;
+    if (preloadIndex < videoList.length) {
+      ref
+          .read(tiktokVideoControllerProvider.notifier)
+          .preloadVideo(preloadIndex);
+    }
+
+    // Fetch more if needed
+    final nextIndex = index + 1;
+    if (nextIndex >= videoList.length - 1 && !isFetchingMore) {
+      setState(() => isFetchingMore = true);
+      final newVideos =
+          await ref.read(tiktokVideoControllerProvider.notifier).loadMore();
+      if (newVideos != null) {
+        setState(() => isFetchingMore = false);
       }
     }
   }
+
+  // void _handleVideoPlayback(int index) async {
+  //   final videoList = ref.read(tiktokVideoControllerProvider).value ?? [];
+
+  //   if (index >= 0 && index < videoList.length) {
+  //     // Prevent preloading if the video at index + 2 isn't initialized yet
+  //     final nextIndex = index + 1;
+  //     if (nextIndex >= videoList.length - 1 && !isFetchingMore) {
+  //       setState(() => isFetchingMore = true);
+  //       final newVideos =
+  //           await ref.read(tiktokVideoControllerProvider.notifier).loadMore();
+  //       if (newVideos != null) {
+  //         setState(() => isFetchingMore = false);
+  //       }
+  //     }
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -100,6 +130,8 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
                         return VisibilityDetector(
                           key: ValueKey(video.documentID),
                           onVisibilityChanged: (visibilityInfo) async {
+                            debugPrint(
+                                "Visibilit is ${visibilityInfo.visibleFraction}");
                             if (visibilityInfo.visibleFraction >= 0.7) {
                               if (video.videoplayer != null &&
                                   video.videoplayer!.value.isInitialized) {
@@ -131,10 +163,14 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
                           child: Stack(
                             fit: StackFit.expand,
                             children: [
-                              VideoPlayerTikTok(
-                                  paging: true,
-                                  videoId: video.documentID,
-                                  videoPlayerController: video.videoplayer),
+                              video.videoplayer?.value.isInitialized == true
+                                  ? VideoPlayerTikTok(
+                                      paging: true,
+                                      videoId: video.documentID,
+                                      videoPlayerController: video.videoplayer)
+                                  : const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
                               VideoTiktokItem(
                                 caption: video.caption,
                                 videoId: video.documentID,

@@ -11,7 +11,7 @@ part 'tiktok_video_controller.g.dart';
 @Riverpod(keepAlive: true)
 class TiktokVideoController extends _$TiktokVideoController {
   late VideoRepository videoRepository;
-  int _limit = 2;
+  int _limit = 4;
   DocumentSnapshot? _lastDoc;
 
   @override
@@ -43,7 +43,7 @@ class TiktokVideoController extends _$TiktokVideoController {
   }
 
   void clearState() {
-    _limit = 2;
+    _limit = 4;
     _lastDoc = null;
     disposeVideoControllers();
   }
@@ -53,6 +53,13 @@ class TiktokVideoController extends _$TiktokVideoController {
       await videoRepository.setViewCount(videoId);
     } catch (e) {
       rethrow;
+    }
+  }
+
+  void disposeVideo(int index) {
+    final videoList = state.value ?? [];
+    if (index >= 0 && index < videoList.length) {
+      videoList[index].videoplayer?.dispose();
     }
   }
 

@@ -7,7 +7,7 @@ part of 'tiktok_video_controller.dart';
 // **************************************************************************
 
 String _$tiktokVideoControllerHash() =>
-    r'e97c9d93190a7e166b7b7fb06e284368385128ca';
+    r'a7ac3374ca1fc31fd7135d95b8734e0941c937a2';
 
 /// See also [TiktokVideoController].
 @ProviderFor(TiktokVideoController)
@@ -24,7 +24,7 @@ final tiktokVideoControllerProvider =
 
 typedef _$TiktokVideoController = AsyncNotifier<List<VideoTikTok>>;
 String _$socialInteractonVideoControllerHash() =>
-    r'991b44880a354ce9ea0364d9da70bbe1b7872106';
+    r'e253c35fbff38c2adfa9708bc2da83e357a1cefa';
 
 /// Copied from Dart SDK
 class _SystemHash {

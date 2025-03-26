@@ -1,4 +1,5 @@
 import 'package:demo/common/widget/video_tiktok.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:async';
 import 'package:demo/features/home/controller/video/comment/comment_video_controller.dart';
@@ -18,13 +19,18 @@ class SocialLikeCommentItem extends ConsumerStatefulWidget {
   bool isLiked;
   VideoTikTok data;
   VoidCallback onCommentPressed;
+  VoidCallback? onEdit;
+
   VoidCallback onShare;
   String? receiverID;
+  bool? showEditIcon;
 
   SocialLikeCommentItem(
       {super.key,
       required this.videoId,
       required this.onShare,
+      this.showEditIcon,
+      this.onEdit,
       this.receiverID,
       required this.isLiked,
       required this.onCommentPressed,
@@ -180,6 +186,28 @@ class _SocialLikeCommentItemState extends ConsumerState<SocialLikeCommentItem> {
                   }
                   widget.onShare();
                 }),
+          const SizedBox(height: 20),
+          if (widget.showEditIcon == true &&
+              widget.receiverID == FirebaseAuth.instance.currentUser?.uid)
+            _buildIcon(
+                Icon(
+                  shadows: [
+                    Shadow(
+                        color: AppColors.neutralBlack.withOpacity(0.5),
+                        blurRadius: 19,
+                        offset: const Offset(0, 0))
+                  ],
+                  Icons.more_horiz,
+                  color: AppColors.backgroundLight,
+                  size: Sizes.iconXl,
+                ),
+                '', () {
+              if (!HelpersUtils.isAuthenticated(context)) {
+                return;
+              }
+              widget.onEdit != null ? widget.onEdit!() : null;
+            }),
+
           SizedBox(height: 20.h),
         ],
       ),

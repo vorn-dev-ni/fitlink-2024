@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:demo/common/widget/app_loading.dart';
+import 'package:demo/common/widget/backdrop_loading.dart';
 import 'package:demo/common/widget/empty_content.dart';
 import 'package:demo/common/widget/video_tiktok.dart';
+import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/features/home/controller/video/comment/comment_video_controller.dart';
 import 'package:demo/features/home/controller/video/single_video_controller.dart';
 import 'package:demo/features/home/controller/video/tiktok_video_controller.dart';
@@ -59,46 +62,52 @@ class _MainSingleVideoState extends ConsumerState<MainSingleVideo> {
   @override
   Widget build(BuildContext context) {
     final videoAsync = ref.watch(singleVideoControllerProvider(widget.videoId));
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: videoAsync.when(
-          data: (data) {
-            return data == null
-                ? const Center(
-                    child: Text(
-                    'This content is not available anymore.',
-                    style: TextStyle(color: AppColors.backgroundLight),
-                  ))
-                : Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      VideoPlayerTikTok(
-                        videoUrl: data?.videoUrl ?? "",
-                        videoPlayerController: data?.videoplayer,
-                      ),
-                      VideoTiktokItem(
-                        caption: data!.caption ?? "",
-                        videoId: widget.videoId,
-                        userdata: data.userRef,
-                        isUserliked: data.isUserliked,
-                        commentCount: data.commentCount,
-                        date: data.createdAt ?? Timestamp.now(),
-                        tags: data.tag ?? [],
-                        img: data.thumbnailUrl ?? "",
-                        onCommentPressed: () {
-                          _showCommentBottomSheet(
-                            data.userRef?.id ?? "",
-                            widget.videoId,
-                          );
-                        },
-                      ),
-                    ],
-                  );
-          },
-          error: (error, stackTrace) {
-            return const Text('Error loading video');
-          },
-          loading: () => renderLoading()),
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: Colors.black,
+          body: videoAsync.when(
+              data: (data) {
+                return data == null
+                    ? const Center(
+                        child: Text(
+                        'This content is not available anymore.',
+                        style: TextStyle(color: AppColors.backgroundLight),
+                      ))
+                    : Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          VideoPlayerTikTok(
+                            videoUrl: data?.videoUrl ?? "",
+                            videoPlayerController: data?.videoplayer,
+                          ),
+                          VideoTiktokItem(
+                            caption: data!.caption ?? "",
+                            videoId: widget.videoId,
+                            userdata: data.userRef,
+                            isUserliked: data.isUserliked,
+                            commentCount: data.commentCount,
+                            date: data.createdAt ?? Timestamp.now(),
+                            tags: data.tag ?? [],
+                            img: data.thumbnailUrl ?? "",
+                            isProfile: true,
+                            onCommentPressed: () {
+                              _showCommentBottomSheet(
+                                data.userRef?.id ?? "",
+                                widget.videoId,
+                              );
+                            },
+                          ),
+                        ],
+                      );
+              },
+              error: (error, stackTrace) {
+                return const Text('Error loading video');
+              },
+              loading: () => renderLoading()),
+        ),
+        renderbackDrop()
+      ],
     );
   }
 
@@ -233,6 +242,11 @@ class _MainSingleVideoState extends ConsumerState<MainSingleVideo> {
         );
       });
     }
+  }
+
+  Widget renderbackDrop() {
+    final loading = ref.watch(appLoadingStateProvider);
+    return loading == true ? backDropLoading() : const SizedBox();
   }
 
   // void bindingController() async {

@@ -9,6 +9,7 @@ import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerTikTok extends ConsumerStatefulWidget {
@@ -138,9 +139,11 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
     if (state == AppLifecycleState.resumed) {
       if (_videoPlayerController!.value.isInitialized &&
           widget.paging == false) {
+        // Fluttertoast.showToast(msg: 'play app');
         _videoPlayerController!.play();
       }
     } else if (state == AppLifecycleState.paused && widget.paging == false) {
+      Fluttertoast.showToast(msg: 'paused app');
       _videoPlayerController!.pause();
     }
   }

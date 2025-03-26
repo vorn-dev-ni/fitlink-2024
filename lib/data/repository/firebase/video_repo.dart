@@ -8,6 +8,7 @@ import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -43,6 +44,35 @@ class VideoRepository {
       return videos;
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<void> deleteVideo(String videoId) async {
+    try {
+      final videoDocRef = _firebaseFirestore.collection('videos').doc(videoId);
+      final videoDoc = await videoDocRef.get();
+
+      if (!videoDoc.exists) {
+        throw Exception("Video not found");
+      }
+
+      final videoData = videoDoc.data()!;
+      final videoUrl = videoData['videoUrl'] as String?;
+      final thumbnailUrl = videoData['thumbnailUrl'] as String?;
+
+      if (videoUrl != null && videoUrl.isNotEmpty) {
+        final videoPath = FirebaseStorage.instance.refFromURL(videoUrl);
+        await videoPath.delete();
+      }
+
+      if (thumbnailUrl != null && thumbnailUrl.isNotEmpty) {
+        final thumbPath = FirebaseStorage.instance.refFromURL(thumbnailUrl);
+        await thumbPath.delete();
+      }
+
+      await videoDocRef.delete();
+    } catch (e) {
+      throw Exception("Failed to delete video: $e");
     }
   }
 

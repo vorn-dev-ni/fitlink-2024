@@ -13,7 +13,6 @@ import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -22,6 +21,7 @@ class VideoTiktokItem extends ConsumerStatefulWidget {
   final String img;
   String? caption;
   int? likeCount;
+  bool? isProfile;
   int? commentCount;
   String? videoId;
   int? shareCount;
@@ -37,6 +37,7 @@ class VideoTiktokItem extends ConsumerStatefulWidget {
       this.videoId,
       required this.date,
       this.tags,
+      this.isProfile,
       this.isUserliked,
       required this.onCommentPressed,
       this.likeCount,
@@ -59,11 +60,11 @@ class _VideoTiktokItemState extends ConsumerState<VideoTiktokItem>
     return Stack(
       children: [
         SocialInteractonVideo(
-          onCommentPressed: widget.onCommentPressed,
-          videoId: widget.videoId ?? "",
-          isUserliked: widget.isUserliked,
-          receiverID: widget.userdata?.id,
-        ),
+            onCommentPressed: widget.onCommentPressed,
+            videoId: widget.videoId ?? "",
+            isUserliked: widget.isUserliked,
+            receiverID: widget.userdata?.id,
+            showEditIcon: widget.isProfile),
         MetaDataVideo(
           caption: widget.caption ?? "This is an",
           date: widget.date,

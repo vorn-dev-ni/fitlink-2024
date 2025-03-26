@@ -63,36 +63,30 @@ class TiktokVideoController extends _$TiktokVideoController {
 
     if (index >= 0 && index < videoList.length) {
       final video = videoList[index];
-
-      // Dispose the controller
-
+      if (video.isInitialized == false || video.isInitialized == null) {
+        return;
+      }
       video.videoplayer == null;
-      // video.videoplayer?.dispose();
-      // Update the video object in the list (set controller to null, isInitialized to false)
       final updatedVideo = video.copyWith(isInitialized: false);
       final updatedList = List<VideoTikTok>.from(videoList);
       updatedList[index] = updatedVideo;
-      // Update state
       state = AsyncData(updatedList);
-
-      Fluttertoast.showToast(msg: 'Disposed video at index $index');
+      // Fluttertoast.showToast(msg: 'Disposed video at index $index');
     }
   }
 
-  // void disposeVideo(int index) {
-  //   final videoList = state.value ?? [];
-  //   if (index >= 0 && index < videoList.length) {
-  //     videoList[index].videoplayer?.dispose();
-  //     Fluttertoast.showToast(msg: 'Dispose video at index $index');
-  //   }
-  // }
-
-  Future preloadVideo(int index, {String? message}) async {
+  Future preloadVideo(int index, {String? message = 'Preload video'}) async {
     try {
       if (state.value == null || index >= state.value!.length) return;
       final videoList = state.value!;
       final video = videoList[index];
+
       if (video.isInitialized == true) return;
+
+      // Fluttertoast.showToast(
+      //     msg: '${message} at index ${index}',
+      //     toastLength: Toast.LENGTH_LONG,
+      //     fontSize: 16.0);
       if (video.videoplayer != null && video.isInitialized == null ||
           video.isInitialized == false) {
         await video.videoplayer?.initialize();
@@ -207,6 +201,14 @@ class SocialInteractonVideoController
       }
 
       yield* videoRepository.getVideoCounts(videoId);
+    } catch (e) {
+      throw Exception("Failed to fetch interaction data: $e");
+    }
+  }
+
+  Future deleteVideo(videoId) async {
+    try {
+      return await videoRepository.deleteVideo(videoId);
     } catch (e) {
       throw Exception("Failed to fetch interaction data: $e");
     }

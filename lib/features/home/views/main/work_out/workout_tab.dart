@@ -12,6 +12,7 @@ import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -39,9 +40,13 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
 
     _pageController.addListener(() {
       final newPage = _pageController.page?.round() ?? 0;
+
       if (newPage != _currentIndex) {
+        final isNext = newPage > _currentIndex;
         _currentIndex = newPage;
-        _handleVideoPlayback(newPage);
+        _handleVideoPlayback(
+          newPage,
+        );
       }
     });
 
@@ -49,37 +54,128 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
   }
 
   void _handleVideoPlayback(int index) async {
+    final controller = ref.read(tiktokVideoControllerProvider.notifier);
     final videoList = ref.read(tiktokVideoControllerProvider).value ?? [];
 
     if (index < 0 || index >= videoList.length) return;
 
-    // Dispose video at index - 2
-    final disposeIndex = index - 2;
-    if (disposeIndex >= 0) {
-      ref
-          .read(tiktokVideoControllerProvider.notifier)
-          .disposeVideo(disposeIndex);
+    // Dispose anything < index - 1
+    for (int i = 0; i < index - 1; i++) {
+      controller.disposeVideo(i);
     }
 
-    // Preload video at index + 2
-    final preloadIndex = index + 2;
+    // Re-initialize index - 1 if needed (check if we're not at the start of the list)
+    if (index > 0) {
+      final reInitIndex = index - 1;
+      if (reInitIndex >= 0 &&
+          reInitIndex < videoList.length &&
+          videoList[reInitIndex].isInitialized != true) {
+        debugPrint("reInitIndex ${reInitIndex}");
+        await controller.preloadVideo(reInitIndex, message: 'reInitIndex');
+      }
+    }
+
+    // Preload index + 1 (adjacent)
+    final preloadIndex = index + 1;
     if (preloadIndex < videoList.length) {
-      ref
-          .read(tiktokVideoControllerProvider.notifier)
-          .preloadVideo(preloadIndex);
+      await controller.preloadVideo(preloadIndex);
     }
 
-    // Fetch more if needed
-    final nextIndex = index + 1;
-    if (nextIndex >= videoList.length - 1 && !isFetchingMore) {
+    // Preload index + 2 (ahead)
+    final aheadIndex = index + 2;
+    if (aheadIndex < videoList.length) {
+      await controller.preloadVideo(aheadIndex);
+    }
+
+    // Load more if getting close to end
+    if (index + 2 >= videoList.length - 1 && !isFetchingMore) {
       setState(() => isFetchingMore = true);
-      final newVideos =
-          await ref.read(tiktokVideoControllerProvider.notifier).loadMore();
+      final newVideos = await controller.loadMore();
       if (newVideos != null) {
         setState(() => isFetchingMore = false);
       }
     }
   }
+
+  // void _handleVideoPlayback(int index) async {
+  //   final controller = ref.read(tiktokVideoControllerProvider.notifier);
+  //   final videoList = ref.read(tiktokVideoControllerProvider).value ?? [];
+
+  //   if (index < 0 || index >= videoList.length) return;
+
+  //   // Dispose anything < index - 1
+  //   for (int i = 0; i < index - 1; i++) {
+  //     controller.disposeVideo(i);
+  //   }
+
+  //   // Re-initialize index - 1 if needed
+  //   final reInitIndex = index - 1;
+
+  //   if (reInitIndex >= 0 &&
+  //       reInitIndex < videoList.length &&
+  //       videoList[reInitIndex].isInitialized == false) {
+  //     Fluttertoast.showToast(msg: 'ReisInitialized at index ${reInitIndex}');
+  //     await controller.preloadVideo(reInitIndex);
+  //   }
+
+  //   // Preload index + 1 (adjacent)
+  //   final preloadIndex = index + 1;
+  //   if (preloadIndex < videoList.length) {
+  //     await controller.preloadVideo(preloadIndex);
+  //   }
+
+  //   // Preload index + 2 (ahead)
+  //   final aheadIndex = index + 2;
+  //   if (aheadIndex < videoList.length) {
+  //     await controller.preloadVideo(aheadIndex);
+  //   }
+
+  //   // Load more if getting close to end
+  //   if (index + 2 >= videoList.length - 1 && !isFetchingMore) {
+  //     setState(() => isFetchingMore = true);
+  //     final newVideos = await controller.loadMore();
+  //     if (newVideos != null) {
+  //       setState(() => isFetchingMore = false);
+  //     }
+  //   }
+  // }
+
+  // void _handleVideoPlayback(int index) async {
+  //   final videoList = ref.read(tiktokVideoControllerProvider).value ?? [];
+  //   final controller = ref.read(tiktokVideoControllerProvider.notifier);
+
+  //   if (index < 0 || index >= videoList.length) return;
+
+  //   // Dispose video at index - 2
+  //   final disposeIndex = index - 2;
+  //   if (disposeIndex >= 0) {
+  //     controller.disposeVideo(disposeIndex);
+  //   }
+
+  //   // Re-initialize video at index - 1 if it was previously disposed
+  //   final reInitIndex = index - 1;
+  //   if (reInitIndex >= 0 &&
+  //       reInitIndex < videoList.length &&
+  //       (videoList[reInitIndex].isInitialized != true)) {
+  //     await controller.preloadVideo(reInitIndex);
+  //   }
+
+  //   // Preload video at index + 1
+  //   final preloadIndex = index + 1;
+  //   if (preloadIndex < videoList.length) {
+  //     await controller.preloadVideo(preloadIndex);
+  //   }
+
+  //   // Load more if near end
+  //   final nextIndex = index + 1;
+  //   if (nextIndex >= videoList.length - 1 && !isFetchingMore) {
+  //     setState(() => isFetchingMore = true);
+  //     final newVideos = await controller.loadMore();
+  //     if (newVideos != null) {
+  //       setState(() => isFetchingMore = false);
+  //     }
+  //   }
+  // }
 
   // void _handleVideoPlayback(int index) async {
   //   final videoList = ref.read(tiktokVideoControllerProvider).value ?? [];
@@ -130,8 +226,6 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
                         return VisibilityDetector(
                           key: ValueKey(video.documentID),
                           onVisibilityChanged: (visibilityInfo) async {
-                            debugPrint(
-                                "Visibilit is ${visibilityInfo.visibleFraction}");
                             if (visibilityInfo.visibleFraction >= 0.7) {
                               if (video.videoplayer != null &&
                                   video.videoplayer!.value.isInitialized) {
@@ -144,28 +238,14 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
                               }
                             }
                           },
-                          // onVisibilityChanged: (visibilityInfo) async {
-                          //   if (visibilityInfo.visibleFraction >= 0.7) {
-                          //     await ref
-                          //         .read(tiktokVideoControllerProvider.notifier)
-                          //         .preloadVideo(index + 2);
-                          //     if (!video.videoplayer!.value.isPlaying &&
-                          //         video.videoplayer != null &&
-                          //         video.videoplayer!.value!.isInitialized) {
-                          //       video.videoplayer!.play();
-                          //     }
-                          //   } else {
-                          //     if (video.videoplayer!.value.isPlaying) {
-                          //       video.videoplayer!.pause();
-                          //     }
-                          //   }
-                          // },
                           child: Stack(
                             fit: StackFit.expand,
                             children: [
-                              video.videoplayer?.value.isInitialized == true
+                              video.isInitialized == true &&
+                                      video.videoplayer != null
                                   ? VideoPlayerTikTok(
                                       paging: true,
+                                      key: UniqueKey(),
                                       videoId: video.documentID,
                                       videoPlayerController: video.videoplayer)
                                   : const Center(

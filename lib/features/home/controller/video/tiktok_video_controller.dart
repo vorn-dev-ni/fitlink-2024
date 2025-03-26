@@ -3,6 +3,7 @@ import 'package:demo/common/widget/video_tiktok.dart';
 import 'package:demo/data/repository/firebase/video_repo.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/video/video_service.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:video_player/video_player.dart';
@@ -26,6 +27,7 @@ class TiktokVideoController extends _$TiktokVideoController {
   void disposeVideoControllers() {
     if (state is AsyncData<List<VideoTikTok>>) {
       for (var controller in state.value!) {
+        controller.videoplayer == null;
         controller.videoplayer?.dispose();
       }
       // Fluttertoast.showToast(msg: 'video has been disposed');
@@ -58,41 +60,46 @@ class TiktokVideoController extends _$TiktokVideoController {
 
   void disposeVideo(int index) {
     final videoList = state.value ?? [];
+
     if (index >= 0 && index < videoList.length) {
-      videoList[index].videoplayer?.dispose();
+      final video = videoList[index];
+
+      // Dispose the controller
+
+      video.videoplayer == null;
+      // video.videoplayer?.dispose();
+      // Update the video object in the list (set controller to null, isInitialized to false)
+      final updatedVideo = video.copyWith(isInitialized: false);
+      final updatedList = List<VideoTikTok>.from(videoList);
+      updatedList[index] = updatedVideo;
+      // Update state
+      state = AsyncData(updatedList);
+
+      Fluttertoast.showToast(msg: 'Disposed video at index $index');
     }
   }
 
-  Future preloadVideo(int index) async {
+  // void disposeVideo(int index) {
+  //   final videoList = state.value ?? [];
+  //   if (index >= 0 && index < videoList.length) {
+  //     videoList[index].videoplayer?.dispose();
+  //     Fluttertoast.showToast(msg: 'Dispose video at index $index');
+  //   }
+  // }
+
+  Future preloadVideo(int index, {String? message}) async {
     try {
-      // Check if index is valid
-      if (state.value == null || index >= state.value!.length) {
-        return;
-      }
-
-      final videoList = state.value ?? [];
+      if (state.value == null || index >= state.value!.length) return;
+      final videoList = state.value!;
       final video = videoList[index];
-
-      // Skip if the video is already initialized
-      if (video.isInitialized == true) {
-        return;
-      }
-
-      // Check if the video player controller is assigned but not initialized
-      if (!video.videoplayer!.value.isInitialized) {
-        Fluttertoast.showToast(msg: 'Preloading video at index $index');
-
-        // Initialize the video player
-        await video.videoplayer!.initialize();
-
-        // Mark the video as initialized
-
-        // Update the state with the new list containing the initialized video
+      if (video.isInitialized == true) return;
+      if (video.videoplayer != null && video.isInitialized == null ||
+          video.isInitialized == false) {
+        await video.videoplayer?.initialize();
+        final updatedVideo = video.copyWith(isInitialized: true);
         final updatedList = List<VideoTikTok>.from(videoList);
-
+        updatedList[index] = updatedVideo;
         state = AsyncData(updatedList);
-
-        Fluttertoast.showToast(msg: 'Done preloading video at index $index');
       }
     } catch (e) {
       Fluttertoast.showToast(

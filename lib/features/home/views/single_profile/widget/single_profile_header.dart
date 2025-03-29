@@ -205,6 +205,9 @@ class _ProfileHeaderState extends ConsumerState<SingleProfileHeader> {
                             FollowMessageWidget(
                                 userId: widget.uid,
                                 unfollow: () async {
+                                  if (!mounted) {
+                                    return;
+                                  }
                                   final thisUserId =
                                       FirebaseAuth.instance.currentUser?.uid;
                                   if (thisUserId != null) {
@@ -217,6 +220,9 @@ class _ProfileHeaderState extends ConsumerState<SingleProfileHeader> {
                                   }
                                 },
                                 following: () async {
+                                  if (!mounted) {
+                                    return;
+                                  }
                                   final thisUserId =
                                       FirebaseAuth.instance.currentUser?.uid;
                                   if (thisUserId != null) {

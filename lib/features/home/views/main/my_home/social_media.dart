@@ -1,15 +1,17 @@
 import 'package:demo/common/widget/app_loading.dart';
 import 'package:demo/common/widget/empty_content.dart';
+import 'package:demo/core/riverpod/upload_progress.dart';
 import 'package:demo/features/home/controller/posts/post_loading_paging.dart';
-import 'package:demo/features/home/controller/posts/social_post_controller.dart';
 import 'package:demo/features/home/controller/posts/social_postone_controller.dart';
 import 'package:demo/features/home/controller/tab/home_scroll_controller.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/features/home/widget/posts/post_panel.dart';
+import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/helpers/permission_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pinch_zoom_release_unzoom/pinch_zoom_release_unzoom.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -56,8 +58,6 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
     super.initState();
   }
 
-  // This function will be triggered when scrolling
-
   @override
   Widget build(BuildContext context) {
     final asyncValues = ref.watch(socialPostoneControllerProvider);
@@ -71,9 +71,10 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
         children: [
           asyncValues.when(
             data: (data) {
-              return data!.isEmpty
+              return data == null || data.isEmpty
                   ? emptyContent(title: 'Oop, No post for today yet!!!')
                   : ListView.builder(
+                      cacheExtent: 200,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: data.length,
@@ -84,11 +85,11 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
                     );
             },
             error: (error, stackTrace) {
-              debugPrint(error.toString());
-              return SizedBox(
-                  height: 600,
-                  child:
-                      emptyContent(title: error.toString().substring(0, 200)));
+              String errorMessage = error.toString();
+              if (errorMessage.length > 100) {
+                errorMessage = errorMessage.substring(0, 100);
+              }
+              return emptyContent(title: errorMessage);
             },
             loading: () {
               return _build_loading();
@@ -136,7 +137,6 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
         isComment: true,
         key: ValueKey(post.postId),
         // url: "loading",
-
         twoFingersOn: () => setState(() => blockScroll = true),
         twoFingersOff: () => Future.delayed(
           PinchZoomReleaseUnzoomWidget.defaultResetDuration,
@@ -151,7 +151,6 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
     if (scrollController.position.atEdge) {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
-        debugPrint("Reach bottom");
         ref.read(socialPostoneControllerProvider.notifier).loadNextPage();
       }
     }
@@ -164,8 +163,9 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
     final loadingPaging = ref.watch(postLoadingPagingProvider);
     return loadingPaging
         ? Padding(
-            padding: const EdgeInsets.only(top: 5, bottom: 5),
-            child: appLoadingSpinner(),
+            padding: const EdgeInsets.only(top: 0, bottom: 100),
+            child: Lottie.asset(Assets.lotties.loadingTwo,
+                alignment: Alignment.topCenter, fit: BoxFit.cover, height: 30),
           )
         : const SizedBox();
   }

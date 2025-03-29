@@ -33,7 +33,7 @@ class _WorkoutTabViewState extends ConsumerState<WorkoutTabView> {
 
         // TabBar without AppBar
         const WorkoutTabBuild(
-          level: 'Intermediate',
+          level: '',
         ),
       ],
     );

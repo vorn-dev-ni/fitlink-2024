@@ -2,7 +2,6 @@ import 'package:demo/common/widget/horidivider.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/features/home/controller/workouts/activities_controller.dart';
 import 'package:demo/features/home/controller/workouts/excercises_controller.dart';
-import 'package:demo/features/home/controller/workouts/workout_date_controller.dart';
 import 'package:demo/features/home/widget/excercise/excercise_item.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';

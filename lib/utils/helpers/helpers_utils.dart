@@ -6,6 +6,8 @@ import 'package:demo/utils/device/device_utils.dart';
 import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get_thumbnail_video/index.dart';
 import 'package:location/location.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/enums.dart';
@@ -17,8 +19,10 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:permission_handler/permission_handler.dart';
+import 'package:get_thumbnail_video/video_thumbnail.dart';
 
 class HelpersUtils {
   HelpersUtils._();
@@ -32,6 +36,65 @@ class HelpersUtils {
       return null;
     }
   }
+
+  static Future<Map<String, dynamic>?> generateThumbnail(
+      String videoPath) async {
+    try {
+      // Get the thumbnail data from the video
+      final Uint8List? thumbnailData = await VideoThumbnail.thumbnailData(
+        video: videoPath,
+        imageFormat: ImageFormat.JPEG,
+        maxWidth: 128, // Set the max width for the thumbnail
+        quality: 25,
+      );
+
+      if (thumbnailData == null) {
+        Fluttertoast.showToast(msg: 'Failed to generate thumbnail');
+        return null;
+      }
+
+      // Return the thumbnail data directly without saving to a file
+      return {'data': thumbnailData};
+    } catch (e) {
+      // debugPrint('Error generating thumbnail: $e');
+      // Fluttertoast.showToast(msg: 'Error generating thumbnail: $e');
+      rethrow;
+    }
+  }
+//   static Future<void> generateAndUploadThumbnail(String videoPath) async {
+//     try {
+//       // Get the thumbnail data from the video
+//       final Uint8List? thumbnailData = await VideoThumbnail.thumbnailData(
+//         video: videoPath,
+//         imageFormat: ImageFormat.JPEG,
+//         maxWidth: 128, // Set the max width for the thumbnail
+//         quality: 25,   // Set the quality of the thumbnail (0-100)
+//       );
+
+//       if (thumbnailData == null) {
+//         Fluttertoast.showToast(msg: 'Failed to generate thumbnail');
+//         return;
+//       }
+
+//       // Save the thumbnail data as a file
+//       final directory = await getTemporaryDirectory();
+//       final thumbnailFile = File('${directory.path}/thumbnail_${DateTime.now().millisecondsSinceEpoch}.jpg');
+
+//       // Write the thumbnail data to a file
+//       await thumbnailFile.writeAsBytes(thumbnailData);
+
+//       // Upload the file to Firebase Storage
+//       final storageRef = FirebaseStorage.instance.ref().child('thumbnails/${DateTime.now().millisecondsSinceEpoch}.jpg');
+
+//       // Upload the file
+//       await storageRef.putFile(thumbnailFile);
+//       Fluttertoast.showToast(msg: 'Thumbnail uploaded successfully!');
+//     } catch (e) {
+//       debugPrint('Error generating or uploading thumbnail: $e');
+//       Fluttertoast.showToast(msg: 'Error: $e');
+//     }
+//   }
+// }
 
   static Future<BitmapDescriptor> getBitmapAssets(String assetPath) async {
     final asset = await rootBundle.load(assetPath);

@@ -266,7 +266,6 @@ class EventSelectMapState extends ConsumerState<EventSelectMap> {
           zoom: 14,
         );
       }
-      debugPrint('position ${position}');
 
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) {

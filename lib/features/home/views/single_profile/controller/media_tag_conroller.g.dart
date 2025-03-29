@@ -6,7 +6,7 @@ part of 'media_tag_conroller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$mediaTagConrollerHash() => r'a0b0cd6ba133499a76ee17e47f6e2d3c46ebaea7';
+String _$mediaTagConrollerHash() => r'1ead33e5bdc59dad5f942a3280d65cee77dacbfd';
 
 /// Copied from Dart SDK
 class _SystemHash {

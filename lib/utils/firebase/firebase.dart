@@ -1,6 +1,7 @@
 import 'package:demo/data/service/utils/notification_service.dart';
 import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/flavor/config.dart';
+import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -17,7 +18,7 @@ Future<void> initializeFirebaseApp(
 
     await Future.delayed(const Duration(milliseconds: 200));
     await FirebaseAppCheck.instance.activate(
-      androidProvider: AndroidProvider.playIntegrity,
+      androidProvider: AndroidProvider.debug,
       appleProvider: AppleProvider.appAttest,
     );
   } catch (e) {
@@ -85,6 +86,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   try {
     String title = message.notification!.title!;
     String body = message.notification!.body!;
+    await LocalStorageUtils().init();
     await NotificationService().showNotification(
         id: message.notification.hashCode, title: title, body: body);
   } catch (e) {

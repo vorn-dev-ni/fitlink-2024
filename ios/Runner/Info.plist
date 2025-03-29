@@ -34,6 +34,22 @@
 				<string>sms</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>app-1-77080916809-ios-299b48fe79c9042c5b2098</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.77080916809-23oebiu8osm3cm3d48v0smbhv0j8uhk5</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
@@ -43,6 +59,8 @@
 	<string>31d372d0865e3bb1cb4725160fc9f301</string>
 	<key>FacebookDisplayName</key>
 	<string>Fit Link</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>GIDClientID</key>
 	<string>$(GUI)</string>
 	<key>GoogleService-Info</key>
@@ -61,10 +79,24 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>commondatastorage.googleapis.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSExceptionMinimumTLSVersion</key>
+				<string>TLSv1.2</string>
+			</dict>
 			<key>facebook.com</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
+				<key>NSExceptionMinimumTLSVersion</key>
+				<string>TLSv1.2</string>
+			</dict>
+			<key>firebasestorage.googleapis.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<false/>
 				<key>NSExceptionMinimumTLSVersion</key>
 				<string>TLSv1.2</string>
 			</dict>
@@ -82,12 +114,10 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSLocalNetworkUsageDescription</key>
-<string>This app requires access to local notifications.</string>
-<key>NSUserNotificationUsageDescription</key>
-<string>App needs permission to show notifications.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>This app requires access to local notifications.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>We need access to your location always.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
@@ -98,16 +128,16 @@
 	<string>We need access to your microphone</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need access to your photo library</string>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>App needs permission to show notifications.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
-		  <string>location</string>
-		  <string>fetch</string>
-          <string>remote-notification</string>
+		<string>location</string>
+		<string>fetch</string>
+		<string>remote-notification</string>
 	</array>
-	<key>FirebaseAppDelegateProxyEnabled</key>
-<false/>
 	<key>UILaunchStoryboardName</key>
 	<string>$(LAUNCH_SCREEN_STORYBOARD)</string>
 	<key>UIMainStoryboardFile</key>
@@ -121,7 +151,7 @@
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-<true/>
+	<true/>
 	<key>keychain-access-groups</key>
 	<array>
 		<string>$(AppIdentifierPrefix)com.google.GIDSignIn</string>

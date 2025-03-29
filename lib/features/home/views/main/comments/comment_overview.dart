@@ -63,8 +63,6 @@ class _CommentOverviewState extends ConsumerState<CommentOverview> {
 
     return commentsStream.when(
       data: (data) {
-        // return buildLoading();
-
         if (data?.isEmpty == true) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 0),

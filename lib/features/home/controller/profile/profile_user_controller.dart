@@ -57,7 +57,6 @@ class ProfileUserController extends _$ProfileUserController {
   ) async {
     try {
       await profileRepository.updateProfile(profileRequester.toJson());
-      debugPrint("User profile has been updated");
     } catch (e) {
       Fluttertoast.showToast(
           msg: e.toString(),

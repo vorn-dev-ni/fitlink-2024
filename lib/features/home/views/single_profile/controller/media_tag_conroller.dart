@@ -24,7 +24,8 @@ class MediaTagConroller extends _$MediaTagConroller {
 
   FutureOr<MediaCount> getData(String uid) async {
     try {
-      return await profileRepository.getMediaCount(uid);
+      final result = await profileRepository.getMediaCount(uid);
+      return result;
     } catch (e) {
       rethrow;
     }

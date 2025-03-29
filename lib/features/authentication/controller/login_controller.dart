@@ -56,7 +56,6 @@ class LoginController extends _$LoginController {
     try {
       final smsCode = ref.watch(otpControlelrProvider);
 
-      debugPrint('Sms code is ${smsCode}');
       final authRepository =
           AuthLoginRepository(firebaseAuthService: FirebaseAuthService());
       await authRepository.loginPhoneNumber(
@@ -64,30 +63,23 @@ class LoginController extends _$LoginController {
           verificationId: verificationId,
           smsCode: smsCode);
     } catch (e) {
-      Fluttertoast.showToast(
-          msg: e.toString(),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 5,
-          backgroundColor: AppColors.errorColor,
-          textColor: Colors.white,
-          fontSize: 16.0);
       rethrow;
     }
   }
 
   Future sendPhoneOtp(
       {required void Function(String verificationId, int? resendToken)
-          onSuccessVerification}) async {
+          onSuccessVerification,
+      String? phoneNumber}) async {
     try {
       // await _authLoginRepository.loginUserWithPhoneNumber(state.);
-      debugPrint('sendPhoneOtp completed:');
+      debugPrint('sendPhoneOtp completed: ${state.phoneNumber}');
 
       final authRepository =
           AuthLoginRepository(firebaseAuthService: FirebaseAuthService());
 
       authRepository.sendPhoneOtp(
-        '${state.countryCode}${state.phoneNumber!}',
+        '${state.countryCode}${state.phoneNumber ?? phoneNumber}',
         verificationCompleted: (PhoneAuthCredential credential) {
           debugPrint('Verification completed: $credential');
         },
@@ -146,7 +138,7 @@ class LoginController extends _$LoginController {
     }
 
     bool isEmailPasswordValid = ValidationUtils.isPasswordEmptyOrLessThen(
-            password: state.password ?? "", length: 12) &&
+            password: state.password ?? "", length: 13) &&
         ValidationUtils.isValidEmail(state.email!);
     if (!isEmailPasswordValid) {
       Fluttertoast.showToast(

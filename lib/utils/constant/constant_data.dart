@@ -1,0 +1,15 @@
+final List<String> chipLabels = [
+  "Workout",
+  "Diet",
+  "Mental well being",
+  "Gym",
+  "Outdoor",
+  "Food",
+  "Sports",
+  "Motivation",
+  "Fitness",
+  "Health",
+  "Trending",
+  "Challenge",
+  "Inspiration",
+];

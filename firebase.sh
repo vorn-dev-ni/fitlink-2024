@@ -32,7 +32,7 @@ case $1 in
     flutterfire config \
       --project=fitlink-b3d6b \
       --out="lib/utils/firebase/firebase_options.dart" \
-      --ios-bundle-id=com.fitlink.app \
+      --ios-bundle-id=com.fitlink.app.prod \
       --ios-out="ios/flavors/prod/GoogleService-Info.plist" \
       --android-package-name=com.fitlink.app \
       # --android-out="$ROOT_DIR/android/app/src/prod/google-services.json"

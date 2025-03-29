@@ -1,13 +1,13 @@
 import 'package:demo/common/model/notification_payload.dart';
 import 'package:demo/data/service/utils/notification_service.dart';
 import 'package:demo/features/home/model/post.dart';
+import 'package:demo/features/home/views/single_video/main_single_video.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/global_key.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
@@ -72,7 +72,8 @@ class FcmService {
     if (value?.data != null) {
       final data = NotificationData.fromMap(value!.data);
       if (FirebaseAuth.instance.currentUser != null && data.type == 'comment' ||
-          data.type == 'like') {
+          data.type == 'like' ||
+          data.type == 'comment-liked') {
         navigatorKey.currentState?.pushNamed(AppPage.commentListings,
             arguments: {'post': Post(postId: data.postID)});
       }
@@ -81,6 +82,29 @@ class FcmService {
         navigatorKey.currentState?.pushNamed(AppPage.viewProfile,
             arguments: {'userId': data.postID});
       }
+      if (FirebaseAuth.instance.currentUser != null && data.type == 'chat') {
+        navigatorKey.currentState?.pushNamed(AppPage.ChatDetails,
+            arguments: {'receiverId': data.senderID, 'chatId': data.postID});
+      }
+      if (FirebaseAuth.instance.currentUser != null &&
+          data.type == 'videoLiked') {
+        navigatorKey.currentState?.push(MaterialPageRoute(
+          builder: (context) {
+            return MainSingleVideo(videoId: data.postID ?? "");
+          },
+        ));
+      }
+      if (FirebaseAuth.instance.currentUser != null &&
+          data.type == 'videoCommentLiked') {
+        navigatorKey.currentState?.push(MaterialPageRoute(
+          builder: (context) {
+            return MainSingleVideo(
+              videoId: data.postID ?? "",
+              isShowCommeet: true,
+            );
+          },
+        ));
+      }
     }
   }
 
@@ -88,7 +112,8 @@ class FcmService {
     if (value?.data != null) {
       final data = NotificationData.fromMap(value!.data);
       if (FirebaseAuth.instance.currentUser != null && data.type == 'comment' ||
-          data.type == 'like') {
+          data.type == 'like' ||
+          data.type == 'comment-liked') {
         Future.delayed(const Duration(milliseconds: 4000), () {
           navigatorKey.currentState?.pushNamed(AppPage.commentListings,
               arguments: {'post': Post(postId: data.postID)});
@@ -99,6 +124,35 @@ class FcmService {
         Future.delayed(const Duration(milliseconds: 4000), () {
           navigatorKey.currentState?.pushNamed(AppPage.viewProfile,
               arguments: {'userId': data.postID});
+        });
+      }
+      if (FirebaseAuth.instance.currentUser != null && data.type == 'chat') {
+        Future.delayed(const Duration(milliseconds: 4000), () {
+          navigatorKey.currentState?.pushNamed(AppPage.ChatDetails,
+              arguments: {'receiverId': data.senderID, 'chatId': data.postID});
+        });
+      }
+      if (FirebaseAuth.instance.currentUser != null &&
+          data.type == 'videoCommentLiked') {
+        Future.delayed(const Duration(milliseconds: 4000), () {
+          navigatorKey.currentState?.push(MaterialPageRoute(
+            builder: (context) {
+              return MainSingleVideo(
+                videoId: data.postID,
+                isShowCommeet: true,
+              );
+            },
+          ));
+        });
+      }
+      if (FirebaseAuth.instance.currentUser != null &&
+          data.type == 'videoLiked') {
+        Future.delayed(const Duration(milliseconds: 4000), () {
+          navigatorKey.currentState?.push(MaterialPageRoute(
+            builder: (context) {
+              return MainSingleVideo(videoId: data.postID);
+            },
+          ));
         });
       }
     }

@@ -238,6 +238,9 @@ class _ExcerciseActivitiesFormState
             final result = await HelpersUtils.navigatorState(context)
                 .push(MaterialPageRoute(
               builder: (context) => EventDatePickerCustom(
+                minDate: DateTime(2020, 3, 18),
+                maxDate: DateTime.now(),
+                enablePastDates: true,
                 selectionMode: DateRangePickerSelectionMode.single,
               ),
             ));

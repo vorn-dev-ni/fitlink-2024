@@ -32,6 +32,10 @@ class $AssetsAppGen {
   AssetGenImage get gymBackground =>
       const AssetGenImage('assets/app/gym_background.png');
 
+  /// File path: assets/app/no-comment.png
+  AssetGenImage get noComment =>
+      const AssetGenImage('assets/app/no-comment.png');
+
   /// File path: assets/app/no_img_available.png
   AssetGenImage get noImgAvailable =>
       const AssetGenImage('assets/app/no_img_available.png');
@@ -39,6 +43,10 @@ class $AssetsAppGen {
   /// File path: assets/app/no_internet_cat.jpg
   AssetGenImage get noInternetCat =>
       const AssetGenImage('assets/app/no_internet_cat.jpg');
+
+  /// File path: assets/app/share-option.png
+  AssetGenImage get shareOption =>
+      const AssetGenImage('assets/app/share-option.png');
 
   /// File path: assets/app/workout_appbar_bg.png
   AssetGenImage get workoutAppbarBg =>
@@ -52,8 +60,10 @@ class $AssetsAppGen {
         catGym,
         defaultAvatar,
         gymBackground,
+        noComment,
         noImgAvailable,
         noInternetCat,
+        shareOption,
         workoutAppbarBg
       ];
 }
@@ -66,6 +76,9 @@ class $AssetsAudioGen {
 
   /// File path: assets/audio/bye.mp3
   String get bye => 'assets/audio/bye.mp3';
+
+  /// File path: assets/audio/chat_sent.mp3
+  String get chatSent => 'assets/audio/chat_sent.mp3';
 
   /// File path: assets/audio/good_job.mp3
   String get goodJob => 'assets/audio/good_job.mp3';
@@ -104,6 +117,7 @@ class $AssetsAudioGen {
   List<String> get values => [
         bgGym,
         bye,
+        chatSent,
         goodJob,
         notification,
         ohGod,
@@ -238,6 +252,9 @@ class $AssetsIconSvgGen {
   /// File path: assets/icon/svg/share.svg
   String get share => 'assets/icon/svg/share.svg';
 
+  /// File path: assets/icon/svg/share_tiktok.svg
+  String get shareTiktok => 'assets/icon/svg/share_tiktok.svg';
+
   /// File path: assets/icon/svg/tiktok.svg
   String get tiktok => 'assets/icon/svg/tiktok.svg';
 
@@ -261,6 +278,7 @@ class $AssetsIconSvgGen {
         plus,
         plus20,
         share,
+        shareTiktok,
         tiktok
       ];
 }

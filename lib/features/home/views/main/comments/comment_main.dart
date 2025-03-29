@@ -41,6 +41,7 @@ class _CommentMainState extends ConsumerState<CommentMain> {
   bool isResize = false;
   bool isAnimating = false;
   bool isLoading = false;
+  bool unavailable = false;
   int currPageSizes = 10;
   late AudioPlayer playAudioUpload;
   late Post post;
@@ -109,7 +110,7 @@ class _CommentMainState extends ConsumerState<CommentMain> {
               appBar: renderAppBar(context),
               resizeToAvoidBottomInset:
                   DeviceUtils.isAndroid() ? isResize : false,
-              bottomSheet: renderBottomSheet(context),
+              bottomSheet: !unavailable ? renderBottomSheet(context) : null,
               body: renderBody(),
             ),
             if (apploading) backDropLoading()
@@ -125,22 +126,37 @@ class _CommentMainState extends ConsumerState<CommentMain> {
         return AppBar();
       },
       data: (data) {
-        return AppBar(
-          centerTitle: false,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          backgroundColor: Colors.white,
-          leadingWidth: 100.w,
-          leading: ProfileHeader(
-              context: context,
-              user: data?.user ?? UserData(),
-              desc: data?.tag,
-              post: data,
-              postId: data?.postId,
-              imageUrl: data?.user?.avatar ?? "",
-              type: ProfileType.header,
-              showBackButton: true),
+        WidgetsBinding.instance.addPostFrameCallback(
+          (timeStamp) {
+            if (data == null) {
+              setState(() {
+                unavailable = true;
+              });
+            }
+          },
         );
+        return data == null
+            ? AppBar(
+                backgroundColor: AppColors.backgroundLight,
+                foregroundColor: AppColors.backgroundDark,
+              )
+            : AppBar(
+                centerTitle: false,
+                elevation: 0,
+                toolbarHeight: 60,
+                scrolledUnderElevation: 0,
+                backgroundColor: Colors.white,
+                leadingWidth: 100.w,
+                leading: ProfileHeader(
+                    context: context,
+                    user: data.user ?? UserData(),
+                    desc: data.tag,
+                    post: data,
+                    postId: data.postId,
+                    imageUrl: data.user?.avatar ?? "",
+                    type: ProfileType.header,
+                    showBackButton: true),
+              );
       },
       loading: () {
         return AppBar(
@@ -192,31 +208,38 @@ class _CommentMainState extends ConsumerState<CommentMain> {
             children: [
               async.when(
                 data: (data) {
-                  return Column(
-                    children: [
-                      PostPanel(
-                        post: data!,
-                        isComment: false,
-                        url: data.imageUrl,
-                        showHeader: false,
-                        twoFingersOn: () => setState(() => blockScroll = true),
-                        twoFingersOff: () => Future.delayed(
-                          PinchZoomReleaseUnzoomWidget.defaultResetDuration,
-                          () => setState(() => blockScroll = false),
-                        ),
-                      ),
-                    ],
-                  );
+                  return data == null
+                      ? Center(
+                          child: emptyContent(
+                              title:
+                                  "This post is unavailable, this user has recently deleted this post, please view other post instead !!!"))
+                      : Column(
+                          children: [
+                            PostPanel(
+                              post: data,
+                              isComment: false,
+                              url: data?.imageUrl,
+                              showHeader: false,
+                              twoFingersOn: () =>
+                                  setState(() => blockScroll = true),
+                              twoFingersOff: () => Future.delayed(
+                                PinchZoomReleaseUnzoomWidget
+                                    .defaultResetDuration,
+                                () => setState(() => blockScroll = false),
+                              ),
+                            ),
+                          ],
+                        );
                 },
                 error: (error, stackTrace) {
-                  return emptyContent(title: error.toString());
+                  return Center(child: emptyContent(title: error.toString()));
                 },
                 loading: () {
                   return buildLoading();
                 },
               ),
-              renderComments(post),
-              renderPaging(),
+              if (!unavailable) renderComments(post),
+              if (!unavailable) renderPaging(),
             ],
           )),
     ));
@@ -321,15 +344,25 @@ class _CommentMainState extends ConsumerState<CommentMain> {
         return ClipOval(
           child: data?.avatar == "" || data?.avatar == null
               ? Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1, color: AppColors.neutralColor),
+                    borderRadius: BorderRadius.circular(Sizes.xxxl),
+                  ),
                   child: Assets.app.defaultAvatar
                       .image(width: 40, height: 40, fit: BoxFit.cover),
                 )
-              : FancyShimmerImage(
-                  boxFit: BoxFit.cover,
-                  width: 40,
-                  height: 40,
-                  imageUrl: data!.avatar!,
-                  errorWidget: errorImgplaceholder()),
+              : Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1, color: AppColors.neutralColor),
+                    borderRadius: BorderRadius.circular(Sizes.xxxl),
+                  ),
+                  child: FancyShimmerImage(
+                      boxFit: BoxFit.cover,
+                      width: 40,
+                      height: 40,
+                      imageUrl: data!.avatar!,
+                      errorWidget: errorImgplaceholder()),
+                ),
         );
       },
       error: (error, stackTrace) {

@@ -7,7 +7,9 @@ import 'package:demo/common/widget/bottom_upload_sheet.dart';
 import 'package:demo/common/widget/error_image_placeholder.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/features/authentication/controller/auth_controller.dart';
+import 'package:demo/features/home/controller/chat/message_detail_controller.dart';
 import 'package:demo/features/home/controller/event/event_detail_participant.dart';
+import 'package:demo/features/home/controller/profile/profile_loading_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/features/home/controller/profile/user_form_controller.dart';
 import 'package:demo/gen/assets.gen.dart';
@@ -91,7 +93,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    final appLoading = ref.watch(appLoadingStateProvider);
+    final appLoading = ref.watch(profileLoadingControllerProvider);
     return Stack(
       children: [
         GestureDetector(
@@ -280,7 +282,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
 
   void _uploadingImage(UploadType type) async {
     try {
-      ref.read(appLoadingStateProvider.notifier).setState(true);
+      ref.read(profileLoadingControllerProvider.notifier).setState(true);
 
       File? fileImage = await HelpersUtils.pickImage(
           type == UploadType.photo ? ImageSource.gallery : ImageSource.camera);
@@ -306,7 +308,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
             duration: 3000, context, 'Oop!', e.message, StatusSnackbar.failed);
       }
     } finally {
-      ref.read(appLoadingStateProvider.notifier).setState(false);
+      ref.read(profileLoadingControllerProvider.notifier).setState(false);
     }
   }
 
@@ -336,19 +338,21 @@ class _EditProfileState extends ConsumerState<EditProfile> {
       final isValid = _formkey.currentState?.validate();
 
       if (isValid == true) {
-        ref.read(appLoadingStateProvider.notifier).setState(true);
+        ref.read(profileLoadingControllerProvider.notifier).setState(true);
         _formkey.currentState!.save();
         await Future.delayed(const Duration(milliseconds: 300));
+
         await ref
             .read(userFormControllerProvider.notifier)
             .updateUserProfile(previewImages);
 
-        if (mounted) {
-          HelpersUtils.navigatorState(context).pop();
-          ref.read(appLoadingStateProvider.notifier).setState(false);
-        }
+        ref.invalidate(messageDetailControllerProvider);
 
         ref.invalidate(eventDetailParticipantProvider);
+        if (mounted) {
+          HelpersUtils.navigatorState(context).pop();
+          ref.read(profileLoadingControllerProvider.notifier).setState(false);
+        }
         playAudioUpload.setVolume(0.8);
         playAudioUpload.play();
         Fluttertoast.showToast(
@@ -370,7 +374,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
             backgroundColor: AppColors.errorColor,
             textColor: Colors.white,
             fontSize: 16.0);
-        ref.read(appLoadingStateProvider.notifier).setState(false);
+        ref.read(profileLoadingControllerProvider.notifier).setState(false);
       }
     }
   }

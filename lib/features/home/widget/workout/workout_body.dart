@@ -6,6 +6,7 @@ import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
+import 'package:demo/utils/formatters/formatter_utils.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
@@ -59,7 +60,7 @@ class _WorkoutTabBuildState extends ConsumerState<WorkoutTabBuild>
     );
   }
 
-  Column WorkoutItem(List<WorkoutExcerciseResponse>? data) {
+  Widget WorkoutItem(List<WorkoutExcerciseResponse>? data) {
     return Column(
       children: [
         Skeletonizer(
@@ -163,7 +164,8 @@ class _WorkoutTabBuildState extends ConsumerState<WorkoutTabBuild>
                             Row(
                               children: [
                                 Text(
-                                  '${workout.totalDuration} Mins',
+                                  FormatterUtils.formatExerciseDuration(
+                                      workout.totalDuration ?? 0),
                                   style: AppTextTheme.lightTextTheme.labelSmall
                                       ?.copyWith(
                                           color: AppColors.backgroundLight),

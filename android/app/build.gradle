@@ -40,14 +40,14 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.fitlink.app"
-            multiDexEnabled true
+        multiDexEnabled true
 
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
-        versionCode project.hasProperty("versionCode") ? project.versionCode.toInteger() : 9
-        versionName project.hasProperty("versionName") ? project.versionName : "1.0.8"
+        versionCode project.hasProperty("versionCode") ? project.versionCode.toInteger() : 14
+        versionName project.hasProperty("versionName") ? project.versionName : "1.0.13"
         // versionCode project.hasProperty("versionCode") ? project.versionCode : 14
         // versionName project.hasProperty("versionName") ? project.versionName : "1.0.2"
         // versionCode flutter.versionCode.toInteger()

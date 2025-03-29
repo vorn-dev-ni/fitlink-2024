@@ -4,9 +4,7 @@ import 'package:demo/common/widget/custom_text_otp.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/features/authentication/controller/login_controller.dart';
 import 'package:demo/features/authentication/controller/otp_controller.dart';
-import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/utils/constant/app_colors.dart';
-import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/device/device_utils.dart';
@@ -99,31 +97,47 @@ class _PhoneOtpVerifyState extends ConsumerState<PhoneOtpVerify> {
                       const Spacer(),
                       TextButton(
                         onPressed: () async {
-                          ref
-                              .read(loginControllerProvider.notifier)
-                              .sendPhoneOtp(
-                            onSuccessVerification:
-                                (verificationId, resendToken) {
-                              debugPrint("Phone has success verification");
-                              Fluttertoast.showToast(
-                                  msg: "Phone has success verification !!!",
-                                  toastLength: Toast.LENGTH_LONG,
-                                  gravity: ToastGravity.BOTTOM,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: AppColors.successColor,
-                                  textColor: Colors.white,
-                                  fontSize: 16.0);
-                            },
-                          );
-                          Fluttertoast.showToast(
-                              msg: "Phone has success verification !!!",
-                              toastLength: Toast.LENGTH_LONG,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: AppColors.successColor,
-                              textColor: Colors.white,
-                              fontSize: 16.0);
-                          debugPrint("Phone resend code already");
+                          try {
+                            ref
+                                .read(appLoadingStateProvider.notifier)
+                                .setState(true);
+                            await ref
+                                .read(loginControllerProvider.notifier)
+                                .sendPhoneOtp(
+                                  phoneNumber: data['phone'] ?? "",
+                                  onSuccessVerification:
+                                      (verificationId, resendToken) {
+                                    debugPrint(
+                                        "Phone has success verification");
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            "Phone has success verification !!!",
+                                        toastLength: Toast.LENGTH_LONG,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: AppColors.successColor,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0);
+                                  },
+                                );
+
+                            Fluttertoast.showToast(
+                                msg: "Phone has success verification !!!",
+                                toastLength: Toast.LENGTH_LONG,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: AppColors.successColor,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
+                            debugPrint("Phone resend code already");
+                            ref
+                                .read(appLoadingStateProvider.notifier)
+                                .setState(false);
+                          } catch (e) {
+                            ref
+                                .read(appLoadingStateProvider.notifier)
+                                .setState(false);
+                          }
                         },
                         style: const ButtonStyle(
                             elevation: WidgetStatePropertyAll(0),
@@ -177,18 +191,26 @@ class _PhoneOtpVerifyState extends ConsumerState<PhoneOtpVerify> {
       if (mounted) {
         ScaffoldMessenger.of(context).removeCurrentSnackBar();
         if (e is AppException) {
+          String errorMessage = e.toString();
+          String displayMessage = errorMessage.length > 50
+              ? errorMessage.substring(0, 50)
+              : errorMessage;
           HelpersUtils.showErrorSnackbar(
               duration: 4000,
               context,
               e.title,
-              e.message,
+              displayMessage,
               StatusSnackbar.failed);
         } else {
+          String errorMessage = e.toString();
+          String displayMessage = errorMessage.length > 50
+              ? errorMessage.substring(0, 50)
+              : errorMessage;
           HelpersUtils.showErrorSnackbar(
               duration: 4000,
               context,
-              'Something went wrong',
-              e.toString(),
+              'Oop',
+              displayMessage,
               StatusSnackbar.failed);
         }
 

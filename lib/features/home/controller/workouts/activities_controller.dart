@@ -1,7 +1,6 @@
 import 'package:demo/data/repository/firebase/activities_repo.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/activities/activities_service.dart';
-import 'package:demo/features/home/controller/logout_controller.dart';
 import 'package:demo/features/home/model/workout_activity.dart';
 import 'package:demo/model/workouts/workout_response.dart';
 import 'package:demo/utils/constant/app_colors.dart';

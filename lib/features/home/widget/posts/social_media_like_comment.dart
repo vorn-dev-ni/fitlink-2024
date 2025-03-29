@@ -135,7 +135,7 @@ class _SocialMediaLikeCommentState extends ConsumerState<SocialMediaLikeComment>
                   children: [
                     const Icon(CupertinoIcons.chat_bubble),
                     const SizedBox(width: Sizes.xs),
-                    Text('${widget.post?.commentsCount}'),
+                    Text('${data.commentsCount}'),
                   ],
                 ),
               ),

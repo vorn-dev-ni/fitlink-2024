@@ -1,5 +1,6 @@
 import 'package:demo/common/model/route_app.dart';
 import 'package:demo/common/model/screen_app.dart';
+import 'package:demo/common/widget/video_preview.dart';
 import 'package:demo/features/authentication/auth.dart';
 import 'package:demo/features/authentication/views/forget_password/forget_password.dart';
 import 'package:demo/features/authentication/views/forget_password/forget_password_success.dart';
@@ -26,10 +27,13 @@ import 'package:demo/features/home/views/main/my_home/upload_media.dart';
 import 'package:demo/features/home/views/profile/preview/preview_image.dart';
 import 'package:demo/features/home/views/profile/edit_profile/edit_profile.dart';
 import 'package:demo/features/home/views/single_profile/views/single_profile.dart';
+import 'package:demo/features/home/views/single_video/main_single_video.dart';
 import 'package:demo/features/home/views/upload/upload_tab.dart';
 import 'package:demo/features/notifications/notification_main.dart';
 import 'package:demo/features/on_boarding/on_boarding.dart';
 import 'package:demo/features/other/no_internet.dart';
+import 'package:demo/features/video_search/search_main.dart';
+import 'package:demo/features/video_search/search_result.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:flutter/material.dart';
 
@@ -37,6 +41,19 @@ class AppRoutes {
   AppRoutes._();
 
   static final List<RoutesApp> mainStacks = [
+    RoutesApp(
+        routeName: AppPage.previewVideo, builder: (context) => VideoPreview()),
+    RoutesApp(
+        routeName: AppPage.singleVideoTiktok,
+        builder: (context) => MainSingleVideo(
+              videoId: "",
+            )),
+    RoutesApp(
+        routeName: AppPage.searchResult,
+        builder: (context) => const SearchResultScreen()),
+    RoutesApp(
+        routeName: AppPage.searchTikTok,
+        builder: (context) => const SearchScreen()),
     RoutesApp(
         routeName: AppPage.ChatSearching,
         builder: (context) => const ChatSearchScreen()),

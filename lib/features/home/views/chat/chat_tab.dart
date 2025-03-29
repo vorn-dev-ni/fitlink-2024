@@ -1,135 +1,82 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:demo/common/widget/empty_content.dart';
+import 'package:demo/data/repository/firebase/profile_repo.dart';
+import 'package:demo/data/service/firebase/firebase_service.dart';
+import 'package:demo/data/service/firestore/profiles/profile_service.dart';
+import 'package:demo/features/home/controller/chat/chat_user_controller.dart';
+import 'package:demo/features/home/controller/chat/following_friend_controller.dart';
+import 'package:demo/features/home/model/post.dart';
+import 'package:demo/features/home/views/chat/widget/chat_main_listing.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
+import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ChatTab extends StatefulWidget {
+class ChatTab extends ConsumerStatefulWidget {
   const ChatTab({super.key});
 
   @override
-  State<ChatTab> createState() => _ChatTabState();
+  ConsumerState<ChatTab> createState() => _ChatTabState();
 }
 
-class _ChatTabState extends State<ChatTab> {
+class _ChatTabState extends ConsumerState<ChatTab> {
   late ScrollController _scrollController;
-  final List<Map<String, String>> chatList = [
-    {
-      "name": "Alice",
-      "message": "Hey! How are you?",
-      "image": "assets/user1.jpg",
-      "time": "1m ago",
-    },
-    {
-      "name": "Bob",
-      "message": "Are we meeting today?",
-      "image": "assets/user2.jpg",
-      "time": "2:30 PM",
-    },
-    {
-      "name": "Charlie",
-      "message": "Let's catch up!",
-      "image": "assets/user3.jpg",
-      "time": "Yesterday",
-    },
-    {
-      "name": "Diana",
-      "message": "I'll call you later.",
-      "image": "assets/user4.jpg",
-      "time": "10:15 AM",
-    },
-    {
-      "name": "Ethan",
-      "message": "Check your email.",
-      "image": "assets/user5.jpg",
-      "time": "2d ago",
-    },
-    {
-      "name": "Charlie",
-      "message": "Let's catch up!",
-      "image": "assets/user3.jpg",
-      "time": "Yesterday",
-    },
-    {
-      "name": "Diana",
-      "message": "I'll call you later.",
-      "image": "assets/user4.jpg",
-      "time": "10:15 AM",
-    },
-    {
-      "name": "Ethan",
-      "message": "Check your email.",
-      "image": "assets/user5.jpg",
-      "time": "2d ago",
-    },
-    {
-      "name": "Charlie",
-      "message": "Let's catch up!",
-      "image": "assets/user3.jpg",
-      "time": "Yesterday",
-    },
-    {
-      "name": "Diana",
-      "message": "I'll call you later.",
-      "image": "assets/user4.jpg",
-      "time": "10:15 AM",
-    },
-    {
-      "name": "Ethan",
-      "message": "Check your email.",
-      "image": "assets/user5.jpg",
-      "time": "2d ago",
-    },
-    {
-      "name": "Charlie",
-      "message": "Let's catch up!",
-      "image": "assets/user3.jpg",
-      "time": "Yesterday",
-    },
-    {
-      "name": "Diana",
-      "message": "I'll call you later.",
-      "image": "assets/user4.jpg",
-      "time": "10:15 AM",
-    },
-    {
-      "name": "Ethan",
-      "message": "Check your email.",
-      "image": "assets/user5.jpg",
-      "time": "2d ago",
-    },
-    {
-      "name": "Charlie",
-      "message": "Let's catch up!",
-      "image": "assets/user3.jpg",
-      "time": "Yesterday",
-    },
-    {
-      "name": "Diana",
-      "message": "I'll call you later.",
-      "image": "assets/user4.jpg",
-      "time": "10:15 AM",
-    },
-    {
-      "name": "Ethan",
-      "message": "Check your email.",
-      "image": "assets/user5.jpg",
-      "time": "2d ago",
-    },
-  ];
+  final ProfileRepository _profileRepository = ProfileRepository(
+      baseService: ProfileService(firebaseAuthService: FirebaseAuthService()));
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   final List<Map<String, dynamic>> friendsList = [
-    {"name": "Panha", "image": "assets/user1.jpg", "status": "online"},
-    {"name": "Tenz", "image": "assets/user2.jpg", "status": "online"},
-    {"name": "Faker", "image": "assets/user3.jpg", "status": "online"},
-    {"name": "Showmaker", "image": "assets/user4.jpg", "status": "online"},
-    {"name": "Peanut", "image": "assets/user5.jpg", "status": "offline"},
-    {"name": "Faker", "image": "assets/user3.jpg", "status": "offline"},
-    {"name": "Showmaker", "image": "assets/user4.jpg", "status": "offline"},
-    {"name": "Peanut", "image": "assets/user5.jpg", "status": "offline"},
+    {
+      "name": "Panha",
+      "image": Assets.app.defaultAvatar.path,
+      "status": "online"
+    },
+    {
+      "name": "Tenz",
+      "image": Assets.app.defaultAvatar.path,
+      "status": "online"
+    },
+    {
+      "name": "Faker",
+      "image": Assets.app.defaultAvatar.path,
+      "status": "online"
+    },
+    {
+      "name": "Showmaker",
+      "image": Assets.app.defaultAvatar.path,
+      "status": "online"
+    },
+    {
+      "name": "Peanut",
+      "image": Assets.app.defaultAvatar.path,
+      "status": "offline"
+    },
+    {
+      "name": "Faker",
+      "image": Assets.app.defaultAvatar.path,
+      "status": "offline"
+    },
+    {
+      "name": "Showmaker",
+      "image": Assets.app.defaultAvatar.path,
+      "status": "offline"
+    },
+    {
+      "name": "Peanut",
+      "image": Assets.app.defaultAvatar.path,
+      "status": "offline"
+    },
   ];
+  late StreamSubscription _userStatusSubscription;
 
   @override
   void initState() {
@@ -138,7 +85,29 @@ class _ChatTabState extends State<ChatTab> {
       statusBarIconBrightness: Brightness.light,
       statusBarBrightness: Brightness.light,
     ));
+    _userStatusSubscription = _profileRepository.listenUserCollections().listen(
+      (userDocSnapshot) {
+        for (var change in userDocSnapshot.docChanges) {
+          if (change.type == DocumentChangeType.modified) {
+            final changedFields = change.doc.data();
+
+            if (changedFields != null) {
+              ref.invalidate(chatUserControllerProvider);
+            }
+          }
+        }
+      },
+      onError: (error) {
+        debugPrint('Error listening to user status: $error');
+      },
+    );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _userStatusSubscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -151,6 +120,7 @@ class _ChatTabState extends State<ChatTab> {
       ),
       child: Scaffold(
         backgroundColor: AppColors.backgroundLight,
+        extendBody: true,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           foregroundColor: AppColors.backgroundLight,
@@ -169,6 +139,13 @@ class _ChatTabState extends State<ChatTab> {
                 color: AppColors.backgroundLight, fontWeight: FontWeight.w500),
           ),
         ),
+        onDrawerChanged: (isOpened) {
+          if (isOpened) {
+            ref.invalidate(followingFriendControllerProvider(
+                userId: FirebaseAuth.instance.currentUser?.uid));
+            setState(() {});
+          }
+        },
         drawer: renderDrawer(context),
         body: Padding(
           padding: const EdgeInsets.all(Sizes.lg),
@@ -177,45 +154,36 @@ class _ChatTabState extends State<ChatTab> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Search Bar
-                TextField(
+                GestureDetector(
                   onTap: () {
                     HelpersUtils.navigatorState(context)
                         .pushNamed(AppPage.ChatSearching);
                   },
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(1),
-                    focusColor: AppColors.secondaryColor,
-                    prefixIcon: const Icon(
-                      Icons.search,
-                      color: AppColors.neutralBlack,
-                    ),
-                    hintText: "Search",
-                    filled: true,
-                    hintStyle: AppTextTheme.lightTextTheme.bodyMedium,
-                    fillColor: Colors.grey[100],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
+                  child: Container(
+                    padding: const EdgeInsets.all(Sizes.md + 2),
+                    decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 219, 219, 223)
+                            .withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(Sizes.md)),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.search),
+                        SizedBox(
+                          width: Sizes.sm,
+                        ),
+                        Text('Search Friend...')
+                      ],
                     ),
                   ),
                 ),
+                // Search Bar
                 const SizedBox(
                   height: Sizes.lg,
                 ),
                 const Text('Message'),
 
                 // Chat List
-                ListView.builder(
-                  itemCount: chatList.length,
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.symmetric(vertical: Sizes.sm),
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    final chat = chatList[index];
-                    return renderUserChat(chat);
-                  },
-                ),
+                const ChatMainListing()
               ],
             ),
           ),
@@ -224,117 +192,124 @@ class _ChatTabState extends State<ChatTab> {
     );
   }
 
-  ListTile renderUserChat(Map<String, String> chat) {
-    return ListTile(
-      contentPadding: const EdgeInsets.all(0),
-      leading: CircleAvatar(
-        radius: 25,
-        backgroundImage: AssetImage(Assets.app.defaultAvatar.path),
-      ),
-      trailing: Text(
-        chat["time"]!,
-        style: AppTextTheme.lightTextTheme.bodySmall
-            ?.copyWith(color: const Color.fromARGB(255, 186, 190, 195)),
-      ),
-      title: Text(
-        chat["name"]!,
-        style: AppTextTheme.lightTextTheme.titleMedium,
-      ),
-      subtitle: Text(
-        chat["message"]!,
-        style: AppTextTheme.lightTextTheme.bodySmall?.copyWith(),
-      ),
-      onTap: () {
-        HelpersUtils.navigatorState(context).pushNamed(AppPage.ChatDetails);
-      },
-    );
-  }
-
   Drawer renderDrawer(BuildContext context) {
+    final async = ref.watch(FollowingFriendControllerProvider(
+        userId: FirebaseAuth.instance.currentUser?.uid));
     return Drawer(
       backgroundColor: AppColors.backgroundDark.withOpacity(0.3),
       elevation: 0,
       shape: Border.all(width: 0),
-      child: Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Friend List",
-                      style: AppTextTheme.lightTextTheme.bodyLarge?.copyWith(
-                          color: AppColors.backgroundLight,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text("Online •",
-                        style: AppTextTheme.lightTextTheme.bodySmall
-                            ?.copyWith(color: AppColors.successColor)),
+      child: SafeArea(
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Friend List",
+                        style: AppTextTheme.lightTextTheme.bodyLarge?.copyWith(
+                            color: AppColors.backgroundLight,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
                   ),
-                  Text("Active now",
-                      style: AppTextTheme.lightTextTheme.bodySmall
-                          ?.copyWith(color: AppColors.backgroundLight)),
-                ],
-              ),
-              // Online Friends Section
+                ),
 
-              Expanded(
-                child: ListView(
+                Row(
                   children: [
-                    for (var friend
-                        in friendsList.where((f) => f["status"] == "online"))
-                      _buildFriendTile(friend),
-
-                    // Offline Friends Section
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 10),
-                      child: Text("Offline",
-                          style: AppTextTheme.lightTextTheme.titleMedium
-                              ?.copyWith(color: AppColors.neutralColor)),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text("Online •",
+                          style: AppTextTheme.lightTextTheme.bodySmall
+                              ?.copyWith(color: AppColors.successColor)),
                     ),
-                    for (var friend
-                        in friendsList.where((f) => f["status"] == "offline"))
-                      _buildFriendTile(friend),
+                    Text("Active now",
+                        style: AppTextTheme.lightTextTheme.bodySmall
+                            ?.copyWith(color: AppColors.backgroundLight)),
                   ],
                 ),
-              ),
-            ],
-          ),
-        ],
+                // Online Friends Section
+                async.when(
+                  data: (data) {
+                    return Expanded(
+                      child: data!.isEmpty
+                          ? const SizedBox()
+                          : ListView(
+                              children: [
+                                for (var friend
+                                    in data.where((f) => f.isOnline == true))
+                                  _buildFriendTile(friend),
+
+                                // Offline Friends Section
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 10),
+                                  child: Text("Offline",
+                                      style: AppTextTheme
+                                          .lightTextTheme.titleMedium
+                                          ?.copyWith(
+                                              color: AppColors.neutralColor)),
+                                ),
+                                for (var friend
+                                    in data.where((f) => f.isOnline == false))
+                                  _buildFriendTile(friend),
+                              ],
+                            ),
+                    );
+                  },
+                  error: (error, stackTrace) {
+                    return emptyContent(title: error.toString());
+                  },
+                  loading: () {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                )
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildFriendTile(Map<String, dynamic> friend) {
+  Widget _buildFriendTile(UserData friend) {
     return renderFriendItem(friend);
   }
 
-  Widget renderFriendItem(Map<String, dynamic> friend) {
-    return ListTile(
-      leading: CircleAvatar(
-        radius: 25,
-        backgroundImage: AssetImage(Assets.app.defaultAvatar.path),
-      ),
-      title: Text(
-        friend["name"]!,
-        style: AppTextTheme.lightTextTheme.bodySmall
-            ?.copyWith(color: const Color.fromARGB(255, 186, 190, 195)),
+  Widget renderFriendItem(UserData friend) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: ListTile(
+        leading: friend.avatar == "" || friend.avatar == null
+            ? CircleAvatar(
+                radius: 25,
+                backgroundImage: AssetImage(Assets.app.defaultAvatar.path),
+              )
+            : ClipRRect(
+                borderRadius: BorderRadius.circular(25),
+                child: FancyShimmerImage(
+                  imageUrl: friend.avatar!,
+                  width: 50,
+                  height: 50,
+                  boxFit: BoxFit.cover,
+                ),
+              ),
+        title: Text(
+          '${friend.fullName}',
+          style: AppTextTheme.lightTextTheme.bodySmall
+              ?.copyWith(color: const Color.fromARGB(255, 186, 190, 195)),
+        ),
       ),
     );
   }

@@ -63,7 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '77080916809',
     projectId: 'fitlink-b3d6b',
     storageBucket: 'fitlink-b3d6b.firebasestorage.app',
-    androidClientId: '77080916809-j0gjnfkj651qdogk0irge1mb0jh21lr1.apps.googleusercontent.com',
+    androidClientId: '77080916809-4i6mmvvfm1k9g06eddgq1hcjdc6m367h.apps.googleusercontent.com',
     iosClientId: '77080916809-584bmt7lkfujgjfkbr88v170r69lmf4p.apps.googleusercontent.com',
     iosBundleId: 'com.fitlink.app.dev',
   );

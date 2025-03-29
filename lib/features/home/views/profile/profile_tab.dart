@@ -12,12 +12,15 @@ import 'package:demo/features/home/controller/posts/social_post_controller.dart'
 import 'package:demo/features/home/controller/posts/user_like_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_post_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
+import 'package:demo/features/home/controller/video/tiktok_video_controller.dart';
 import 'package:demo/features/home/views/single_profile/controller/media_tag_conroller.dart';
+import 'package:demo/features/home/views/single_profile/controller/notification_badge.dart';
 import 'package:demo/features/home/views/single_profile/controller/single_user_controller.dart';
 import 'package:demo/features/home/views/profile/post/post_profile.dart';
 import 'package:demo/features/home/views/profile/profile_header.dart';
 import 'package:demo/features/home/views/profile/video/video_profile.dart';
 import 'package:demo/features/home/views/profile/workout/workout_profile.dart';
+import 'package:demo/features/notifications/controller/notification_user_controller.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/sizes.dart';
@@ -60,7 +63,9 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
         currentUser: true,
         userId: uid ?? "",
       ),
-      const VideoProfile(),
+      VideoProfile(
+        userId: FirebaseAuth.instance.currentUser?.uid,
+      ),
       WorkoutProfile(
         key: UniqueKey(),
         userId: uid ?? "",
@@ -104,6 +109,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
             data: (data) {
               final emailExisted = data?.email;
               return SafeArea(
+                bottom: false,
                 top: DeviceUtils.isIOS(),
                 child: NestedScrollView(
                   floatHeaderSlivers: false,
@@ -111,6 +117,9 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                     ProfileHeader(
                       uid: data?.id ?? "",
                       onLogout: () async {
+                        ref
+                            .read(appLoadingStateProvider.notifier)
+                            .setState(true);
                         await handleLogout();
                       },
                     ),
@@ -142,13 +151,15 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                 child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                error.toString(),
+                error.toString().length > 100
+                    ? error.toString().substring(0, 50)
+                    : error.toString(),
                 style: AppTextTheme.lightTextTheme.bodyMedium
                     ?.copyWith(color: AppColors.errorColor),
               ),
             )),
             loading: () {
-              return build_loading();
+              return buildLoader();
             },
           )),
           if (isLoading) backDropLoading()
@@ -157,7 +168,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     );
   }
 
-  Skeletonizer build_loading() {
+  Widget buildLoader() {
     return Skeletonizer(
       enabled: true,
       ignorePointers: true,
@@ -207,35 +218,41 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
   Future handleLogout() async {
     try {
       if (mounted) {
-        _playsoundLogout.play();
-
-        Fluttertoast.showToast(
-            msg: 'See you soon love 😔 !!!',
-            timeInSecForIosWeb: 3,
-            toastLength: Toast.LENGTH_SHORT);
-        LocalStorageUtils().setKeyString('email', '');
-        ref.invalidate(navbarControllerProvider);
         ref.invalidate(singleUserControllerProvider);
-        ref.invalidate(navigationStateProvider);
         ref.invalidate(registerControllerProvider);
         ref.invalidate(loginControllerProvider);
         ref.invalidate(socialPostControllerProvider);
         ref.invalidate(userLikeControllerProvider);
         ref.invalidate(mediaTagConrollerProvider);
+
+        LocalStorageUtils().setKeyString('email', '');
+        LocalStorageUtils().setKeyString('notificationCount', '');
         await authController.logout();
-        // ref.invalidate(activitiesControllerProvider);
+        _playsoundLogout.play();
+        Fluttertoast.showToast(
+            msg: 'See you soon love 😔 !!!',
+            timeInSecForIosWeb: 3,
+            toastLength: Toast.LENGTH_SHORT);
         String uid = LocalStorageUtils().getKey('uid') ?? '';
         ref.read(userStatusControllerProvider.notifier).setUserOffline(uid);
         ref.read(logoutControllerProvider.notifier).logout();
+        ref.invalidate(userNotificationControllerProvider);
+        ref.invalidate(notificationUserControllerProvider);
         LocalStorageUtils().setKeyString('uid', '');
         ref.invalidate(profileUserControllerProvider);
         ref.invalidate(profilePostControllerProvider);
+        ref.refresh(tiktokVideoControllerProvider.notifier).refresh();
+        ref.invalidate(socialInteractonVideoControllerProvider);
+        ref.read(appLoadingStateProvider.notifier).setState(false);
+        ref.invalidate(navbarControllerProvider);
+        ref.invalidate(navigationStateProvider);
       }
     } catch (e) {
       LocalStorageUtils().setKeyString('uid', '');
       LocalStorageUtils().setKeyString('email', '');
       ref.invalidate(profilePostControllerProvider);
       ref.invalidate(profileUserControllerProvider);
+      ref.read(appLoadingStateProvider.notifier).setState(false);
     }
   }
 

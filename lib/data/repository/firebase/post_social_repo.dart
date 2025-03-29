@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
 class PostSocialRepo {
   late BaseSocialMediaService baseSocialMediaService;
@@ -49,26 +48,56 @@ class PostSocialRepo {
     }
   }
 
+  Future<List<Map<String, dynamic>>> combinesPosts(int pageSize) async {
+    final newestSnapshot =
+        await baseSocialMediaService.getLatestPosts(pageSize);
+    final trendingSnapshot =
+        await baseSocialMediaService.getAllPostOneTime(pageSize);
+
+    List<Map<String, dynamic>> newestPosts = newestSnapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data();
+      data['postId'] = doc.id; // Assign doc.id as postId
+      return data;
+    }).toList();
+
+    List<Map<String, dynamic>> trendingPosts = trendingSnapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data();
+      data['postId'] = doc.id; // Assign doc.id as postId
+      return data;
+    }).toList();
+
+    // Merge data ensuring no duplicates
+    Set<String> postIds = {};
+    List<Map<String, dynamic>> mergedPosts = [];
+
+    for (var post in [...newestPosts, ...trendingPosts]) {
+      if (!postIds.contains(post['postId'])) {
+        postIds.add(post['postId']);
+        mergedPosts.add(post);
+      }
+    }
+
+    return mergedPosts.take(pageSize).toList();
+  }
+
   Future<List<Post>?> getOneTimePosts(String uid, int? pageSize) async {
     try {
-      final snapShot =
-          await baseSocialMediaService.getAllPostOneTime(pageSize ?? 8);
-      if (snapShot.size <= 0) {
+      final combinedPosts = await combinesPosts(pageSize ?? 8);
+
+      if (combinedPosts.isEmpty) {
         return null;
       }
 
       List<Post> posts = await Future.wait(
-        snapShot.docs.map((doc) async {
-          Map<String, dynamic> postData = doc.data();
+        combinedPosts.map((postData) async {
           DocumentReference? userRef = postData['userId'] as DocumentReference?;
-
           Map<String, dynamic>? userData =
               userRef != null ? await extractUserData(userRef) : null;
 
-          bool isLiked = await checkUserLikePost(doc.id);
+          bool isLiked = await checkUserLikePost(postData['postId']);
 
           return Post.fromJson({
-            "postId": doc.id,
+            "postId": postData['postId'],
             "userLiked": isLiked,
             "likesCount": postData['likesCount'],
             "user": userData,
@@ -90,6 +119,48 @@ class PostSocialRepo {
       rethrow;
     }
   }
+
+  // Future<List<Post>?> getOneTimePosts(String uid, int? pageSize) async {
+  //   try {
+  //     final snapShot =
+  //         await baseSocialMediaService.getAllPostOneTime(pageSize ?? 8);
+  //     if (snapShot.size <= 0) {
+  //       return null;
+  //     }
+
+  //     List<Post> posts = await Future.wait(
+  //       snapShot.docs.map((doc) async {
+  //         Map<String, dynamic> postData = doc.data();
+  //         DocumentReference? userRef = postData['userId'] as DocumentReference?;
+
+  //         Map<String, dynamic>? userData =
+  //             userRef != null ? await extractUserData(userRef) : null;
+
+  //         bool isLiked = await checkUserLikePost(doc.id);
+
+  //         return Post.fromJson({
+  //           "postId": doc.id,
+  //           "userLiked": isLiked,
+  //           "likesCount": postData['likesCount'],
+  //           "user": userData,
+  //           "imageUrl": postData['imageUrl'],
+  //           "caption": postData['caption'],
+  //           "commentsCount": postData['commentsCount'],
+  //           "tag": postData['tag'],
+  //           "createdAt": postData['createdAt'],
+  //           "type": postData['type'],
+  //           "emoji": postData['emoji'],
+  //           "feeling": postData['feeling'],
+  //           'formattedCreatedAt': postData['createdAt'],
+  //         });
+  //       }).toList(),
+  //     );
+
+  //     return posts;
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   Stream<List<Post>?> getAllUserPost(String uid) {
     try {

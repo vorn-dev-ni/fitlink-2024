@@ -5,13 +5,13 @@ import 'package:demo/data/service/firestore/notification/notification_service.da
 import 'package:demo/data/service/firestore/posts/social_post_service.dart';
 import 'package:demo/features/home/controller/posts/post_loading_paging.dart';
 import 'package:demo/features/home/model/post.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'social_postone_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 class SocialPostoneController extends _$SocialPostoneController {
-  int _pageSizes = 4;
+  int _pageSizes = 6;
   late PostSocialRepo postSocialRepo;
   late NotificationRepo notificationRepo;
   final firebaseService = FirebaseAuthService();
@@ -40,11 +40,11 @@ class SocialPostoneController extends _$SocialPostoneController {
     try {
       // Check if there are more posts
       final total = await postSocialRepo.getTotalPosts();
-      if (total <= _pageSizes) {
+      if (total < _pageSizes) {
         return;
       }
       ref.read(postLoadingPagingProvider.notifier).setState(true);
-      _pageSizes = _pageSizes + 10;
+      _pageSizes = _pageSizes + 5;
 
       // Fetch new batch of posts using pagination
       final newDataStream = await postSocialRepo.getOneTimePosts(

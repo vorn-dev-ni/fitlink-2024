@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:demo/utils/constant/enums.dart';
+import 'package:demo/utils/device/device_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -24,19 +26,6 @@ class NotificationRemoteService extends NotificationBaseService {
   }
 
   @override
-  Future postNotification(String uid, Map<String, dynamic> data) async {
-    try {
-      await _firestore
-          .collection('users')
-          .doc(uid)
-          .collection('notifications')
-          .add(data);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  @override
   Future<void> sendLikeNotification(
       String senderID, String receiverID, String postID) async {
     try {
@@ -52,15 +41,19 @@ class NotificationRemoteService extends NotificationBaseService {
         'senderID': senderID,
         'receiverID': receiverID,
         'postID': postID,
+        'text': ''
       });
       debugPrint('Notification sent: ${response.data}');
     } catch (e) {
-      debugPrint('Error sending notification: $e');
+      debugPrint('Error sendLikeNotification notification: $e');
     }
   }
 
   Future<void> removeFcmToken(String userId) async {
     try {
+      if (!DeviceUtils.isAndroid()) {
+        return;
+      }
       await FirebaseMessaging.instance.deleteToken();
       await FirebaseFirestore.instance.collection('users').doc(userId).update({
         'fcmToken': FieldValue.delete(),
@@ -73,10 +66,8 @@ class NotificationRemoteService extends NotificationBaseService {
 
   Future<void> storeFcmToken(String userId, String fcmToken) async {
     try {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .get();
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(userId).get();
 
       final result = userDoc.data() as Map;
       String? existingFcmToken = result['fcmToken'];
@@ -113,10 +104,11 @@ class NotificationRemoteService extends NotificationBaseService {
         'senderID': senderID,
         'receiverID': receiverID,
         'postID': postID,
+        'text': ''
       });
       debugPrint('Notification sent: ${response.data}');
     } catch (e) {
-      debugPrint('Error sending notification: $e');
+      debugPrint('Error sendCommentNotification notification: $e');
       rethrow;
     }
   }
@@ -132,16 +124,133 @@ class NotificationRemoteService extends NotificationBaseService {
 
       final HttpsCallable callable = FirebaseFunctions.instance
           .httpsCallable('sendNotificationToSpecificUser');
-      debugPrint('Payload is ${senderID} ${receiverID} ${userId}');
       final response = await callable.call({
         'eventType': 'following',
         'senderID': senderID,
         'receiverID': receiverID,
         'postID': userId,
+        'text': ''
       });
       debugPrint('Notification sent: ${response.data}');
     } catch (e) {
-      debugPrint('Error sending notification: $e');
+      debugPrint('Error sendFollowingNotification notification: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future sendLikeCommentNotification(
+      String senderID, String receiverID, String postID) async {
+    try {
+      if (receiverID == FirebaseAuth.instance.currentUser?.uid) {
+        return;
+      }
+      final HttpsCallable callable = FirebaseFunctions.instance
+          .httpsCallable('sendNotificationToSpecificUser');
+      final response = await callable.call({
+        'eventType': 'comment-liked',
+        'senderID': senderID,
+        'receiverID': receiverID,
+        'postID': postID,
+        'text': ''
+      });
+      debugPrint('Notification sent: ${response.data}');
+    } catch (e) {
+      debugPrint('Error sendLikeCommentNotification notification: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future sendChatBetweenUsers(
+      String senderID, String receiverID, String chatId, String text) async {
+    try {
+      if (receiverID == FirebaseAuth.instance.currentUser?.uid) {
+        return;
+      }
+      final HttpsCallable callable = FirebaseFunctions.instance
+          .httpsCallable('sendNotificationToSpecificUser');
+      final response = await callable.call({
+        'eventType': 'chat',
+        'senderID': senderID,
+        'receiverID': receiverID,
+        'postID': chatId,
+        'text': text
+      });
+      debugPrint('Notification chat sent: ${response.data}');
+    } catch (e) {
+      debugPrint('Error sendChatBetweenUsers notification: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future sendAlertEventInterestNotification(
+      String senderID, String receiverID, String postID) async {
+    try {
+      if (FirebaseAuth.instance.currentUser?.uid == null) {
+        return;
+      }
+      final HttpsCallable callable = FirebaseFunctions.instance
+          .httpsCallable('sendNotificationToSpecificUser');
+      final response = await callable.call({
+        'eventType': 'join-event',
+        'senderID': senderID,
+        'receiverID': receiverID,
+        'postID': postID,
+        'text': ''
+      });
+      debugPrint('Notification chat sent: ${response.data}');
+    } catch (e) {
+      debugPrint('Error sendChatBetweenUsers notification: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<QuerySnapshot<Map<String, dynamic>>> getNotificationByUser(
+    String userId, {
+    DocumentSnapshot? lastDoc,
+    int limit = 10,
+  }) async {
+    try {
+      Query<Map<String, dynamic>> query = _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('notifications')
+          .orderBy('timestamp', descending: true)
+          .limit(limit);
+
+      if (lastDoc != null) {
+        query = query.startAfterDocument(lastDoc);
+      }
+
+      return await query.get();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future sendVideoLikeOrComment(String senderID, String receiverID,
+      String postID, VideoTypeLike type) async {
+    try {
+      if (FirebaseAuth.instance.currentUser?.uid == null) {
+        return;
+      }
+      final HttpsCallable callable = FirebaseFunctions.instance
+          .httpsCallable('sendNotificationToSpecificUser');
+      final response = await callable.call({
+        'eventType':
+            type == VideoTypeLike.like ? 'videoLiked' : 'videoCommentLiked',
+        'senderID': senderID,
+        'receiverID': receiverID,
+        'postID': postID,
+        'text': ''
+      });
+      debugPrint('Notification chat sent: ${response.data}');
+    } catch (e) {
+      debugPrint('Error sendChatBetweenUsers notification: $e');
       rethrow;
     }
   }

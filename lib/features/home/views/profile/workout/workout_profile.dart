@@ -22,7 +22,8 @@ class _WorkoutProfileState extends ConsumerState<WorkoutProfile> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Sizes.lg),
+        padding: const EdgeInsets.only(
+            left: Sizes.lg, right: Sizes.lg, bottom: Sizes.xxxl),
         child: Column(
           children: [
             WorkoutActivities(

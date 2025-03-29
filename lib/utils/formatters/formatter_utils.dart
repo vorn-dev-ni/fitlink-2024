@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class FormatterUtils {
@@ -10,6 +11,44 @@ class FormatterUtils {
           RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
           (Match match) => '${match.group(1)},',
         );
+  }
+
+  static bool isDifferentDay(DateTime currentDate, DateTime previousDate) {
+    return currentDate.year != previousDate.year ||
+        currentDate.month != previousDate.month ||
+        currentDate.day != previousDate.day;
+  }
+
+  static bool isTimeDifferenceSignificant(
+      DateTime currentDate, DateTime previousDate) {
+    final difference = currentDate.difference(previousDate).inMinutes;
+
+    debugPrint('diff $difference'); // Debugging the time difference
+
+    if (difference < 10) {
+      return false;
+    }
+
+    return currentDate.year != previousDate.year ||
+        currentDate.month != previousDate.month ||
+        currentDate.day != previousDate.day;
+  }
+
+  static String formatChatTimeStamp(Timestamp timestamp) {
+    final DateTime dateTime = timestamp.toDate();
+
+    final DateTime currentTime = DateTime.now();
+
+    final differenceInDays = currentTime.difference(dateTime).inDays;
+    if (differenceInDays == 0) {
+      return DateFormat('HH:mm').format(dateTime);
+    } else if (differenceInDays == 1) {
+      return 'Yesterday at ${DateFormat('HH:mm').format(dateTime)}';
+    } else if (differenceInDays < 7) {
+      return DateFormat('EEE, HH:mm').format(dateTime).toUpperCase();
+    } else {
+      return "${DateFormat('MMM dd').format(dateTime)} at ${DateFormat('HH:mm').format(dateTime)}";
+    }
   }
 
   static String formatTimestamp(Timestamp? timestamp) {

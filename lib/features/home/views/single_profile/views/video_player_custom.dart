@@ -138,7 +138,8 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
         // Fluttertoast.showToast(msg: 'play app');
         _videoPlayerController!.play();
       }
-    } else if (state == AppLifecycleState.paused && widget.paging == false) {
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive && widget.paging == false) {
       // Fluttertoast.showToast(msg: 'paused app');
       _videoPlayerController!.pause();
     }

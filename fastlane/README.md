@@ -170,13 +170,13 @@ testing
 
 Increment version code and version name, then build the app
 
-### android staging_beta
+### android production_beta
 
 ```sh
-[bundle exec] fastlane android staging_beta
+[bundle exec] fastlane android production_beta
 ```
 
-Build and distribute APK for Staging
+Build and distribute APK for Production
 
 ----
 

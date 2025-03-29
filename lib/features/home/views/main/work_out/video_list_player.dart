@@ -126,6 +126,14 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoListingPlayer>
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      _videoPlayerController?.pause();
+    }
+  }
+
+  @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     if (widget.videoPlayerController == null) {

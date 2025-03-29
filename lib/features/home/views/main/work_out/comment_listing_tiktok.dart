@@ -376,6 +376,10 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut);
 
+                if (mounted) {
+                  DeviceUtils.hideKeyboard(context);
+                }
+
                 await ref
                     .read(tiktokCommentControllerProvider(widget.videoId)
                         .notifier)

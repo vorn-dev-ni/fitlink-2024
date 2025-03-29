@@ -180,9 +180,9 @@ platform :android do
 end
 
   platform :android do
-  desc "Build and distribute APK for Staging"
-  lane :staging_beta do
-    load_env(env:"staging")  # Pass "staging" as a hash parameter
+  desc "Build and distribute APK for Production"
+  lane :production_beta do
+    load_env(env:"prod")  # Pass "staging" as a hash parameter
     # gradle(task: "clean",project_dir: "./android")
      # Increment versionName by a patch (1.0.0 → 1.0.1)
     increment_version_name(
@@ -205,10 +205,10 @@ end
 
     
    firebase_app_distribution(
-    app: "1:77080916809:android:ebe1398ec028ced65b2098",  # Your Firebase App ID
+    app: "1:77080916809:android:09ec1787731c23985b2098",  # Your Firebase App ID
     testers: "Sivsovanpanhavorn@gmail.com, Sovanpanhavorn.siv@tovtrip.com,amyjohn922@gmail.com, henghuylong1@gmail.com, narakithya@gmail.com",  # Testers' email addresses
     release_notes:  "📢 New Android Build Available on Firebase App Distribution!
-• Environment: Staging
+• Environment: Production
 • Build: #{version_code}
 • Version: #{version_name}
 
@@ -228,11 +228,11 @@ Android Notification Icon → When the app is in the background or terminated, t
 We’re excited to hear your thoughts on the new features! Test everything out, and feel free to report any bugs or issues you encounter. Your feedback helps us improve the app for everyone.
 
 🧪 Enjoy testing! 🚀",
-apk_path: "/Users/macbook/Documents/flutter/fitlink-2024/build/app/outputs/flutter-apk/app-staging-release.apk"
+apk_path: "/Users/macbook/Documents/flutter/fitlink-2024/build/app/outputs/flutter-apk/app-prod-release.apk"
 
 )
 deploy_message =  "📢 New Android Build Available on Firebase App Distribution!
-• Environment: Staging
+• Environment: Production
 • Build: #{version_code}
 • Version: #{version_name}
 

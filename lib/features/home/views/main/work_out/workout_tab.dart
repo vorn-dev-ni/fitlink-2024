@@ -7,12 +7,14 @@ import 'package:demo/features/home/controller/video/tiktok_video_controller.dart
 import 'package:demo/features/home/views/main/work_out/comment_listing_tiktok.dart';
 import 'package:demo/features/home/views/main/work_out/social_like_comment_item.dart';
 import 'package:demo/features/home/views/main/work_out/tiktok_video_item.dart';
+import 'package:demo/features/home/views/main/work_out/video_list_player.dart';
 import 'package:demo/features/home/views/single_profile/views/video_player_custom.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:preload_page_view/preload_page_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -25,8 +27,10 @@ class WorkoutTab extends ConsumerStatefulWidget {
 
 class _WorkoutTabState extends ConsumerState<WorkoutTab>
     with WidgetsBindingObserver {
-  final PageController _pageController =
-      PageController(initialPage: 0, keepPage: true);
+  final PageController _pageController = PageController(
+    initialPage: 0,
+    keepPage: true,
+  );
 
   bool isSliding = false;
   bool isPause = false;
@@ -42,7 +46,6 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
       final newPage = _pageController.page?.round() ?? 0;
 
       if (newPage != _currentIndex) {
-        final isNext = newPage > _currentIndex;
         _currentIndex = newPage;
         _handleVideoPlayback(
           newPage,
@@ -59,30 +62,11 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
 
     if (index < 0 || index >= videoList.length) return;
 
-    // Dispose anything < index - 1
-    for (int i = 0; i < index - 1; i++) {
-      controller.disposeVideo(i);
-    }
-
-    if (index > 0) {
-      final reInitIndex = index - 1;
-      if (reInitIndex >= 0 &&
-          reInitIndex < videoList.length &&
-          videoList[reInitIndex].isInitialized != true) {
-        await controller.preloadVideo(reInitIndex, message: 'Reload Video at');
-      }
-    }
-
-    // Preload index + 1 (adjacent)
-    final preloadIndex = index + 1;
-    if (preloadIndex < videoList.length) {
-      await controller.preloadVideo(preloadIndex, message: 'Preload video');
-    }
-
-    // Preload index + 2 (ahead)
     final aheadIndex = index + 2;
     if (aheadIndex < videoList.length) {
-      await controller.preloadVideo(aheadIndex);
+      await ref
+          .read(tiktokVideoControllerProvider.notifier)
+          .preloadVideo(aheadIndex);
     }
 
     final nextIndex = index + 1;
@@ -112,69 +96,49 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
           : SafeArea(
               top: false,
               bottom: false,
-              child: Stack(
-                children: [
-                  Container(
-                    color: AppColors.backgroundDark,
-                    child: PageView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: data.length,
-                      pageSnapping: true,
-                      controller: _pageController,
-                      itemBuilder: (context, index) {
-                        final video = data[index];
-                        return VisibilityDetector(
-                          key: ValueKey(video.documentID),
-                          onVisibilityChanged: (visibilityInfo) async {
-                            if (visibilityInfo.visibleFraction >= 0.8) {
-                              if (video.videoplayer != null &&
-                                  video.videoplayer!.value.isInitialized) {
-                                video.videoplayer!.play();
-                              }
-                            } else {
-                              video.videoplayer!.pause();
-                            }
+              child: Container(
+                color: AppColors.backgroundDark,
+                child: PreloadPageView.builder(
+                  pageSnapping: true,
+                  scrollDirection: Axis.vertical,
+                  controller: PreloadPageController(),
+                  itemCount: data.length,
+                  preloadPagesCount: 2,
+                  itemBuilder: (context, index) {
+                    final video = data[index];
+                    return Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        // VideoPlayer( video.),
+                        VideoListingPlayer(
+                          videoUrl: video.videoUrl,
+                          paging: true,
+                          videoId: video.documentID ?? "",
+                          videoPlayerController: video.videoplayer,
+                        ),
+                        VideoTiktokItem(
+                          caption: video.caption,
+                          videoId: video.documentID,
+                          commentCount: video.commentCount,
+                          likeCount: video.likeCount,
+                          isUserliked: video.isUserliked,
+                          shareCount: video.likeCount,
+                          date: video.createdAt ?? Timestamp.now(),
+                          tags: video.tag ?? [],
+                          userdata: video.userRef,
+                          img: video.thumbnailUrl ?? "",
+                          onCommentPressed: () {
+                            _showCommentBottomSheet(
+                              video.userRef?.id ?? "",
+                              video.documentID ?? "",
+                            );
                           },
-                          child: Stack(
-                            fit: StackFit.expand,
-                            children: [
-                              video.isInitialized == true &&
-                                      video.videoplayer != null
-                                  ? VideoPlayerTikTok(
-                                      paging: true,
-                                      key: UniqueKey(),
-                                      videoId: video.documentID,
-                                      videoPlayerController: video.videoplayer)
-                                  : const Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
-                              VideoTiktokItem(
-                                caption: video.caption,
-                                videoId: video.documentID,
-                                commentCount: video.commentCount,
-                                likeCount: video.likeCount,
-                                isUserliked: video.isUserliked,
-                                shareCount: video.likeCount,
-                                date: video.createdAt ?? Timestamp.now(),
-                                tags: video.tag ?? [],
-                                userdata: video.userRef,
-                                img: video.thumbnailUrl ?? "",
-                                onCommentPressed: () {
-                                  _showCommentBottomSheet(
-                                    video.userRef?.id ?? "",
-                                    video.documentID ?? "",
-                                  );
-                                },
-                              ),
-                              if (index >= data.length - 1)
-                                renderLoadingBottom()
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
+                        ),
+                        if (index >= data.length - 1) renderLoadingBottom()
+                      ],
+                    );
+                  },
+                ),
               ),
             );
     }, error: (error, stackTrace) {

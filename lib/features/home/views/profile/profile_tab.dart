@@ -236,19 +236,16 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
         String uid = LocalStorageUtils().getKey('uid') ?? '';
         ref.read(userStatusControllerProvider.notifier).setUserOffline(uid);
         ref.read(logoutControllerProvider.notifier).logout();
-        ref.invalidate(notificationBadgeProvider);
+        ref.invalidate(userNotificationControllerProvider);
         ref.invalidate(notificationUserControllerProvider);
         LocalStorageUtils().setKeyString('uid', '');
         ref.invalidate(profileUserControllerProvider);
         ref.invalidate(profilePostControllerProvider);
-        // ref.invalidate(tiktokVideoControllerProvider);
+        ref.refresh(tiktokVideoControllerProvider.notifier).refresh();
         ref.invalidate(socialInteractonVideoControllerProvider);
+        ref.read(appLoadingStateProvider.notifier).setState(false);
         ref.invalidate(navbarControllerProvider);
         ref.invalidate(navigationStateProvider);
-        ref.read(appLoadingStateProvider.notifier).setState(false);
-        Future.delayed(const Duration(milliseconds: 1000), () {
-          ref.read(appLoadingStateProvider.notifier).setState(false);
-        });
       }
     } catch (e) {
       LocalStorageUtils().setKeyString('uid', '');

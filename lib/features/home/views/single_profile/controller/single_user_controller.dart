@@ -94,8 +94,8 @@ class SingleUserController extends _$SingleUserController {
         await profileRepository.followingUser(receiverID);
         ref.invalidate(mediaTagConrollerProvider);
         ref.invalidate(followingFriendControllerProvider);
-        // await notificationRepo.sentFollowingNotification(
-        //     senderID: senderId, receiverID: receiverID, userId: senderId);
+        await notificationRepo.sentFollowingNotification(
+            senderID: senderId, receiverID: receiverID, userId: senderId);
       }
     } catch (e) {
       if (kDebugMode) {

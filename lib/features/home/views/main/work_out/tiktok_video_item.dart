@@ -97,7 +97,7 @@ class MetaDataVideo extends StatefulWidget {
 }
 
 class _MetaDataVideoState extends State<MetaDataVideo> {
-  bool showMore = false;
+  bool showMore = true;
   @override
   Widget build(BuildContext context) {
     return Positioned(

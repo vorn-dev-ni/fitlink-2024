@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/features/home/views/single_profile/model/media_count.dart';
+import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ProfileRepository {
   late BaseUserService baseService;
@@ -123,9 +125,17 @@ class ProfileRepository {
     }
   }
 
-  Stream<int> getNotificationCount(String? uid) {
+  Stream<int> getNotificationCount(String? uid) async* {
     try {
-      return baseService.getNotificationCount(uid);
+      yield* baseService.getNotificationCount(uid);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future clearBadge() async {
+    try {
+      await baseService.clearNotificationCount();
     } catch (e) {
       rethrow;
     }

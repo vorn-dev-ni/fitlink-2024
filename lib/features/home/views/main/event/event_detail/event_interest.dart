@@ -216,7 +216,7 @@ class _EventBottomInterestState extends ConsumerState<EventBottomInterest> {
     );
   }
 
-  Skeletonizer buildLoading() {
+  Widget buildLoading() {
     return Skeletonizer(
       enabled: true,
       child: SliverToBoxAdapter(
@@ -279,21 +279,28 @@ class _EventBottomInterestState extends ConsumerState<EventBottomInterest> {
 
                                 return Transform.translate(
                                   offset: Offset(index * -10, 0),
-                                  child: ClipOval(
-                                    child: user.avatarImage.isEmpty
-                                        ? Container(
-                                            child: Assets.app.defaultAvatar
-                                                .image(
-                                                    width: 44,
-                                                    height: 50,
-                                                    fit: BoxFit.cover),
-                                          )
-                                        : FancyShimmerImage(
-                                            boxFit: BoxFit.cover,
-                                            width: 20,
-                                            height: 50,
-                                            imageUrl: user.avatarImage,
-                                            errorWidget: errorImgplaceholder()),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          width: 1,
+                                          color: AppColors.neutralColor),
+                                      borderRadius:
+                                          BorderRadius.circular(Sizes.xxxl),
+                                    ),
+                                    child: ClipOval(
+                                      child: user.avatarImage.isEmpty
+                                          ? Assets.app.defaultAvatar.image(
+                                              width: 44,
+                                              height: 50,
+                                              fit: BoxFit.cover)
+                                          : FancyShimmerImage(
+                                              boxFit: BoxFit.cover,
+                                              width: 20,
+                                              height: 50,
+                                              imageUrl: user.avatarImage,
+                                              errorWidget:
+                                                  errorImgplaceholder()),
+                                    ),
                                   ),
                                 );
                               },
@@ -392,21 +399,23 @@ class _ListUserState extends ConsumerState<ListUser> {
             final result = data;
             return Transform.translate(
               offset: Offset(index * -10, 0),
-              child: ClipOval(
-                child: result?.avatar == null && result?.avatar == ""
-                    ? Container(
-                        decoration:
-                            const BoxDecoration(color: AppColors.neutralColor),
-                        child: Assets.app.defaultAvatar
-                            .image(width: 20, height: 50, fit: BoxFit.cover),
-                      )
-                    : FancyShimmerImage(
-                        boxFit: BoxFit.cover,
-                        width: 20,
-                        height: 50,
-                        imageUrl: result?.avatar ?? "",
-                        errorWidget: Assets.app.defaultAvatar
-                            .image(width: 20, height: 50, fit: BoxFit.cover)),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(width: 1, color: AppColors.neutralColor),
+                  borderRadius: BorderRadius.circular(Sizes.xxxl),
+                ),
+                child: ClipOval(
+                  child: result?.avatar == null && result?.avatar == ""
+                      ? Assets.app.defaultAvatar
+                          .image(width: 20, height: 50, fit: BoxFit.cover)
+                      : FancyShimmerImage(
+                          boxFit: BoxFit.cover,
+                          width: 20,
+                          height: 50,
+                          imageUrl: result?.avatar ?? "",
+                          errorWidget: Assets.app.defaultAvatar
+                              .image(width: 20, height: 50, fit: BoxFit.cover)),
+                ),
               ),
             );
           },
@@ -420,12 +429,8 @@ class _ListUserState extends ConsumerState<ListUser> {
                 offset: Offset(index * -10, 0),
                 child: ClipOval(
                   child: user.avatarImage.isEmpty
-                      ? Container(
-                          decoration: const BoxDecoration(
-                              color: AppColors.neutralColor),
-                          child: Assets.app.defaultAvatar
-                              .image(width: 20, height: 50, fit: BoxFit.cover),
-                        )
+                      ? Assets.app.defaultAvatar
+                          .image(width: 20, height: 50, fit: BoxFit.cover)
                       : FancyShimmerImage(
                           boxFit: BoxFit.cover,
                           width: 20,

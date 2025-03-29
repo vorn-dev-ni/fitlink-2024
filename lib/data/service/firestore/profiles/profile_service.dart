@@ -156,12 +156,18 @@ class ProfileService implements BaseUserService {
     if (userId == null) {
       return Stream.value(0);
     }
-    return _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('notifications')
-        .snapshots()
-        .map((snapshot) => snapshot.size);
+    return _firestore.collection('users').doc(userId).snapshots().map(
+        (snapshot) => (snapshot.data()?['notificationReadCount'] ?? 0) as int);
+  }
+
+  @override
+  Future<void> clearNotificationCount() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    await _firestore.collection('users').doc(user.uid).update({
+      'notificationReadCount': 0,
+    });
   }
 
   @override

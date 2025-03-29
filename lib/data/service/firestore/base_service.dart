@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:demo/common/widget/video_tiktok.dart';
 import 'package:demo/features/home/model/chat.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/features/home/views/single_profile/model/media_count.dart';
@@ -21,6 +20,7 @@ abstract class BaseUserService {
   Future updateCoverImage(Map<String, dynamic> data);
   Future updateProfile(Map<String, dynamic> data);
   Future followUser(String followedUserId);
+  Future clearNotificationCount();
   Stream<int> getNotificationCount(String? userId);
   Future isFollowingUser(String followedUserId);
   Future unfollowUser(String followedUserId);

@@ -70,7 +70,6 @@ class NotificationUserController extends _$NotificationUserController {
 
     try {
       int mutatePage = limit;
-      debugPrint(" pagesie ${mutatePage}");
 
       ref.read(notificationLoadingProvider.notifier).setState(true);
       final notifications = await notificationRepo.getNotificationByUser(

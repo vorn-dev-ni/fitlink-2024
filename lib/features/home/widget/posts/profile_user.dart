@@ -117,8 +117,12 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
               ),
             ),
           widget.type == ProfileType.comment
-              ? ClipOval(
-                  child: Container(
+              ? Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1, color: AppColors.neutralColor),
+                    borderRadius: BorderRadius.circular(Sizes.xxxl),
+                  ),
+                  child: ClipOval(
                     child: widget.comment?.user?.avatar != "" &&
                             widget.comment?.user?.avatar != null
                         ? FancyShimmerImage(
@@ -133,8 +137,12 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                             .image(width: 40, height: 40, fit: BoxFit.cover),
                   ),
                 )
-              : ClipOval(
-                  child: Container(
+              : Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1, color: AppColors.neutralColor),
+                    borderRadius: BorderRadius.circular(Sizes.xxxl),
+                  ),
+                  child: ClipOval(
                     child: widget.imageUrl != ""
                         ? FancyShimmerImage(
                             imageUrl: widget.imageUrl,

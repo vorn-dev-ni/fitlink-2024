@@ -67,9 +67,7 @@ class _MyHomeScreenState extends ConsumerState<MyHomeScreen> {
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
         extendBody: true,
-
         backgroundColor: AppColors.backgroundLight,
-        // body: tabScreens[tabIndex],
         body: Stack(
           children: [
             IndexedStack(

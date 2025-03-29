@@ -35,6 +35,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sizer/sizer.dart';
@@ -164,6 +165,8 @@ class _MyAppState extends ConsumerState<MyApp> {
     _streamSubscription.cancel();
     streamAuthState?.cancel();
     streamUserFirestore?.cancel();
+    DefaultCacheManager().emptyCache();
+
     super.dispose();
   }
 
@@ -183,6 +186,7 @@ class _MyAppState extends ConsumerState<MyApp> {
           ref.invalidate(socialInteractonVideoControllerProvider);
           ref.invalidate(userNotificationControllerProvider);
           // ref.invalidate(tiktokVideoControllerProvider);
+          // ref.refresh(tiktokVideoControllerProvider.notifier).refresh();
           ref
               .read(navbarControllerProvider.notifier)
               .updateProfileTab(authModel.avatar ?? "");

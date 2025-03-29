@@ -56,7 +56,6 @@ class LoginController extends _$LoginController {
     try {
       final smsCode = ref.watch(otpControlelrProvider);
 
-      debugPrint('Sms code is ${smsCode}');
       final authRepository =
           AuthLoginRepository(firebaseAuthService: FirebaseAuthService());
       await authRepository.loginPhoneNumber(
@@ -70,16 +69,17 @@ class LoginController extends _$LoginController {
 
   Future sendPhoneOtp(
       {required void Function(String verificationId, int? resendToken)
-          onSuccessVerification}) async {
+          onSuccessVerification,
+      String? phoneNumber}) async {
     try {
       // await _authLoginRepository.loginUserWithPhoneNumber(state.);
-      debugPrint('sendPhoneOtp completed:');
+      debugPrint('sendPhoneOtp completed: ${state.phoneNumber}');
 
       final authRepository =
           AuthLoginRepository(firebaseAuthService: FirebaseAuthService());
 
       authRepository.sendPhoneOtp(
-        '${state.countryCode}${state.phoneNumber!}',
+        '${state.countryCode}${state.phoneNumber ?? phoneNumber}',
         verificationCompleted: (PhoneAuthCredential credential) {
           debugPrint('Verification completed: $credential');
         },

@@ -18,7 +18,7 @@ Future<void> initializeFirebaseApp(
 
     await Future.delayed(const Duration(milliseconds: 200));
     await FirebaseAppCheck.instance.activate(
-      androidProvider: AndroidProvider.playIntegrity,
+      androidProvider: AndroidProvider.debug,
       appleProvider: AppleProvider.appAttest,
     );
   } catch (e) {

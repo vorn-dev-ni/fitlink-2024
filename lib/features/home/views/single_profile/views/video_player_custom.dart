@@ -9,7 +9,6 @@ import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerTikTok extends ConsumerStatefulWidget {
@@ -58,6 +57,7 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
     if (_videoPlayerController != null) {
       return;
     }
+
     if (widget.videoPlayerController != null) {
       _videoPlayerController = widget.videoPlayerController;
     } else if (widget.videoFile != null) {
@@ -67,7 +67,6 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
       final file = await _cacheVideo(widget.videoUrl!);
       _videoPlayerController = VideoPlayerController.file(file)..initialize();
     }
-
     _videoPlayerController?.setLooping(true);
 
     if (widget.paging == false) {
@@ -125,10 +124,13 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     if (widget.videoPlayerController == null) {
+      _videoPlayerController?.pause();
+      _videoPlayerController = null;
       _videoPlayerController?.dispose();
       _videoPlayerController?.removeListener(_videoListener);
     }
     _debounce?.cancel();
+    // DefaultCacheManager().emptyCache();
 
     super.dispose();
   }
@@ -143,7 +145,7 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
         _videoPlayerController!.play();
       }
     } else if (state == AppLifecycleState.paused && widget.paging == false) {
-      Fluttertoast.showToast(msg: 'paused app');
+      // Fluttertoast.showToast(msg: 'paused app');
       _videoPlayerController!.pause();
     }
   }
@@ -167,7 +169,7 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
                 if (_isBuffering || _isSeeking)
                   const Center(
                       child: CircularProgressIndicator(
-                          color: AppColors.primaryColor)),
+                          color: AppColors.secondaryColor)),
                 // Custom Progress Bar
                 renderProgressVideo(),
               ],
@@ -177,8 +179,8 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
             children: [
               if (widget.paging == false) renderButtonClose(context),
               const Center(
-                  child:
-                      CircularProgressIndicator(color: AppColors.primaryColor)),
+                  child: CircularProgressIndicator(
+                      color: AppColors.secondaryColor)),
             ],
           );
   }
@@ -204,14 +206,17 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
 
   Widget fullScreen(VideoPlayerController controller) {
     return Transform.scale(
-      scaleY: DeviceUtils.isAndroid() ? 0.6 : 1,
-      scaleX: DeviceUtils.isAndroid() ? 0.55 : 1,
-      child: FittedBox(
-        fit: BoxFit.cover,
-        child: SizedBox(
-          width: controller.value.size.width,
-          height: controller.value.size.height,
-          child: VideoPlayer(controller),
+      scaleX: 1,
+      scaleY: 1,
+      child: SizedBox.expand(
+        child: FittedBox(
+          fit: BoxFit.cover,
+          child: SizedBox(
+            width: controller.value.size.width,
+            height: controller.value.size.height,
+            child: AspectRatio(
+                aspectRatio: 9 / 16, child: VideoPlayer(controller)),
+          ),
         ),
       ),
     );

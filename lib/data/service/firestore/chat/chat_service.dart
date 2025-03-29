@@ -185,6 +185,7 @@ class ChatService extends ChatBaseService {
         'createdAt': Timestamp.now(),
         "senderId": senderId,
         'lastMessage': '',
+        "last_read": {},
         'lastMessageTimestamp': Timestamp.now(),
       });
     } catch (e) {

@@ -40,8 +40,6 @@ class SocialPostoneController extends _$SocialPostoneController {
     try {
       // Check if there are more posts
       final total = await postSocialRepo.getTotalPosts();
-
-      debugPrint('total ${total} pageSize ${_pageSizes}');
       if (total < _pageSizes) {
         return;
       }

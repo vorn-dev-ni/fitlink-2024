@@ -161,12 +161,6 @@ class NotificationService {
     String channelDesc = 'This is the channel',
   }) async {
     try {
-      int previousCount =
-          int.parse(LocalStorageUtils().getKey('notificationCount') ?? '0');
-      previousCount = previousCount + 1;
-      await LocalStorageUtils()
-          .setKeyString('notificationCount', previousCount.toString());
-
       await _notificationsPlugin?.show(
         id,
         title,

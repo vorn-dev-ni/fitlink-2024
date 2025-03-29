@@ -222,13 +222,12 @@ class _SocialLikeCommentItemState extends ConsumerState<SocialLikeCommentItem> {
       return isCurrentlyLiked;
     }
 
-    _debounceTimer = Timer(const Duration(milliseconds: 500), () {});
+    _debounceTimer = Timer(const Duration(milliseconds: 1000), () {});
     ref
         .read(tiktokCommentControllerProvider(
           widget.videoId,
         ).notifier)
         .toggleLike(alreadyLiked: isCurrentlyLiked, receiverID: receiverID);
-    // hasLiked = !isCurrentlyLiked;
 
     return !isCurrentlyLiked;
   }

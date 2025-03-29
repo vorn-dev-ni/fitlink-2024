@@ -50,7 +50,7 @@ class FirebaseAuthService {
         verificationCompleted: verificationCompleted,
         verificationFailed: verificationFailed,
         codeSent: codeSent,
-        timeout: const Duration(seconds: 60),
+        timeout: const Duration(seconds: 100),
         codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
       );
     } catch (e) {

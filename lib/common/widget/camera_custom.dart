@@ -17,6 +17,7 @@ import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:demo/utils/validation/video_validation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:async';
@@ -55,7 +56,10 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
   void initState() {
     super.initState();
     // _checkCameraPermission();
+    // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
     _initializeCamera();
+
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -172,9 +176,11 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
       if (_cameras.isNotEmpty) {
         _controller = CameraController(
           enableAudio: true,
-          fps: 30,
+          videoBitrate: 1000000,
+          imageFormatGroup: ImageFormatGroup.yuv420,
+          fps: 20,
           _isFrontCamera ? _cameras[1] : _cameras[0],
-          ResolutionPreset.high,
+          ResolutionPreset.medium,
         );
 
         await _controller?.initialize();
@@ -348,116 +354,115 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
           debugPrint('Current Zoom Level: $_currentZoomLevel');
         }
       },
-      child: AspectRatio(
-        aspectRatio: .56,
-        child: Stack(
-          children: [
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          if (_controller != null)
             Transform(
               transform: cameraTransform,
               alignment: Alignment.center,
               child: CameraPreview(_controller!),
             ),
-            if (!_isRecording)
-              Positioned(
-                top: 20,
-                right: 20,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: Icon(
-                      _isFlashOn ? Icons.flash_on : Icons.flash_off,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                    onPressed: _toggleFlash,
-                  ),
-                ),
-              ),
-            if (!_isRecording)
-              Positioned(
-                top: 20,
-                right: 80,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: const Icon(
-                      CupertinoIcons.switch_camera,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                    onPressed: _toggleCameraPosition,
-                  ),
-                ),
-              ),
+          if (!_isRecording)
             Positioned(
-              bottom: 60,
+              top: 20,
+              right: 20,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  icon: Icon(
+                    _isFlashOn ? Icons.flash_on : Icons.flash_off,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                  onPressed: _toggleFlash,
+                ),
+              ),
+            ),
+          if (!_isRecording)
+            Positioned(
+              top: 20,
+              right: 80,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  icon: const Icon(
+                    CupertinoIcons.switch_camera,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                  onPressed: _toggleCameraPosition,
+                ),
+              ),
+            ),
+          Positioned(
+            bottom: 60,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: GestureDetector(
+                onTap: _isRecording ? _stopRecording : _startRecording,
+                // onLongPress: _startRecording,
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: _isRecording ? Colors.red : Colors.white,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 4),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          if (!_isRecording)
+            Positioned(
+              bottom: 10,
+              left: 20,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.photo,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                  onPressed: _pickVideo,
+                ),
+              ),
+            ),
+          if (_isRecording)
+            Positioned(
+              bottom: 20,
               left: 0,
               right: 0,
               child: Center(
-                child: GestureDetector(
-                  onTap: _isRecording ? _stopRecording : _startRecording,
-                  // onLongPress: _startRecording,
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: _isRecording ? Colors.red : Colors.white,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 4),
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: AppColors.backgroundDark.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(Sizes.md)),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                  child: Text(
+                    '${formatDuration(_recordDuration)} / 01:00',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
                     ),
                   ),
                 ),
               ),
             ),
-            if (!_isRecording)
-              Positioned(
-                bottom: 10,
-                left: 20,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.photo,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                    onPressed: _pickVideo,
-                  ),
-                ),
-              ),
-            if (_isRecording)
-              Positioned(
-                bottom: 20,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: AppColors.backgroundDark.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(Sizes.md)),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                    child: Text(
-                      '${formatDuration(_recordDuration)} / 01:00',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
+        ],
       ),
     );
   }

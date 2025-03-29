@@ -31,7 +31,6 @@ import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:sizer/sizer.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 class ChatDetailScreen extends ConsumerStatefulWidget {
   const ChatDetailScreen({super.key});
@@ -433,7 +432,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen>
     );
   }
 
-  Expanded buildChat(List<Message>? data) {
+  Widget buildChat(List<Message>? data) {
     return Expanded(
       child: ListView.builder(
         padding: const EdgeInsets.all(20),
@@ -860,6 +859,11 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen>
             width: 130,
             height: 300,
             imageUrl: thumbnailUrl,
+            errorWidget: Assets.app.noImgAvailable.image(
+              width: 15,
+              height: 15,
+              fit: BoxFit.cover,
+            ),
             boxFit: BoxFit.cover,
           ),
           Positioned.fill(
@@ -878,47 +882,56 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen>
             ),
           ),
           Positioned(
-              left: 7,
-              bottom: 4,
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.backgroundLight)),
-                      child: avatar == "" || avatar == null
-                          ? Assets.app.defaultAvatar.image(
-                              width: 20,
-                              height: 20,
-                              fit: BoxFit.cover,
-                            )
-                          : FancyShimmerImage(
-                              width: 20,
-                              height: 20,
-                              imageUrl: thumbnailUrl,
-                              boxFit: BoxFit.cover,
+            left: 7,
+            bottom: 2,
+            child: Row(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1, color: AppColors.neutralColor),
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: ClipOval(
+                    child: avatar == "" || avatar == null
+                        ? Assets.app.defaultAvatar.image(
+                            width: 15,
+                            height: 15,
+                            fit: BoxFit.cover,
+                          )
+                        : FancyShimmerImage(
+                            width: 15,
+                            height: 15,
+                            errorWidget: ClipOval(
+                              child: Assets.app.defaultAvatar.image(
+                                width: 15,
+                                height: 15,
+                                fit: BoxFit.cover,
+                              ),
                             ),
+                            imageUrl: thumbnailUrl,
+                            boxFit: BoxFit.cover,
+                          ),
+                  ),
+                ),
+                const SizedBox(width: Sizes.xs),
+                // Adjust the width to be more flexible
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width -
+                        40, // Make it flexible
+                  ),
+                  child: Text(
+                    fullName,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: AppTextTheme.lightTextTheme.bodySmall?.copyWith(
+                      color: AppColors.backgroundLight,
                     ),
                   ),
-                  const SizedBox(
-                    width: Sizes.xs,
-                  ),
-                  SizedBox(
-                    width: 80,
-                    child: Text(
-                      fullName,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: AppTextTheme.lightTextTheme.bodySmall
-                          ?.copyWith(color: AppColors.backgroundLight),
-                    ),
-                  )
-                ],
-              ))
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );
@@ -971,10 +984,10 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen>
       constraints:
           _isLongPressed && _selectedIndex >= 0 && _hasPressDelete == false
               ? BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width * 0.6,
+                  maxWidth: MediaQuery.of(context).size.width * 0.7,
                   maxHeight: 300)
               : BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width * 0.6,
+                  maxWidth: MediaQuery.of(context).size.width * 0.7,
                 ),
       child: Column(
         children: [
@@ -983,6 +996,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen>
                   children: [
                     BubbleNormalImage(
                       id: message,
+                      padding: const EdgeInsets.all(6),
                       image: _image(
                           thumbnailUrl ?? "", videoUserName ?? "", videoAvatar),
                       onTap: () {

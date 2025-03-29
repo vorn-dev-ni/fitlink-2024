@@ -3,6 +3,7 @@ import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/base_service.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:demo/utils/constant/enums.dart';
+import 'package:demo/utils/device/device_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,9 @@ class NotificationRemoteService extends NotificationBaseService {
 
   Future<void> removeFcmToken(String userId) async {
     try {
+      if (!DeviceUtils.isAndroid()) {
+        return;
+      }
       await FirebaseMessaging.instance.deleteToken();
       await FirebaseFirestore.instance.collection('users').doc(userId).update({
         'fcmToken': FieldValue.delete(),

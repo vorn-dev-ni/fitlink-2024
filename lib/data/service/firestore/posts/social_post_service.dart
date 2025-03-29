@@ -277,10 +277,10 @@ class SocialPostService extends BaseSocialMediaService {
       int pageSize) async {
     debugPrint("Page size is ${pageSize}");
     final now = DateTime.now();
-    final weeksAgo = now.subtract(const Duration(days: 14));
+    final ageAgo = now.subtract(const Duration(days: 30));
     return await _firestore
         .collection('posts')
-        .where('createdAt', isGreaterThanOrEqualTo: weeksAgo)
+        .where('createdAt', isGreaterThanOrEqualTo: ageAgo)
         .orderBy('likesCount', descending: true)
         .orderBy('commentsCount', descending: true)
         .orderBy('createdAt', descending: true)
@@ -296,11 +296,11 @@ class SocialPostService extends BaseSocialMediaService {
   @override
   Future<QuerySnapshot<Map<String, dynamic>>> getLatestPosts(pageSize) async {
     final now = DateTime.now();
-    final twoWeeksAgo = now.subtract(const Duration(days: 14));
+    final ageAgo = now.subtract(const Duration(days: 30));
 
     return await _firestore
         .collection('posts')
-        .where('createdAt', isGreaterThanOrEqualTo: twoWeeksAgo)
+        .where('createdAt', isGreaterThanOrEqualTo: ageAgo)
         .orderBy('createdAt', descending: true)
         .limit(4)
         .get();

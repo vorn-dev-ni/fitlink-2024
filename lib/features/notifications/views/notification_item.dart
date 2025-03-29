@@ -49,17 +49,25 @@ class _NotificationItemState extends State<NotificationItem> {
       child: ListTile(
         tileColor: AppColors.backgroundLight,
         leading: widget.avatar.isEmpty
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(100),
-                child: Assets.app.defaultAvatar.image(fit: BoxFit.cover),
-              )
-            : ClipRRect(
-                borderRadius: BorderRadius.circular(100),
-                child: FancyShimmerImage(
-                  imageUrl: widget.avatar,
-                  boxFit: BoxFit.cover,
-                  width: 55,
-                  height: 55,
+            ? Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    border:
+                        Border.all(width: 1, color: AppColors.neutralColor)),
+                child: ClipOval(
+                    child: Assets.app.defaultAvatar.image(fit: BoxFit.cover)))
+            : Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    border:
+                        Border.all(width: 1, color: AppColors.neutralColor)),
+                child: ClipOval(
+                  child: FancyShimmerImage(
+                    imageUrl: widget.avatar,
+                    boxFit: BoxFit.cover,
+                    width: 55,
+                    height: 55,
+                  ),
                 ),
               ),
         title: Row(

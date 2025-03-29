@@ -18,6 +18,7 @@ import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
+import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
@@ -134,43 +135,50 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                     Positioned(
                       top: 45,
                       left: 12,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: const Color.fromARGB(255, 233, 235, 237),
-                            width: 2,
-                          ),
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return ZoomableImage(
-                                  imageUrl: currentUser?.avatar != "" &&
-                                          currentUser?.avatar != null
-                                      ? currentUser!.avatar!
-                                      : "https://cdn3d.iconscout.com/3d/premium/thumb/man-avatar-3d-icon-download-in-png-blend-fbx-gltf-file-formats--men-people-male-pack-avatars-icons-5187871.png?f=webp",
-                                );
-                              },
-                            );
-                          },
-                          child: ClipOval(
-                            child: currentUser?.avatar != "" &&
-                                    currentUser?.avatar != null
-                                ? FancyShimmerImage(
-                                    errorWidget: errorImgplaceholder(),
-                                    width: 100,
-                                    height: 100,
-                                    boxFit: BoxFit.cover,
-                                    imageUrl: currentUser?.avatar ?? "")
-                                : Assets.app.defaultAvatar.image(
+                      child: InkWell(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return ZoomableImage(
+                                imageUrl: currentUser?.avatar != "" &&
+                                        currentUser?.avatar != null
+                                    ? currentUser!.avatar!
+                                    : "https://cdn3d.iconscout.com/3d/premium/thumb/man-avatar-3d-icon-download-in-png-blend-fbx-gltf-file-formats--men-people-male-pack-avatars-icons-5187871.png?f=webp",
+                              );
+                            },
+                          );
+                        },
+                        child: currentUser?.avatar != "" &&
+                                currentUser?.avatar != null
+                            ? Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 1, color: AppColors.neutralColor),
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: ClipOval(
+                                  child: FancyShimmerImage(
+                                      errorWidget: errorImgplaceholder(),
+                                      width: 100,
+                                      height: 100,
+                                      boxFit: BoxFit.cover,
+                                      imageUrl: currentUser?.avatar ?? ""),
+                                ),
+                              )
+                            : Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 1, color: AppColors.neutralColor),
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: ClipOval(
+                                  child: Assets.app.defaultAvatar.image(
                                     width: 100,
                                     height: 100,
                                   ),
-                          ),
-                        ),
+                                ),
+                              ),
                       ),
                     ),
                     Positioned(
@@ -332,7 +340,7 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                 ),
                               ],
                             ),
-                            RenderMediaStatus(currentUser)
+                            renderMediaState(currentUser)
                           ],
                         ),
                       ),
@@ -364,7 +372,7 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                       padding: const EdgeInsets.all(0),
                       onPressed: () {
                         ref
-                            .read(notificationBadgeProvider.notifier)
+                            .read(userNotificationControllerProvider.notifier)
                             .clearNotificationBadge();
 
                         HelpersUtils.navigatorState(context)
@@ -375,9 +383,7 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                         size: Sizes.xxl,
                         color: AppColors.backgroundLight,
                       )),
-                  if (data?.notificaitonCount != null &&
-                      data!.notificaitonCount! > 0)
-                    renderBadge(data),
+                  if (data?.notificaitonCount != null) renderBadge(),
                 ],
               );
             },
@@ -418,23 +424,42 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
     );
   }
 
-  Widget renderBadge(MediaCount data) {
-    final badgeCount = ref.watch(notificationBadgeProvider);
-    return badgeCount > 0
-        ? Positioned(
-            top: 0,
-            right: 0,
-            child: Badge(
-              label: Text('$badgeCount'),
-              backgroundColor: AppColors.errorColor,
-              textColor: AppColors.backgroundLight,
-              smallSize: 20,
-            ),
-          )
-        : const SizedBox();
+  Widget renderBadge() {
+    final asyncValue = ref.watch(userNotificationControllerProvider);
+
+    return asyncValue.when(
+      data: (data) {
+        return data > 0
+            ? Positioned(
+                top: 0,
+                right: 0,
+                child: Badge(
+                  label: Text('$data'),
+                  backgroundColor: AppColors.errorColor,
+                  textColor: AppColors.backgroundLight,
+                  smallSize: 20,
+                ),
+              )
+            : const SizedBox();
+      },
+      error: (error, stackTrace) => const SizedBox(),
+      loading: () => const SizedBox(),
+    );
+    // badgeCount > 0
+    //     ? Positioned(
+    //         top: 0,
+    //         right: 0,
+    //         child: Badge(
+    //           label: Text('$badgeCount'),
+    //           backgroundColor: AppColors.errorColor,
+    //           textColor: AppColors.backgroundLight,
+    //           smallSize: 20,
+    //         ),
+    //       )
+    //     : const SizedBox();
   }
 
-  Widget RenderMediaStatus(AuthModel? currentUser) {
+  Widget renderMediaState(AuthModel? currentUser) {
     final async = ref.watch(mediaTagConrollerProvider(currentUser?.id ?? ""));
     return async.when(
       data: (data) {

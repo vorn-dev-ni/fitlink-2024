@@ -216,7 +216,7 @@ class _CommentMainState extends ConsumerState<CommentMain> {
                       : Column(
                           children: [
                             PostPanel(
-                              post: data ?? Post(),
+                              post: data,
                               isComment: false,
                               url: data?.imageUrl,
                               showHeader: false,
@@ -344,15 +344,25 @@ class _CommentMainState extends ConsumerState<CommentMain> {
         return ClipOval(
           child: data?.avatar == "" || data?.avatar == null
               ? Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1, color: AppColors.neutralColor),
+                    borderRadius: BorderRadius.circular(Sizes.xxxl),
+                  ),
                   child: Assets.app.defaultAvatar
                       .image(width: 40, height: 40, fit: BoxFit.cover),
                 )
-              : FancyShimmerImage(
-                  boxFit: BoxFit.cover,
-                  width: 40,
-                  height: 40,
-                  imageUrl: data!.avatar!,
-                  errorWidget: errorImgplaceholder()),
+              : Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1, color: AppColors.neutralColor),
+                    borderRadius: BorderRadius.circular(Sizes.xxxl),
+                  ),
+                  child: FancyShimmerImage(
+                      boxFit: BoxFit.cover,
+                      width: 40,
+                      height: 40,
+                      imageUrl: data!.avatar!,
+                      errorWidget: errorImgplaceholder()),
+                ),
         );
       },
       error: (error, stackTrace) {

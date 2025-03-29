@@ -237,12 +237,7 @@ class _SocialLikeCommentItemState extends ConsumerState<SocialLikeCommentItem> {
       onTap: onTap,
       child: Column(
         children: [
-          Stack(
-            children: [
-              // Main icon
-              icon
-            ],
-          ),
+          icon,
           Text(
             label,
             style: TextStyle(

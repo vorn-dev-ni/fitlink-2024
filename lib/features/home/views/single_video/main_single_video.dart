@@ -14,6 +14,7 @@ import 'package:demo/features/home/views/main/work_out/tiktok_video_item.dart';
 import 'package:demo/features/home/views/single_profile/views/video_player_custom.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
+import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
 import 'package:sizer/sizer.dart';
@@ -62,52 +63,65 @@ class _MainSingleVideoState extends ConsumerState<MainSingleVideo> {
   @override
   Widget build(BuildContext context) {
     final videoAsync = ref.watch(singleVideoControllerProvider(widget.videoId));
-    return Stack(
-      children: [
-        Scaffold(
-          backgroundColor: Colors.black,
-          body: videoAsync.when(
-              data: (data) {
-                return data == null
-                    ? const Center(
-                        child: Text(
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: videoAsync.when(
+          data: (data) {
+            return data == null
+                ? Stack(
+                    children: [
+                      Positioned(
+                        top: 50,
+                        left: 20,
+                        child: GestureDetector(
+                          onTap: () {
+                            HelpersUtils.navigatorState(context).pop();
+                          },
+                          child: const Icon(
+                            Icons.close,
+                            color: AppColors.backgroundLight,
+                          ),
+                        ),
+                      ),
+                      const Center(
+                          child: Text(
                         'This content is not available anymore.',
                         style: TextStyle(color: AppColors.backgroundLight),
-                      ))
-                    : Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          VideoPlayerTikTok(
-                            videoUrl: data?.videoUrl ?? "",
-                            videoPlayerController: data?.videoplayer,
-                          ),
-                          VideoTiktokItem(
-                            caption: data!.caption ?? "",
-                            videoId: widget.videoId,
-                            userdata: data.userRef,
-                            isUserliked: data.isUserliked,
-                            commentCount: data.commentCount,
-                            date: data.createdAt ?? Timestamp.now(),
-                            tags: data.tag ?? [],
-                            img: data.thumbnailUrl ?? "",
-                            isProfile: true,
-                            onCommentPressed: () {
-                              _showCommentBottomSheet(
-                                data.userRef?.id ?? "",
-                                widget.videoId,
-                              );
-                            },
-                          ),
-                        ],
-                      );
-              },
-              error: (error, stackTrace) {
-                return const Text('Error loading video');
-              },
-              loading: () => renderLoading()),
-        ),
-        renderbackDrop()
-      ],
+                      )),
+                    ],
+                  )
+                : Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      VideoPlayerTikTok(
+                        videoUrl: data?.videoUrl ?? "",
+                        videoPlayerController: data?.videoplayer,
+                      ),
+                      VideoTiktokItem(
+                        caption: data!.caption ?? "",
+                        videoId: widget.videoId,
+                        userdata: data.userRef,
+                        isUserliked: data.isUserliked,
+                        commentCount: data.commentCount,
+                        date: data.createdAt ?? Timestamp.now(),
+                        tags: data.tag ?? [],
+                        img: data.thumbnailUrl ?? "",
+                        isProfile: true,
+                        onCommentPressed: () {
+                          _showCommentBottomSheet(
+                            data.userRef?.id ?? "",
+                            widget.videoId,
+                          );
+                        },
+                      ),
+                      renderbackDrop()
+                    ],
+                  );
+          },
+          error: (error, stackTrace) {
+            return const Text('Error loading video');
+          },
+          loading: () => renderLoading()),
     );
   }
 
@@ -141,16 +155,12 @@ class _MainSingleVideoState extends ConsumerState<MainSingleVideo> {
                             const Text('This...'),
                           ],
                         )),
-                    Positioned(
-                      right: 16,
-                      bottom: 0,
-                      child: SocialLikeCommentItem(
-                          videoId: '',
-                          onShare: () {},
-                          isLiked: false,
-                          onCommentPressed: () {},
-                          data: VideoTikTok()),
-                    )
+                    SocialLikeCommentItem(
+                        videoId: '',
+                        onShare: () {},
+                        isLiked: false,
+                        onCommentPressed: () {},
+                        data: VideoTikTok()),
                   ],
                 ))));
   }
@@ -232,13 +242,14 @@ class _MainSingleVideoState extends ConsumerState<MainSingleVideo> {
   }
 
   void checkState() async {
-    final videos = await ref.read(tiktokVideoControllerProvider.future);
+    final videos =
+        await ref.read(singleVideoControllerProvider(widget.videoId).future);
 
-    if (videos.isNotEmpty && widget.isShowCommeet == true) {
+    if (widget.isShowCommeet == true && videos != null) {
       Future.delayed(const Duration(seconds: 1), () {
         _showCommentBottomSheet(
-          videos.first.userRef?.id ?? "",
-          videos.first.documentID ?? "",
+          videos.userRef?.id ?? "",
+          videos.documentID ?? "",
         );
       });
     }

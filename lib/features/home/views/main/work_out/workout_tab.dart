@@ -183,16 +183,12 @@ class _WorkoutTabState extends ConsumerState<WorkoutTab>
                             const Text('This...'),
                           ],
                         )),
-                    Positioned(
-                      right: 16,
-                      bottom: 0,
-                      child: SocialLikeCommentItem(
-                          videoId: '',
-                          onShare: () {},
-                          isLiked: false,
-                          onCommentPressed: () {},
-                          data: VideoTikTok()),
-                    )
+                    SocialLikeCommentItem(
+                        videoId: '',
+                        onShare: () {},
+                        isLiked: false,
+                        onCommentPressed: () {},
+                        data: VideoTikTok())
                   ],
                 ))));
   }

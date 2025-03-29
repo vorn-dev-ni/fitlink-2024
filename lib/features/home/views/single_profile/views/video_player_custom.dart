@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:demo/features/home/controller/video/tiktok_video_controller.dart';
 import 'package:demo/utils/constant/app_colors.dart';
-import 'package:demo/utils/device/device_utils.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
@@ -114,7 +113,6 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
   @override
   void initState() {
     super.initState();
-
     _initializeVideoPlayer();
     addViewCountWithDebounce(widget.videoId);
     WidgetsBinding.instance.addObserver(this);
@@ -123,12 +121,8 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    if (widget.videoPlayerController == null) {
-      _videoPlayerController?.pause();
-      _videoPlayerController = null;
-      _videoPlayerController?.dispose();
-      _videoPlayerController?.removeListener(_videoListener);
-    }
+    _videoPlayerController?.dispose();
+    _videoPlayerController?.removeListener(_videoListener);
     _debounce?.cancel();
     // DefaultCacheManager().emptyCache();
 
@@ -273,10 +267,9 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
   }
 
   void _videoListener() {
-    if (!mounted) return;
     final isCurrentlyBuffering = _videoPlayerController!.value.isBuffering;
     final currentPos = _videoPlayerController!.value.position.inSeconds;
-
+    if (!mounted) return;
     setState(() {
       _isBuffering = isCurrentlyBuffering;
       if (_videoPlayerController?.value.isPlaying == true) {

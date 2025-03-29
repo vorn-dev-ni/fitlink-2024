@@ -61,25 +61,21 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoListingPlayer>
       _videoPlayerController = widget.videoPlayerController;
     }
 
-    // else if (widget.videoFile != null) {
-    //   _videoPlayerController = VideoPlayerController.file(widget.videoFile!);
-    // } else if (widget.videoUrl != null) {
-    //   final file = await _cacheVideo(widget.videoUrl!);
-    //   _videoPlayerController = VideoPlayerController.file(file);
-    // }
-
     await _videoPlayerController?.initialize();
     _videoPlayerController?.setLooping(true);
     _videoPlayerController?.addListener(_videoListener);
-    setState(() {
-      _videoDuration =
-          _videoPlayerController!.value.duration.inSeconds.toDouble();
 
-      if (widget.paging == false && !_manualPause) {
-        _videoPlayerController?.play();
-        _isPlaying = true;
-      }
-    });
+    if (mounted) {
+      setState(() {
+        _videoDuration =
+            _videoPlayerController!.value.duration.inSeconds.toDouble();
+
+        if (widget.paging == false && !_manualPause) {
+          _videoPlayerController?.play();
+          _isPlaying = true;
+        }
+      });
+    }
   }
 
   // Future<File> _cacheVideo(String url) async {

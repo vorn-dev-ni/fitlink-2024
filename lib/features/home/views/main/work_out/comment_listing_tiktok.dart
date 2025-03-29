@@ -103,16 +103,22 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
         widget.data.isEmpty
             ? Expanded(
                 child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Assets.app.noComment
-                          .image(fit: BoxFit.cover, width: 100, height: 100),
-                      const SizedBox(
-                        height: 20,
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        // crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Assets.app.noComment.image(
+                              fit: BoxFit.cover, width: 100, height: 100),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          const Text("No comments yet"),
+                        ],
                       ),
-                      const Text("No comments yet"),
-                    ],
+                    ),
                   ),
                 ),
               )

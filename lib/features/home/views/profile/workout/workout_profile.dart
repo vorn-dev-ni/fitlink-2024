@@ -22,14 +22,17 @@ class _WorkoutProfileState extends ConsumerState<WorkoutProfile> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(
-            left: Sizes.lg, right: Sizes.lg, bottom: Sizes.xxxl),
+        padding:
+            const EdgeInsets.only(left: Sizes.lg, right: 0, bottom: Sizes.xxxl),
         child: Column(
           children: [
             WorkoutActivities(
               userId: widget.userId == ""
                   ? FirebaseAuth.instance.currentUser!.uid
                   : widget.userId,
+            ),
+            const SizedBox(
+              height: Sizes.xxxl + 20,
             ),
           ],
         ),

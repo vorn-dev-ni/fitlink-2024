@@ -35,6 +35,9 @@ class _WorkoutTabViewState extends ConsumerState<WorkoutTabView> {
         const WorkoutTabBuild(
           level: '',
         ),
+        const SizedBox(
+          height: Sizes.xxxl + 20,
+        ),
       ],
     );
   }

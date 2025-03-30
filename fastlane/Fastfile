@@ -218,7 +218,7 @@ end
 
 🚀 Fix Bug Features & Updates:
 
-Fix video playing when app inactive mode
+Fix camera stop record only if video is being recording...
 
 ⚠ Known Issues:
 
@@ -243,7 +243,7 @@ deploy_message =  "📢 New Android Build Available on Firebase App Distribution
 
 🚀 Fix Bug Features & Updates:
 
-Fix video playing when app inactive mode
+Fix camera stop record only if video is being recording...
 
 Facebook (Dev Mode) → The app may not retrieve the user’s profile name when logged in under Facebook’s Dev Mode, causing the user to appear as annouymous on both Android and iOS. This issue is not present in the production version.
 

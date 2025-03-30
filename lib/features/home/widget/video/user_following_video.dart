@@ -158,7 +158,7 @@ class _UserFollowingVideoShareState
                         ),
                     ],
                   )
-                : Center(
+                : SingleChildScrollView(
                     child: Column(
                       children: [
                         Assets.app.noComment

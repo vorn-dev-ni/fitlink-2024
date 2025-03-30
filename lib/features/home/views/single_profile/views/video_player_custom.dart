@@ -164,7 +164,7 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
                 if (_isBuffering || _isSeeking)
                   const Center(
                       child: CircularProgressIndicator(
-                          color: AppColors.secondaryColor)),
+                          color: AppColors.backgroundLight)),
                 // Custom Progress Bar
                 renderProgressVideo(),
               ],
@@ -175,7 +175,7 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoPlayerTikTok>
               if (widget.paging == false) renderButtonClose(context),
               const Center(
                   child: CircularProgressIndicator(
-                      color: AppColors.secondaryColor)),
+                      color: AppColors.backgroundLight)),
             ],
           );
   }

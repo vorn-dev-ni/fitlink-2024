@@ -7,7 +7,7 @@ part of 'tiktok_video_controller.dart';
 // **************************************************************************
 
 String _$tiktokVideoControllerHash() =>
-    r'2ac4cc9e710ee4c73cc74ae8d974f816d5759242';
+    r'c3bab8a0ee7b8ecdf09c7915210b9e8b296ee37b';
 
 /// See also [TiktokVideoController].
 @ProviderFor(TiktokVideoController)

@@ -128,7 +128,8 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoListingPlayer>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.inactive) {
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.hidden) {
       _videoPlayerController?.pause();
     }
   }
@@ -168,14 +169,14 @@ class _VideoPlayerTikTokState extends ConsumerState<VideoListingPlayer>
                   if (_isBuffering || _isSeeking)
                     const Center(
                         child: CircularProgressIndicator(
-                            color: AppColors.primaryColor)),
+                            color: AppColors.backgroundLight)),
                   renderProgressVideo(),
                 ],
               ),
             ),
           )
         : const Center(
-            child: CircularProgressIndicator(color: AppColors.secondaryColor));
+            child: CircularProgressIndicator(color: AppColors.backgroundLight));
   }
 
   Center renderPausePlay() {

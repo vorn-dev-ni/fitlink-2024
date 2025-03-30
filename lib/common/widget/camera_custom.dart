@@ -243,31 +243,34 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
     _timer?.cancel();
     _recordDuration = 0;
 
-    try {
-      final file = await _controller!.stopVideoRecording();
-      _controller?.prepareForVideoRecording();
-      final thumbnailString = await HelpersUtils.generateThumbnail(file.path);
-      File videoFile = File(file.path);
+    if (_controller!.value.isRecordingVideo == true) {
+      try {
+        final file = await _controller!.stopVideoRecording();
+        _controller?.prepareForVideoRecording();
+        final thumbnailString = await HelpersUtils.generateThumbnail(file.path);
+        File videoFile = File(file.path);
 
-      if (mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => VideoPreviewPage(
-              videoPath: file.path,
-              videoFile: videoFile,
-              thumbnailData: thumbnailString!['data'],
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VideoPreviewPage(
+                videoPath: file.path,
+                videoFile: videoFile,
+                thumbnailData: thumbnailString!['data'],
+              ),
             ),
-          ),
-        ).whenComplete(
-          () async {},
-        );
+          ).whenComplete(
+            () async {},
+          );
+        }
+      } catch (e) {
+        debugPrint("Error stopping recording: $e");
       }
-    } catch (e) {
-      debugPrint("Error stopping recording: $e");
     }
-
-    setState(() => _isRecording = false);
+    if (mounted) {
+      setState(() => _isRecording = false);
+    }
   }
 
   Future<void> _pickVideo() async {
@@ -297,15 +300,14 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
           () {},
         );
       }
-      // HelpersUtils.navigatorState(context)
-      //     .pushNamed(AppPage.previewVideo, arguments: pickedFile.path);
     }
   }
 
   void _dispose() {
-    _controller?.stopVideoRecording();
+    if (_controller?.value.isRecordingVideo == true) {
+      _controller?.stopVideoRecording();
+    }
     _controller?.dispose();
-
     _timer?.cancel();
   }
 

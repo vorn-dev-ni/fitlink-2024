@@ -73,17 +73,6 @@ class SingleUserController extends _$SingleUserController {
         ref.invalidate(followingFriendControllerProvider);
       }
     } catch (e) {
-      if (kDebugMode) {
-        Fluttertoast.showToast(
-            msg: e.toString(),
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 5,
-            backgroundColor: AppColors.errorColor,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      }
-
       rethrow;
     }
   }
@@ -98,16 +87,6 @@ class SingleUserController extends _$SingleUserController {
             senderID: senderId, receiverID: receiverID, userId: senderId);
       }
     } catch (e) {
-      if (kDebugMode) {
-        Fluttertoast.showToast(
-            msg: e.toString(),
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 5,
-            backgroundColor: AppColors.errorColor,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      }
       rethrow;
     }
   }

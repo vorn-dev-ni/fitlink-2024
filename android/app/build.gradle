@@ -125,8 +125,6 @@ dependencies {
   implementation 'com.google.android.play:integrity:1.4.0'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
 
-
-
 }
 flutter {
     source = "../.."

@@ -27,6 +27,7 @@ class PostPanel extends ConsumerStatefulWidget {
   final bool showHeader;
   final String? url;
   final bool? showEditable;
+  final bool allowReport;
   final VoidCallback? twoFingersOn;
   final VoidCallback? twoFingersOff;
   final VoidCallback? pressThreedot;
@@ -35,6 +36,7 @@ class PostPanel extends ConsumerStatefulWidget {
   const PostPanel({
     this.isComment = false,
     this.pressThreedot,
+    this.allowReport = false,
     this.showHeader = true,
     this.twoFingersOff,
     required this.post,
@@ -106,6 +108,7 @@ class _PostPanelState extends ConsumerState<PostPanel>
           ProfileHeader(
               desc: widget.post.tag ?? "",
               user: widget.post.user,
+              allowReport: widget.allowReport,
               imageUrl: widget.post.user?.avatar ?? "",
               type: widget.showEditable == false
                   ? ProfileType.header

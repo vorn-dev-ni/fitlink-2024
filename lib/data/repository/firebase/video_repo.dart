@@ -116,40 +116,76 @@ class VideoRepository {
 
   Future<VideoTikTok?> getVideoByIdOnce(String videoId) async {
     try {
+      final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+
+      // 1. Get blocked users/content
+      final blockSnapshot = await FirebaseFirestore.instance
+          .collection('blocks')
+          .where('blockerId', isEqualTo: currentUserId)
+          .get();
+
+      final blockedUserIds =
+          blockSnapshot.docs.map((doc) => doc['blockedId'] as String).toList();
+      final blockedContentIds = blockSnapshot.docs
+          .map((doc) => doc['contentId'] as String?)
+          .whereType<String>()
+          .toList();
+
+      // 2. Fetch the video
       final doc =
           await _firebaseFirestore.collection('videos').doc(videoId).get();
-      if (doc.exists) {
-        await Future.delayed(const Duration(milliseconds: 400));
+      if (!doc.exists) return null;
 
-        final hasLiked = await checkIfUserLiked(videoId);
-        final userRef = doc.data()!['userRef'] as DocumentReference?;
+      final userRef = doc.data()!['userRef'] as DocumentReference?;
+      final userId = userRef?.id;
 
-        final userDoc = await userRef!.get();
-        final result = userDoc.data() as Map<String, dynamic>;
-        final resultUser = UserData.fromJson({'id': userDoc.id, ...result});
-
-        return VideoTikTok.fromFirestore(doc, resultUser,
-            paramsLiked: hasLiked);
+      // 3. Skip if blocked
+      if ((userId != null && blockedUserIds.contains(userId)) ||
+          blockedContentIds.contains(videoId)) {
+        return null;
       }
-      return null;
+
+      await Future.delayed(const Duration(milliseconds: 400));
+      final hasLiked = await checkIfUserLiked(videoId);
+
+      final userDoc = await userRef!.get();
+      final result = userDoc.data() as Map<String, dynamic>;
+      final resultUser = UserData.fromJson({'id': userDoc.id, ...result});
+
+      return VideoTikTok.fromFirestore(doc, resultUser, paramsLiked: hasLiked);
     } catch (e) {
       throw Exception("Failed to fetch video by ID: $e");
     }
   }
 
   Stream<List<VideoTikTok>> getVideosByUserId(String userId) {
+    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
     final userRef = _firebaseFirestore.collection('users').doc(userId);
+
     return _firebaseFirestore
         .collection('videos')
         .orderBy('createdAt', descending: true)
         .where('userRef', isEqualTo: userRef)
         .snapshots()
         .asyncMap((snapshot) async {
+      // 1. Get blocked content
+      final blockSnapshot = await FirebaseFirestore.instance
+          .collection('blocks')
+          .where('blockerId', isEqualTo: currentUserId)
+          .get();
+
+      final blockedContentIds = blockSnapshot.docs
+          .map((doc) => doc['contentId'] as String?)
+          .whereType<String>()
+          .toList();
+
       List<VideoTikTok> videos = [];
       for (var doc in snapshot.docs) {
+        if (blockedContentIds.contains(doc.id)) continue;
+
         final hasLiked = await checkIfUserLiked(doc.id);
-        final userData = await userRef.get();
-        final result = UserData.fromJson(userData.data()!);
+        final userDataDoc = await userRef.get();
+        final result = UserData.fromJson(userDataDoc.data()!);
 
         videos
             .add(VideoTikTok.fromFirestore(doc, result, paramsLiked: hasLiked));
@@ -470,6 +506,28 @@ class VideoRepository {
     required int page,
     DocumentSnapshot? startAfter,
   }) async {
+    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+
+    List<String> blockedUserIds = [];
+    List<String> blockedContentIds = [];
+
+    // Only fetch blocked users/content if user is logged in
+    if (currentUserId != null) {
+      final blockSnapshot = await FirebaseFirestore.instance
+          .collection('blocks')
+          .where('blockerId', isEqualTo: currentUserId)
+          .get();
+
+      blockedUserIds =
+          blockSnapshot.docs.map((doc) => doc['blockedId'] as String).toList();
+
+      blockedContentIds = blockSnapshot.docs
+          .map((doc) => doc['contentId'] as String?)
+          .whereType<String>()
+          .toList();
+    }
+
+    // Fetch videos from service
     final snapshot =
         await videoService.fetchVideos(page: page, startAfter: startAfter);
 
@@ -477,10 +535,16 @@ class VideoRepository {
 
     for (var doc in snapshot.docs) {
       final userRef = doc.data()['userRef'] as DocumentReference?;
+      final userId = userRef?.id;
+
+      // Skip blocked users/content only if the user is logged in
+      if (currentUserId != null &&
+          ((userId != null && blockedUserIds.contains(userId)) ||
+              blockedContentIds.contains(doc.id))) {
+        continue;
+      }
 
       UserData? user;
-
-      // If userRef exists, fetch user data
       if (userRef != null) {
         final userDoc = await userRef.get();
         if (userDoc.exists) {
@@ -494,35 +558,6 @@ class VideoRepository {
 
     return videos;
   }
-
-  // Future<List<VideoTikTok>> fetchVideos({
-  //   required int page,
-  //   DocumentSnapshot? startAfter,
-  // }) async {
-  //   final snapshot =
-  //       await videoService.fetchVideos(page: page, startAfter: startAfter);
-
-  //   List<VideoTikTok> videos = [];
-
-  //   for (var doc in snapshot.docs) {
-  //     final userRef = doc.data()['userRef'] as DocumentReference?;
-
-  //     UserData? user;
-
-  //     // If userRef exists, fetch user data
-  //     if (userRef != null) {
-  //       final userDoc = await userRef.get();
-  //       if (userDoc.exists) {
-  //         final result = userDoc.data() as Map<String, dynamic>;
-  //         user = UserData.fromJson({'id': userDoc.id, ...result});
-  //       }
-  //     }
-
-  //     videos.add(VideoTikTok.fromFirestore(doc, user));
-  //   }
-
-  //   return videos;
-  // }
 
   Future setViewCount(String videoId) async {
     try {

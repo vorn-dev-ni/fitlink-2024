@@ -70,17 +70,14 @@ class SocialPostService extends BaseSocialMediaService {
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> _getTrendingPosts(int pageSize) {
-    final now = DateTime.now();
-    final twoWeekAgo = now.subtract(const Duration(days: 14));
     return Stream.empty();
   }
 
   Stream<List<DocumentSnapshot>> getPosts(int pageSize) {
     final now = DateTime.now();
-    final tenDayAgo = now.subtract(const Duration(days: 14));
+    // final tenDayAgo = now.subtract(const Duration(days: 14));
     return FirebaseFirestore.instance
         .collection('posts')
-        .where('createdAt', isGreaterThanOrEqualTo: tenDayAgo)
         .orderBy('createdAt', descending: true) // Keep other orders if needed
         .limit(pageSize)
         .snapshots()
@@ -264,7 +261,6 @@ class SocialPostService extends BaseSocialMediaService {
     try {
       final ref =
           _firestore.collection('posts').orderBy('createdAt', descending: true);
-
       final snapshot = await ref.get();
       return snapshot.docs.length;
     } catch (e) {
@@ -275,12 +271,8 @@ class SocialPostService extends BaseSocialMediaService {
   @override
   Future<QuerySnapshot<Map<String, dynamic>>> getAllPostOneTime(
       int pageSize) async {
-    debugPrint("Page size is ${pageSize}");
-    final now = DateTime.now();
-    final ageAgo = now.subtract(const Duration(days: 30));
     return await _firestore
         .collection('posts')
-        .where('createdAt', isGreaterThanOrEqualTo: ageAgo)
         .orderBy('likesCount', descending: true)
         .orderBy('commentsCount', descending: true)
         .orderBy('createdAt', descending: true)

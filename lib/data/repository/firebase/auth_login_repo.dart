@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:io';
+
 import 'package:demo/common/model/user_model.dart';
 import 'package:demo/data/repository/firebase_auth_repo.dart';
 import 'package:demo/data/service/firestore/notification/notification_service.dart';
@@ -247,6 +249,54 @@ class AuthLoginRepository extends FirebaseAuthRepository {
       await firebaseAuthService.getAuth?.sendPasswordResetEmail(email: email);
     } catch (err) {
       // throw Exception(err.toString());
+      rethrow;
+    }
+  }
+
+  @override
+  Future loginUserWithApple(
+      {required String? email,
+      required String? fullName,
+      required String? identityToken,
+      required String? authorizationCode}) async {
+    try {
+      final AuthCredential appleAuthCredential = OAuthProvider('apple.com')
+          .credential(idToken: identityToken, accessToken: authorizationCode);
+      UserCredential? userCredential = await firebaseAuthService.getAuth!
+          .signInWithCredential(appleAuthCredential);
+      await firebaseAuthService.reloadUser();
+
+      AuthModel? userDoc =
+          await firestoreService.getEmail(userCredential.user!.uid);
+
+      if (userDoc.fullname == null || userDoc.fullname == "") {
+        Fluttertoast.showToast(
+            msg: 'Welcome back ${fullName ?? "Annouymouse User"} 😘',
+            timeInSecForIosWeb: 4,
+            toastLength: Toast.LENGTH_LONG);
+        await firebaseAuthService.currentUser!.updateDisplayName(
+            userCredential.user?.displayName ?? fullName ?? "Annouymouse User");
+        await firestoreService.addUserToFirestore(
+          userCredential.user?.displayName ?? fullName ?? "Annouymouse User",
+          userCredential.user!.email!,
+          authprovider: 'google',
+          socialAvatar: userCredential.user?.photoURL ?? "",
+        );
+      } else {
+        debugPrint("User already exists in Firestore.");
+        Fluttertoast.showToast(
+            msg: 'Welcome back ${userDoc.fullname} 😘',
+            timeInSecForIosWeb: 4,
+            toastLength: Toast.LENGTH_LONG);
+        await firebaseAuthService.currentUser!
+            .updateDisplayName(userDoc.fullname ?? "Annouymouse User");
+      }
+
+      if (userCredential.user == null) {
+        throw FirebaseCredentialException(
+            title: 'Oops', message: 'Invalid credential !!!');
+      }
+    } catch (e) {
       rethrow;
     }
   }

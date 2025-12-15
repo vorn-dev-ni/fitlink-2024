@@ -49,7 +49,7 @@ class NotificationService {
       onDidReceiveNotificationResponse: _onDidReceiveNotificationResponse,
     );
 
-    debugPrint("Notification local initialized");
+    // debugPrint("Notification local initialized");
 
     // Request permissions (for Android 13+ and iOS)
     final androidPlugin =

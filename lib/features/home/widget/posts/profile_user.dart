@@ -26,6 +26,7 @@ class ProfileHeader extends ConsumerStatefulWidget {
   final ProfileType type;
   final bool showBackButton;
   final UserData? user;
+  final bool allowReport;
   final Comment? comment;
   final VoidCallback? onPressThreeDot;
   final Post? post;
@@ -35,6 +36,7 @@ class ProfileHeader extends ConsumerStatefulWidget {
   const ProfileHeader({
     Key? key,
     required this.user,
+    this.allowReport = false,
     this.postId,
     this.onPressThreeDot,
     this.post,
@@ -161,6 +163,19 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
           const Spacer(),
           if (widget.type == ProfileType.profile &&
               widget.post?.user?.id == FirebaseAuth.instance.currentUser?.uid)
+            IconButton(
+              onPressed: () {
+                widget.onPressThreeDot != null
+                    ? widget.onPressThreeDot!()
+                    : null;
+              },
+              icon: const Icon(
+                CupertinoIcons.ellipsis,
+                size: Sizes.iconMd,
+                color: AppColors.secondaryColor,
+              ),
+            ),
+          if (widget.allowReport)
             IconButton(
               onPressed: () {
                 widget.onPressThreeDot != null

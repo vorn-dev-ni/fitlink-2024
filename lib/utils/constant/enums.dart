@@ -17,7 +17,8 @@ enum NotificationType {
   chat,
   commentLike,
   videoLiked,
-  videoCommentLiked
+  videoCommentLiked,
+  blocked
 }
 
 class NotificationTypeMapper {
@@ -29,7 +30,8 @@ class NotificationTypeMapper {
     'commentLike': NotificationType.commentLike,
     'comment-liked': NotificationType.commentLike,
     'videoCommentLiked': NotificationType.videoCommentLiked,
-    'videoLiked': NotificationType.videoLiked
+    'videoLiked': NotificationType.videoLiked,
+    'blocked': NotificationType.blocked,
   };
 
   static NotificationType? fromString(String value) {

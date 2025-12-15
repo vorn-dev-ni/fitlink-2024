@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/data/repository/firebase/auth_login_repo.dart';
 import 'package:demo/data/repository/firebase_auth_repo.dart';
@@ -37,6 +36,35 @@ class AuthController {
       }
       if (e is FirebaseAuthException) {
         debugPrint("Facebook code is ${e.code}");
+        message = FirebaseAuthMessage.getMessage(e.code);
+      }
+      if (e is AppException) {
+        message = e.message;
+      }
+      throw AppException(title: 'Oops!', message: message);
+    }
+  }
+
+  Future loginWithApple(
+      {required String? email,
+      required String? fullName,
+      required String? identityToken,
+      required String? authorizationCode}) async {
+    try {
+      return await _authLoginRepository.loginUserWithApple(
+          email: email,
+          fullName: fullName,
+          identityToken: identityToken,
+          authorizationCode: authorizationCode);
+          
+    } catch (e) {
+      String message = e.toString();
+      debugPrint("Apple error is ${e.runtimeType}");
+      if (e is FirebaseException) {
+        message = FirebaseAuthMessage.getMessage(e.code);
+      }
+      if (e is FirebaseAuthException) {
+        debugPrint("Apple code is ${e.code}");
         message = FirebaseAuthMessage.getMessage(e.code);
       }
       if (e is AppException) {

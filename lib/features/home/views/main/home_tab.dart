@@ -1,4 +1,5 @@
 import 'package:demo/common/widget/app_loading.dart';
+import 'package:demo/common/widget/eu_dialog.dart';
 import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/data/service/firestore/firestore_service.dart';
 import 'package:demo/features/home/controller/posts/social_postone_controller.dart';
@@ -13,6 +14,7 @@ import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
+import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -68,6 +70,31 @@ class _HomeTabState extends ConsumerState<HomeTab>
     _tabController = TabController(length: _screens.length, vsync: this);
 
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkEulaStatus();
+    });
+  }
+
+  void _checkEulaStatus() {
+    final hasAgreed = LocalStorageUtils().getboolKey('hasAgree');
+
+    if (hasAgreed == null || hasAgreed == false) {
+      _showEulaAndTransition();
+    }
+  }
+
+  void _showEulaAndTransition() {
+    showEulaDialog(context);
+  }
+
+  void showEulaDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const EuDialog();
+      },
+    );
   }
 
   Widget build(BuildContext context) {

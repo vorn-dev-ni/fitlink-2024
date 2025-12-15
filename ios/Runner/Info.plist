@@ -39,7 +39,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>app-1-77080916809-ios-299b48fe79c9042c5b2098</string>
+				<string>app-1-77080916809-uas1cgb45nc5gqjle44lr3vj94mrgcsk</string>
 			</array>
 		</dict>
 		<dict>
@@ -47,7 +47,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.77080916809-23oebiu8osm3cm3d48v0smbhv0j8uhk5</string>
+				<string>com.googleusercontent.apps.77080916809-uas1cgb45nc5gqjle44lr3vj94mrgcsk</string>
 			</array>
 		</dict>
 	</array>
@@ -114,8 +114,12 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSCameraUsageDescription</key>
-	<string>We need access to your camera</string>
+	<key>NSUserAuthenticationUsageDescription</key>
+   <string>We need this to sign in with Apple</string>		
+	<key>NSAppleMusicUsageDescription</key>
+	<string>FitLink may access your music library to help track your workouts with your favorite music.</string>
+   <key>NSCameraUsageDescription</key>
+   <string>We need access to your camera so you can take photos of your workouts and share them with friends on your profile.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>This app requires access to local notifications.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -124,8 +128,8 @@
 	<string>We need your location to provide better services.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app requires your location to function properly.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>We need access to your microphone</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>We need access to your microphone to record voice messages you can send to friends.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need access to your photo library</string>
 	<key>NSUserNotificationUsageDescription</key>
@@ -134,7 +138,6 @@
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>location</string>
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>

@@ -16,7 +16,6 @@ class FcmService {
 
   FcmService() {
     fcmInstance = FirebaseMessaging.instance;
-    debugPrint("Call init fcmservce");
     initToken();
   }
 

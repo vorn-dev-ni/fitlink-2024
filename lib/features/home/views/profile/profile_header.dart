@@ -10,7 +10,6 @@ import 'package:demo/features/home/controller/profile/profile_user_controller.da
 import 'package:demo/features/home/views/single_profile/controller/media_tag_conroller.dart';
 import 'package:demo/features/home/views/profile/user_media.dart';
 import 'package:demo/features/home/views/single_profile/controller/notification_badge.dart';
-import 'package:demo/features/home/views/single_profile/model/media_count.dart';
 import 'package:demo/gen/assets.gen.dart';
 import 'package:demo/utils/constant/app_colors.dart';
 import 'package:demo/utils/constant/app_page.dart';
@@ -18,7 +17,6 @@ import 'package:demo/utils/constant/enums.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/exception/app_exception.dart';
 import 'package:demo/utils/helpers/helpers_utils.dart';
-import 'package:demo/utils/local_storage/local_storage_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
@@ -30,11 +28,13 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 class ProfileHeader extends ConsumerStatefulWidget {
   final Function onLogout;
+  final Function onDelete;
   String? uid;
   bool? singleMode;
   ProfileHeader(
       {super.key,
       required this.onLogout,
+      required this.onDelete,
       required this.uid,
       this.singleMode = false});
 
@@ -332,7 +332,87 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                             style: TextStyle(
                                                 color: AppColors.errorColor),
                                           )),
-                                    )
+                                    ),
+                                    const SizedBox(
+                                      width: Sizes.lg,
+                                    ),
+                                    ClipRRect(
+                                      clipBehavior: Clip.antiAlias,
+                                      child: TextButton(
+                                          style: TextButton.styleFrom(
+                                              backgroundColor: AppColors
+                                                  .errorLight
+                                                  .withOpacity(0.15),
+                                              overlayColor:
+                                                  AppColors.errorLight,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          Sizes.lg))),
+                                          onPressed: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    AppALertDialog(
+                                                        bgColor: const Color
+                                                                .fromRGBO(
+                                                                0, 0, 0, 1)
+                                                            .withOpacity(0.4),
+                                                        onConfirm: () {},
+                                                        negativeButton: SizedBox(
+                                                            width: 100.w,
+                                                            child: FilledButton(
+                                                                style: FilledButton.styleFrom(backgroundColor: const Color.fromARGB(255, 241, 228, 228).withOpacity(0.5)),
+                                                                onPressed: () {
+                                                                  HelpersUtils.navigatorState(
+                                                                          context)
+                                                                      .pop();
+                                                                },
+                                                                child: const Text('Cancel'))),
+                                                        positivebutton: SizedBox(
+                                                            width: 100.w,
+                                                            child: FilledButton(
+                                                                style: FilledButton.styleFrom(backgroundColor: AppColors.errorColor.withOpacity(0.5)),
+                                                                onPressed: () {
+                                                                  HelpersUtils.navigatorState(
+                                                                          context)
+                                                                      .pop();
+                                                                  SystemChrome.setEnabledSystemUIMode(
+                                                                      SystemUiMode
+                                                                          .manual,
+                                                                      overlays:
+                                                                          SystemUiOverlay
+                                                                              .values);
+                                                                  SystemChrome
+                                                                      .setSystemUIOverlayStyle(
+                                                                          const SystemUiOverlayStyle(
+                                                                    statusBarColor:
+                                                                        Color.fromARGB(
+                                                                            0,
+                                                                            169,
+                                                                            166,
+                                                                            166),
+                                                                    statusBarIconBrightness:
+                                                                        Brightness
+                                                                            .dark,
+                                                                    statusBarBrightness:
+                                                                        Brightness
+                                                                            .dark, // For iOS
+                                                                  ));
+                                                                  widget
+                                                                      .onDelete();
+                                                                  // Call deletion action here
+                                                                },
+                                                                child: const Text('Confirm'))),
+                                                        title: 'Delete Your Account',
+                                                        desc: "Once you delete your account, there is no going back. Please be certain."));
+                                          },
+                                          child: const Text(
+                                            'Delete Account',
+                                            style: TextStyle(
+                                                color: AppColors.errorColor),
+                                          )),
+                                    ),
                                   ],
                                 ),
                                 const SizedBox(
@@ -340,7 +420,97 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                                 ),
                               ],
                             ),
-                            renderMediaState(currentUser)
+                            // SizedBox(
+                            //   height: 40,
+                            //   child: ClipRRect(
+                            //     clipBehavior: Clip.antiAlias,
+                            //     child: TextButton(
+                            //         style: TextButton.styleFrom(
+                            //             backgroundColor: AppColors.errorLight
+                            //                 .withOpacity(0.15),
+                            //             overlayColor: AppColors.errorLight,
+                            //             shape: RoundedRectangleBorder(
+                            //                 borderRadius: BorderRadius.circular(
+                            //                     Sizes.lg))),
+                            //         onPressed: () {
+                            //           showDialog(
+                            //               context: context,
+                            //               builder: (context) => AppALertDialog(
+                            //                   bgColor:
+                            //                       const Color.fromRGBO(0, 0, 0, 1)
+                            //                           .withOpacity(0.4),
+                            //                   onConfirm: () {},
+                            //                   negativeButton: SizedBox(
+                            //                       width: 100.w,
+                            //                       child: FilledButton(
+                            //                           style: FilledButton.styleFrom(
+                            //                               backgroundColor:
+                            //                                   const Color.fromARGB(
+                            //                                           255,
+                            //                                           241,
+                            //                                           228,
+                            //                                           228)
+                            //                                       .withOpacity(
+                            //                                           0.5)),
+                            //                           onPressed: () {
+                            //                             HelpersUtils
+                            //                                     .navigatorState(
+                            //                                         context)
+                            //                                 .pop();
+                            //                           },
+                            //                           child: const Text(
+                            //                               'Cancel'))),
+                            //                   positivebutton: SizedBox(
+                            //                       width: 100.w,
+                            //                       child: FilledButton(
+                            //                           style: FilledButton.styleFrom(
+                            //                               backgroundColor: AppColors
+                            //                                   .errorColor
+                            //                                   .withOpacity(0.5)),
+                            //                           onPressed: () {
+                            //                             HelpersUtils
+                            //                                     .navigatorState(
+                            //                                         context)
+                            //                                 .pop();
+                            //                             SystemChrome
+                            //                                 .setEnabledSystemUIMode(
+                            //                                     SystemUiMode
+                            //                                         .manual,
+                            //                                     overlays:
+                            //                                         SystemUiOverlay
+                            //                                             .values);
+                            //                             SystemChrome
+                            //                                 .setSystemUIOverlayStyle(
+                            //                                     const SystemUiOverlayStyle(
+                            //                               statusBarColor:
+                            //                                   Color.fromARGB(
+                            //                                       0,
+                            //                                       169,
+                            //                                       166,
+                            //                                       166),
+                            //                               statusBarIconBrightness:
+                            //                                   Brightness.dark,
+                            //                               statusBarBrightness:
+                            //                                   Brightness
+                            //                                       .dark, // For iOS
+                            //                             ));
+                            //                             widget.onLogout();
+                            //                           },
+                            //                           child: const Text('Confirm'))),
+                            //                   title: 'Are you sure?',
+                            //                   desc: "do you want to logout from this account and no logger has access?"));
+                            //         },
+                            //         child: const Text(
+                            //           'Delete Account',
+                            //           style: TextStyle(
+                            //               color: AppColors.errorColor),
+                            //         )),
+                            //   ),
+                            // ),
+                            // const SizedBox(
+                            //   height: Sizes.md,
+                            // ),
+                            renderMediaState(currentUser),
                           ],
                         ),
                       ),

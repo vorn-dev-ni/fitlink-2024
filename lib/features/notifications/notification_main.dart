@@ -263,6 +263,8 @@ class _NotificationMainState extends ConsumerState<NotificationMain> {
         return '${fullName ?? "Someone"} liked your video.';
       case NotificationType.videoCommentLiked:
         return '${fullName ?? "Someone"} comment on your video.';
+      case NotificationType.blocked:
+        return 'One of your posts has been hidden as the user has blocked it.';
       default:
         return '${fullName ?? "Someone"} sent you a notification.';
     }

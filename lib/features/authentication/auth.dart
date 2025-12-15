@@ -2,14 +2,11 @@ import 'dart:async';
 
 import 'package:demo/common/widget/backdrop_loading.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
-import 'package:demo/data/service/firebase/firebase_service.dart';
 import 'package:demo/features/authentication/views/login/login_email.dart';
 import 'package:demo/features/authentication/views/login/login_phone.dart';
 import 'package:demo/utils/constant/app_colors.dart';
-import 'package:demo/utils/constant/app_page.dart';
 import 'package:demo/utils/constant/sizes.dart';
 import 'package:demo/utils/device/device_utils.dart';
-import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

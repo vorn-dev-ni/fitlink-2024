@@ -228,7 +228,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen>
                     children: [
                       if (receiverId != null) renderHeader(receiverId!),
                       loadingHeader(),
-                      buildChat(data),
+                      buildChat(data, _isLongPressed || _hasPressDelete),
                       messageBar(data),
                     ],
                   ),
@@ -432,7 +432,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen>
     );
   }
 
-  Widget buildChat(List<Message>? data) {
+  Widget buildChat(List<Message>? data, bool? isHoldpress) {
     return Expanded(
       child: ListView.builder(
         padding: const EdgeInsets.all(20),
@@ -443,10 +443,8 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen>
         itemBuilder: (context, index) {
           final chat = data![index];
           final userInfo = chat.otherUserInfo;
-
           final currentMessageDate = chat.timestamp.toDate();
           DateTime? previousMessageDate;
-
           if (index < data.length - 1) {
             previousMessageDate = data[index + 1].timestamp.toDate();
           }
@@ -458,6 +456,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen>
 
           return Container(
             margin: EdgeInsets.only(top: isLoadMoreDone ? 40 : 0),
+            height: isHoldpress == true ? 1150 : null,
             child: Column(
               children: [
                 if (show == true)

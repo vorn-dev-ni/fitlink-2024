@@ -164,17 +164,17 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
         final navigator = Navigator.of(context);
         navigator.pop(result);
       },
-      child: Stack(
-        children: [
-          Scaffold(
-            resizeToAvoidBottomInset: false,
-            bottomSheet: renderBottomSheet(context),
-            appBar: renderAppBar(context),
-            body: GestureDetector(
-              onTap: () {
-                FocusScope.of(context).unfocus();
-              },
-              child: SafeArea(
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Stack(
+          children: [
+            Scaffold(
+              resizeToAvoidBottomInset: false,
+              bottomSheet: renderBottomSheet(context),
+              appBar: renderAppBar(context),
+              body: SafeArea(
                   child: SingleChildScrollView(
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.manual,
@@ -313,15 +313,15 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
                               ),
                             ),
                           ],
-                        )
+                        ),
                     ],
                   ),
                 ),
               )),
             ),
-          ),
-          if (loading) backDropLoading()
-        ],
+            if (loading) backDropLoading()
+          ],
+        ),
       ),
     );
   }
@@ -504,7 +504,7 @@ class _UploadMediaPostState extends ConsumerState<UploadMediaPost> {
       color: const Color.fromARGB(255, 244, 246, 249),
       elevation: 4,
       child: Padding(
-        padding: const EdgeInsets.all(Sizes.lg),
+        padding: const EdgeInsets.all(Sizes.xxl),
         child: SizedBox(
           height: 4.h,
           child: Row(

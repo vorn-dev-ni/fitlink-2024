@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:demo/common/widget/app_dialog.dart';
 import 'package:demo/data/repository/firebase/video_repo.dart';
@@ -55,11 +54,7 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
   @override
   void initState() {
     super.initState();
-    // _checkCameraPermission();
-    // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
     _initializeCamera();
-
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -119,8 +114,6 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
 
   Future<void> _checkCameraPermission() async {
     final status = await Permission.camera.status;
-    // final audioStatus = await Permission.microphone.status;
-
     if (status.isGranted) {
       _initializeCamera();
       return;
@@ -134,15 +127,6 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
       }
     }
 
-    // if (!audioStatus.isGranted) {
-    //   final newAudioStatus = await Permission.microphone.request();
-    //   if (!newAudioStatus.isGranted) {
-    //     _showPermissionDialog(
-    //         title: 'Microphone permission',
-    //         desc: 'Please open your microphone setting');
-    //     return;
-    //   }
-    // }
     if (await Permission.camera.isGranted) {
       setState(() {});
 
@@ -174,13 +158,18 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
       _cameras = await availableCameras();
 
       if (_cameras.isNotEmpty) {
+        final CameraDescription selectedCamera = _isFrontCamera
+            ? _cameras
+                .firstWhere((c) => c.lensDirection == CameraLensDirection.front)
+            : _cameras
+                .firstWhere((c) => c.lensDirection == CameraLensDirection.back);
+
         _controller = CameraController(
-          enableAudio: true,
-          videoBitrate: 1000000,
-          imageFormatGroup: ImageFormatGroup.yuv420,
-          fps: 20,
-          _isFrontCamera ? _cameras[1] : _cameras[0],
-          ResolutionPreset.medium,
+          selectedCamera,
+          ResolutionPreset.high,
+          imageFormatGroup: ImageFormatGroup.bgra8888,
+          enableAudio: false,
+          fps: null,
         );
 
         await _controller?.initialize();
@@ -188,11 +177,10 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
 
         if (mounted) setState(() {});
       }
+
       _isInitializing = false;
     } catch (e) {
       _showPermissionDialog(title: 'Permission Required', desc: e.toString());
-
-      // Fluttertoast.showToast(msg: e.toString());
     }
   }
 
@@ -327,9 +315,9 @@ class _CameraRecordCustomState extends State<CameraRecordCustom>
         decoration: const BoxDecoration(color: AppColors.backgroundDark),
       );
     }
-
-    Matrix4 cameraTransform =
-        _isFrontCamera ? Matrix4.rotationY(3.14159) : Matrix4.identity();
+    Matrix4 cameraTransform = (Platform.isAndroid && _isFrontCamera)
+        ? Matrix4.rotationY(3.14159)
+        : Matrix4.identity();
 
     return GestureDetector(
       onScaleUpdate: (details) async {
@@ -596,64 +584,68 @@ class _VideoPreviewPageState extends ConsumerState<VideoPreviewPage> {
     );
   }
 
-  SizedBox renderPostButton() {
-    return SizedBox(
-      width: 100.w,
-      child: ElevatedButton.icon(
-        icon: const Icon(
-          CupertinoIcons.arrow_up,
-          color: Colors.white,
-          size: 20,
-        ),
-        label: const Text("Post"),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.secondaryColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+  Widget renderPostButton() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: SizedBox(
+        width: 100.w,
+        child: ElevatedButton.icon(
+          icon: const Icon(
+            CupertinoIcons.arrow_up,
+            color: Colors.white,
+            size: 20,
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          label: const Text("Post"),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.secondaryColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          ),
+          onPressed: () async {
+            File? thumbnail;
+            String caption = textcaptionController.text.trim();
+            if (previewImage == null) {
+              final thumbnailFile = widget.thumbnailData;
+              if (thumbnailFile != null) {
+                thumbnail = await saveThumbnail(thumbnailFile);
+              }
+            } else {
+              thumbnail = previewImage;
+            }
+            List<String> tags = _selectedChipIndices.values.toList();
+            final messageValidation =
+                VideoValidationHelper.validateUploadFields(
+                    widget.videoFile, thumbnail, caption, tags);
+            if (messageValidation != null) {
+              if (mounted) {
+                showDialog(
+                    context: context,
+                    builder: (context) => AppALertDialog(
+                        bgColor: AppColors.backgroundLight,
+                        textColor: AppColors.errorColor,
+                        contentColor: AppColors.backgroundDark,
+                        onConfirm: () {},
+                        title: 'Missing Field',
+                        desc: messageValidation));
+              }
+
+              return;
+            }
+
+            if (thumbnail != null) {
+              await videoUserActionController.uploadVideo(
+                videoFile: widget.videoFile,
+                thumbnailFile: thumbnail,
+                caption: caption,
+                tags: tags,
+              );
+            } else {
+              Fluttertoast.showToast(msg: "Video or Thumbnail is missing!");
+            }
+          },
         ),
-        onPressed: () async {
-          File? thumbnail;
-          String caption = textcaptionController.text.trim();
-          if (previewImage == null) {
-            final thumbnailFile = widget.thumbnailData;
-            if (thumbnailFile != null) {
-              thumbnail = await saveThumbnail(thumbnailFile);
-            }
-          } else {
-            thumbnail = previewImage;
-          }
-          List<String> tags = _selectedChipIndices.values.toList();
-          final messageValidation = VideoValidationHelper.validateUploadFields(
-              widget.videoFile, thumbnail, caption, tags);
-          if (messageValidation != null) {
-            if (mounted) {
-              showDialog(
-                  context: context,
-                  builder: (context) => AppALertDialog(
-                      bgColor: AppColors.backgroundLight,
-                      textColor: AppColors.errorColor,
-                      contentColor: AppColors.backgroundDark,
-                      onConfirm: () {},
-                      title: 'Missing Field',
-                      desc: messageValidation));
-            }
-
-            return;
-          }
-
-          if (thumbnail != null) {
-            await videoUserActionController.uploadVideo(
-              videoFile: widget.videoFile,
-              thumbnailFile: thumbnail,
-              caption: caption,
-              tags: tags,
-            );
-          } else {
-            Fluttertoast.showToast(msg: "Video or Thumbnail is missing!");
-          }
-        },
       ),
     );
   }
@@ -1011,6 +1003,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   }
 }
 
+@immutable
+// ignore: must_be_immutable
 class ChipSelectionBottomSheet extends StatefulWidget {
   final List<String> chipLabels;
   late Map<int, String> selectedChipIndices;

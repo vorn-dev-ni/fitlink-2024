@@ -219,6 +219,7 @@ class _CommentMainState extends ConsumerState<CommentMain> {
                               post: data,
                               isComment: false,
                               url: data?.imageUrl,
+                              showEditable: false,
                               showHeader: false,
                               twoFingersOn: () =>
                                   setState(() => blockScroll = true),
@@ -265,6 +266,7 @@ class _CommentMainState extends ConsumerState<CommentMain> {
             PostPanel(
               post: Post(),
               isComment: false,
+              showEditable: false,
               url: "loading",
               showHeader: false,
               twoFingersOn: () => setState(() => blockScroll = true),

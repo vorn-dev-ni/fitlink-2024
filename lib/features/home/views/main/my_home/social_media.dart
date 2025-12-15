@@ -1,20 +1,30 @@
-import 'package:demo/common/widget/app_loading.dart';
+import 'package:demo/common/controller/report_controller.dart';
+import 'package:demo/common/controller/user_deletion_controller.dart';
+import 'package:demo/common/widget/confirm_block_dialog.dart';
 import 'package:demo/common/widget/empty_content.dart';
-import 'package:demo/core/riverpod/upload_progress.dart';
+import 'package:demo/common/widget/report_alert_dialog.dart';
+import 'package:demo/core/riverpod/app_provider.dart';
+import 'package:demo/features/authentication/auth.dart';
 import 'package:demo/features/home/controller/posts/post_loading_paging.dart';
+import 'package:demo/features/home/controller/posts/social_post_controller.dart';
 import 'package:demo/features/home/controller/posts/social_postone_controller.dart';
 import 'package:demo/features/home/controller/tab/home_scroll_controller.dart';
 import 'package:demo/features/home/model/post.dart';
 import 'package:demo/features/home/widget/posts/post_panel.dart';
 import 'package:demo/gen/assets.gen.dart';
+import 'package:demo/utils/constant/app_page.dart';
+import 'package:demo/utils/constant/global_key.dart';
 import 'package:demo/utils/constant/sizes.dart';
+import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/helpers/permission_utils.dart';
+import 'package:demo/utils/theme/text/text_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pinch_zoom_release_unzoom/pinch_zoom_release_unzoom.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:demo/utils/constant/app_colors.dart';
 
 class SocialMediaTab extends ConsumerStatefulWidget {
   const SocialMediaTab({super.key});
@@ -115,7 +125,10 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
           return Padding(
             padding: const EdgeInsets.only(bottom: Sizes.xs),
             child: PostPanel(
+              allowReport: false,
               post: Post(),
+              isComment: false,
+              showEditable: true,
               url: "loading",
               twoFingersOn: () => setState(() => blockScroll = true),
               twoFingersOff: () => Future.delayed(
@@ -134,7 +147,13 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
       padding: const EdgeInsets.only(bottom: Sizes.xs),
       child: PostPanel(
         post: post,
+
+        allowReport: true,
         isComment: true,
+        pressThreedot: () {
+          _onTapReportPost(context, post.postId, post);
+          // print("JI");
+        },
         key: ValueKey(post.postId),
         // url: "loading",
         twoFingersOn: () => setState(() => blockScroll = true),
@@ -144,6 +163,113 @@ class _SocialMediaTabState extends ConsumerState<SocialMediaTab>
         ),
       ),
     );
+  }
+
+  Future _onReportPost(String reason, String postId, String userPostId) async {
+    await ref
+        .read(reportControllerProvider.notifier)
+        .sendReport(postId: postId, reason: reason, type: "post");
+  }
+
+  void _onTapReportPost(BuildContext context, String? postId, Post post) {
+    if (postId != null) {
+      showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+        ),
+        isScrollControlled: true,
+        showDragHandle: true,
+        backgroundColor: const Color.fromARGB(255, 236, 241, 247),
+        builder: (BuildContext context) {
+          return DraggableScrollableSheet(
+            initialChildSize: 0.2,
+            minChildSize: 0.1,
+            maxChildSize: 0.4,
+            expand: false,
+            builder: (context, scrollController) {
+              return Container(
+                margin: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(10.0),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(16.0)),
+                ),
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: const Icon(
+                        Icons.report,
+                        color: AppColors.backgroundDark,
+                        size: Sizes.iconSm,
+                      ),
+                      title: Text(
+                        'Report Post',
+                        style: AppTextTheme.lightTextTheme.bodyMedium,
+                      ),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        showDialog(
+                            context: context,
+                            builder: (context) => ReportAlertDialog(
+                                  onSelectReason: (reason) {
+                                    _onReportPost(
+                                        reason, postId, post.user?.id ?? "");
+                                  },
+                                ));
+                      },
+                    ),
+                    if (post.user?.id != FirebaseAuth.instance.currentUser?.uid)
+                      ListTile(
+                        leading: const Icon(
+                          Icons.warning,
+                          color: AppColors.backgroundDark,
+                          size: Sizes.iconSm,
+                        ),
+                        title: Text(
+                          'Block User',
+                          style: AppTextTheme.lightTextTheme.bodyMedium,
+                        ),
+                        onTap: () async {
+                          final confirmed = await showDialog<bool>(
+                            context: context,
+                            builder: (dialogContext) {
+                              return ConfirmBlockDialog(onConfirm: () {
+                                Navigator.of(dialogContext).pop(true);
+                              });
+                            },
+                          );
+                          if (mounted && confirmed == true) {
+                            // Safe navigation using State's context
+                            final isAuth =
+                                HelpersUtils.isAuthenticated(context);
+                            if (isAuth) {
+                              ref
+                                  .read(appLoadingStateProvider.notifier)
+                                  .setState(true);
+                              await ref
+                                  .read(socialPostControllerProvider.notifier)
+                                  .blockUser(
+                                      blockedId: post.user?.id ?? "",
+                                      contentId: postId,
+                                      postID: postId);
+                              ref.invalidate(socialPostoneControllerProvider);
+                              ref
+                                  .read(appLoadingStateProvider.notifier)
+                                  .setState(false);
+                            }
+                          }
+                        },
+                      ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      );
+    }
   }
 
   void _scrollListener() {

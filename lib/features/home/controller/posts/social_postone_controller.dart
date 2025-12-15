@@ -36,6 +36,12 @@ class SocialPostoneController extends _$SocialPostoneController {
     }
   }
 
+  void refresh() {
+    state = const AsyncLoading();
+    debugPrint("Calling refreshing one post");
+    ref.invalidateSelf();
+  }
+
   Future<void> loadNextPage() async {
     try {
       // Check if there are more posts

@@ -11,7 +11,6 @@ import 'package:demo/utils/helpers/helpers_utils.dart';
 import 'package:demo/utils/theme/text/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sizer/sizer.dart';
 
 class UploadTab extends ConsumerStatefulWidget {
   const UploadTab({super.key});
@@ -61,9 +60,6 @@ class _UploadTabState extends ConsumerState<UploadTab>
 
   Widget renderBottom(BuildContext context) {
     return Container(
-      // alignment: Alignment.topCenter,
-      // height: 15.h,
-
       decoration: const BoxDecoration(color: Colors.black),
       padding: const EdgeInsets.symmetric(
           horizontal: Sizes.xxxl + 50, vertical: Sizes.xxxl),

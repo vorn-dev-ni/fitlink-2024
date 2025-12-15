@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:demo/app_cycle.dart';
 import 'package:demo/common/model/user_model.dart';
-import 'package:demo/common/widget/video/progress_uploading.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
 import 'package:demo/core/riverpod/app_setting.dart';
 import 'package:demo/core/riverpod/connectivity_state.dart';
@@ -14,10 +13,13 @@ import 'package:demo/features/home/controller/chat/following_friend_controller.d
 import 'package:demo/features/home/controller/chat/user_status_controller.dart';
 import 'package:demo/features/home/controller/comment/comment_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
+import 'package:demo/features/home/controller/posts/auth_provider.dart';
 import 'package:demo/features/home/controller/posts/social_post_controller.dart';
+import 'package:demo/features/home/controller/posts/social_postone_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_post_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/features/home/controller/video/tiktok_video_controller.dart';
+import 'package:demo/features/home/controller/video/video_page_controller.dart';
 import 'package:demo/features/home/controller/workouts/activities_controller.dart';
 import 'package:demo/features/home/views/single_profile/controller/notification_badge.dart';
 import 'package:demo/l10n/I10n.dart';
@@ -131,7 +133,8 @@ class _MyAppState extends ConsumerState<MyApp> {
                 if (userDoc != null &&
                     isUserEmailExist != null &&
                     isUserEmailExist != "") {
-                  await syncUser(user.uid);
+                  debugPrint("Running xx syncUser");
+                  syncUser(user.uid);
                 }
               });
             }
@@ -154,7 +157,6 @@ class _MyAppState extends ConsumerState<MyApp> {
         .onConnectivityChange()
         .listen(
       (event) {
-        debugPrint("Connection state is ${event.toString()}");
         _handleCheckConnection(event);
       },
     );
@@ -166,7 +168,6 @@ class _MyAppState extends ConsumerState<MyApp> {
     streamAuthState?.cancel();
     streamUserFirestore?.cancel();
     DefaultCacheManager().emptyCache();
-
     super.dispose();
   }
 
@@ -187,15 +188,19 @@ class _MyAppState extends ConsumerState<MyApp> {
           ref.invalidate(userNotificationControllerProvider);
           // ref.refresh(tiktokVideoControllerProvider.notifier).refresh();
           // ref.invalidate(tiktokVideoControllerProvider);
+
           ref
               .read(navbarControllerProvider.notifier)
               .updateProfileTab(authModel.avatar ?? "");
           // ref.invalidate(navbarControllerProvider);
-          ref.invalidate(socialPostControllerProvider);
+          ref.read(socialPostoneControllerProvider.notifier).refresh();
+
           ref.invalidate(commentControllerProvider);
           ref.invalidate(profilePostControllerProvider);
           ref.invalidate(activitiesControllerProvider);
           ref.invalidate(profileUserControllerProvider);
+          ref.read(tiktokVideoControllerProvider.notifier).refresh();
+          ref.read(videoPageControllerProvider.notifier).resetPage();
           ref.read(appLoadingStateProvider.notifier).setState(false);
         }
       }

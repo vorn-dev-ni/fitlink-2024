@@ -3,6 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class FirebaseAuthRepository<T> {
   Future loginUserWithFacebook();
+  Future loginUserWithApple(
+      {required String? email,
+      required String? fullName,
+      required String? identityToken,
+      required String? authorizationCode});
   Future sendPhoneOtp(
     String phoneNumber, {
     required Function(PhoneAuthCredential) verificationCompleted,

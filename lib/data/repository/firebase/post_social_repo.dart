@@ -82,19 +82,55 @@ class PostSocialRepo {
 
   Future<List<Post>?> getOneTimePosts(String uid, int? pageSize) async {
     try {
+      final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+
+      // 1. Get combined posts
       final combinedPosts = await combinesPosts(pageSize ?? 8);
 
-      if (combinedPosts.isEmpty) {
-        return null;
+      if (combinedPosts.isEmpty) return null;
+
+      List<Map<String, dynamic>> filteredPostsData;
+
+      // 2. Filter blocked users/content only if user is logged in
+      if (currentUserId != null) {
+        final blockSnapshot = await FirebaseFirestore.instance
+            .collection('blocks')
+            .where('blockerId', isEqualTo: currentUserId)
+            .get();
+
+        List<String> blockedUserIds = [];
+        List<String> blockedContentIds = [];
+
+        for (var doc in blockSnapshot.docs) {
+          blockedUserIds.add(doc['blockedId']);
+          if (doc['contentId'] != null) blockedContentIds.add(doc['contentId']);
+        }
+
+        filteredPostsData = combinedPosts.where((postData) {
+          final String? postUserId =
+              (postData['userId'] as DocumentReference?)?.id;
+          final String? postContentId = postData['postId'] as String?;
+          final isBlockedUser =
+              postUserId != null && blockedUserIds.contains(postUserId);
+          final isBlockedContent = postContentId != null &&
+              blockedContentIds.contains(postContentId);
+          return !isBlockedUser && !isBlockedContent;
+        }).toList();
+      } else {
+        // If user is not logged in, no filtering
+        filteredPostsData = combinedPosts;
       }
 
+      // 3. Map to Post objects
       List<Post> posts = await Future.wait(
-        combinedPosts.map((postData) async {
+        filteredPostsData.map((postData) async {
           DocumentReference? userRef = postData['userId'] as DocumentReference?;
           Map<String, dynamic>? userData =
               userRef != null ? await extractUserData(userRef) : null;
 
-          bool isLiked = await checkUserLikePost(postData['postId']);
+          bool isLiked = currentUserId != null
+              ? await checkUserLikePost(postData['postId'])
+              : false;
 
           return Post.fromJson({
             "postId": postData['postId'],

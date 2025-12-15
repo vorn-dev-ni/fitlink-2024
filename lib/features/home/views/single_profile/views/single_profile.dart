@@ -142,8 +142,14 @@ class _SingleProfileState extends ConsumerState<SingleProfile> {
       child: SafeArea(
         top: DeviceUtils.isIOS(),
         child: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) =>
-              [ProfileHeader(singleMode: true, onLogout: () {}, uid: uid)],
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            ProfileHeader(
+              singleMode: true,
+              onLogout: () {},
+              uid: uid,
+              onDelete: () {},
+            )
+          ],
           body: SafeArea(
             child: Column(
               children: [

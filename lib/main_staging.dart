@@ -154,7 +154,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         .onConnectivityChange()
         .listen(
       (event) {
-        debugPrint("Connection state is ${event.toString()}");
+        // debugPrint("Connection state is ${event.toString()}");
         _handleCheckConnection(event);
       },
     );

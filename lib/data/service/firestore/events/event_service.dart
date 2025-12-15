@@ -20,10 +20,10 @@ class EventService extends BaseService {
 
   @override
   Stream<QuerySnapshot<Map<String, dynamic>>> getAllRealTime() {
-    DateTime now = DateTime.now();
+    // DateTime now = DateTime.now();
     return _firestore
         .collection('events')
-        .where('preStartDate', isGreaterThanOrEqualTo: now)
+        // .where('preStartDate', isGreaterThanOrEqualTo: now)
         .orderBy('preStartDate', descending: false)
         .orderBy('preEndDate', descending: false)
         .snapshots();

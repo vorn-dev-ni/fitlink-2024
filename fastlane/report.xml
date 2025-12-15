@@ -5,42 +5,42 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: Switch to android load_env lane" time="0.000112">
+      <testcase classname="fastlane.lanes" name="0: Switch to android load_env lane" time="0.000107">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: increment_version_name" time="0.001402">
+      <testcase classname="fastlane.lanes" name="1: increment_version_name" time="0.014827">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="2: increment_version_code" time="0.001077">
+      <testcase classname="fastlane.lanes" name="2: increment_version_code" time="0.001067">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="3: get_version_name" time="0.000184">
+      <testcase classname="fastlane.lanes" name="3: get_version_name" time="0.000254">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="4: get_version_code" time="0.000173">
+      <testcase classname="fastlane.lanes" name="4: get_version_code" time="0.000272">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="5: assembleProdRelease" time="105.265141">
+      <testcase classname="fastlane.lanes" name="5: assembleProdRelease" time="109.270047">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="6: firebase_app_distribution" time="40.420635">
+      <testcase classname="fastlane.lanes" name="6: firebase_app_distribution" time="44.411775">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="7: telegram" time="1.040355">
+      <testcase classname="fastlane.lanes" name="7: telegram" time="1.00916">
         
       </testcase>
     

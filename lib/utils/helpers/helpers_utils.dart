@@ -102,10 +102,10 @@ class HelpersUtils {
     return icon;
   }
 
-  static bool isAuthenticated(BuildContext context) {
+  static bool isAuthenticated(BuildContext? context) {
     final email = LocalStorageUtils().getKey('email');
-    if (email == "" || email == null) {
-      HelpersUtils.navigatorState(context).pushNamed(AppPage.auth);
+    if (email == "" || email == null && context != null) {
+      HelpersUtils.navigatorState(context!).pushNamed(AppPage.auth);
       return false;
     }
     return true;
@@ -149,6 +149,12 @@ class HelpersUtils {
     }
   }
 
+  static String generateRandomEmail() {
+    final random = Random();
+    final randomString = List.generate(10, (_) => random.nextInt(10)).join();
+    return "apple_user_$randomString@example.com";
+  }
+
   static Future<String?> getDeviceToken() async {
     try {
       String? token = DeviceUtils.isAndroid()
@@ -156,11 +162,11 @@ class HelpersUtils {
           : await FirebaseMessaging.instance.getAPNSToken();
 
       if (token != null) {
-        debugPrint("Device FCM Token: $token");
+        // debugPrint("Device FCM Token: $token");
 
         return token;
       } else {
-        debugPrint("Failed to retrieve FCM token");
+        // debugPrint("Failed to retrieve FCM token");
       }
     } catch (e) {
       debugPrint("Error retrieving FCM token: $e");

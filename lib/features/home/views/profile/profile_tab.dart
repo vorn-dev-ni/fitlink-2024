@@ -1,3 +1,4 @@
+import 'package:demo/common/controller/user_deletion_controller.dart';
 import 'package:demo/common/model/user_model.dart';
 import 'package:demo/common/widget/backdrop_loading.dart';
 import 'package:demo/core/riverpod/app_provider.dart';
@@ -9,10 +10,12 @@ import 'package:demo/features/home/controller/chat/user_status_controller.dart';
 import 'package:demo/features/home/controller/logout_controller.dart';
 import 'package:demo/features/home/controller/navbar_controller.dart';
 import 'package:demo/features/home/controller/posts/social_post_controller.dart';
+import 'package:demo/features/home/controller/posts/social_postone_controller.dart';
 import 'package:demo/features/home/controller/posts/user_like_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_post_controller.dart';
 import 'package:demo/features/home/controller/profile/profile_user_controller.dart';
 import 'package:demo/features/home/controller/video/tiktok_video_controller.dart';
+import 'package:demo/features/home/controller/video/video_page_controller.dart';
 import 'package:demo/features/home/views/single_profile/controller/media_tag_conroller.dart';
 import 'package:demo/features/home/views/single_profile/controller/notification_badge.dart';
 import 'package:demo/features/home/views/single_profile/controller/single_user_controller.dart';
@@ -115,11 +118,23 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                   floatHeaderSlivers: false,
                   headerSliverBuilder: (context, innerBoxIsScrolled) => [
                     ProfileHeader(
-                      uid: data?.id ?? "",
-                      onLogout: () async {
+                      //Delete account
+                      onDelete: () {
                         ref
                             .read(appLoadingStateProvider.notifier)
                             .setState(true);
+                        ref
+                            .read(userDeletionControllerProvider.notifier)
+                            .deleteUser(
+                                userId:
+                                    FirebaseAuth.instance.currentUser?.uid ??
+                                        "")
+                            .then((_) async {
+                          await handleLogout();
+                        });
+                      },
+                      uid: data?.id ?? "",
+                      onLogout: () async {
                         await handleLogout();
                       },
                     ),
@@ -182,9 +197,8 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             ProfileHeader(
               uid: "example",
-              onLogout: () {
-                // handleLogout();
-              },
+              onDelete: () {},
+              onLogout: () {},
             ),
           ],
           body: SafeArea(
@@ -215,50 +229,56 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     );
   }
 
-  Future handleLogout() async {
+  Future<void> handleLogout() async {
     try {
-      if (mounted) {
-        ref.invalidate(singleUserControllerProvider);
-        ref.invalidate(registerControllerProvider);
-        ref.invalidate(loginControllerProvider);
-        ref.invalidate(socialPostControllerProvider);
-        ref.invalidate(userLikeControllerProvider);
-        ref.invalidate(mediaTagConrollerProvider);
+      // Clear local storage
+      await LocalStorageUtils().setKeyString('uid', '');
+      await LocalStorageUtils().setKeyString('email', '');
+      await LocalStorageUtils().setKeyString('notificationCount', '');
 
-        LocalStorageUtils().setKeyString('email', '');
-        LocalStorageUtils().setKeyString('notificationCount', '');
-        await authController.logout();
-        _playsoundLogout.play();
-        Fluttertoast.showToast(
-            msg: 'See you soon love 😔 !!!',
-            timeInSecForIosWeb: 3,
-            toastLength: Toast.LENGTH_SHORT);
-        String uid = LocalStorageUtils().getKey('uid') ?? '';
-        ref.read(userStatusControllerProvider.notifier).setUserOffline(uid);
-        ref.read(logoutControllerProvider.notifier).logout();
-        ref.invalidate(userNotificationControllerProvider);
-        ref.invalidate(notificationUserControllerProvider);
-        LocalStorageUtils().setKeyString('uid', '');
-        ref.invalidate(profileUserControllerProvider);
-        ref.invalidate(profilePostControllerProvider);
-        ref.refresh(tiktokVideoControllerProvider.notifier).refresh();
-        ref.invalidate(socialInteractonVideoControllerProvider);
-        ref.read(appLoadingStateProvider.notifier).setState(false);
-        ref.invalidate(navbarControllerProvider);
-        ref.invalidate(navigationStateProvider);
-      }
-    } catch (e) {
-      LocalStorageUtils().setKeyString('uid', '');
-      LocalStorageUtils().setKeyString('email', '');
-      ref.invalidate(profilePostControllerProvider);
+      // Invalidate ALL app state
+      ref.invalidate(singleUserControllerProvider);
+      ref.invalidate(registerControllerProvider);
+      ref.invalidate(loginControllerProvider);
+      ref.invalidate(userLikeControllerProvider);
+      ref.invalidate(mediaTagConrollerProvider);
+      ref.invalidate(userNotificationControllerProvider);
+      ref.invalidate(notificationUserControllerProvider);
       ref.invalidate(profileUserControllerProvider);
+      ref.invalidate(profilePostControllerProvider);
+      ref.invalidate(socialPostControllerProvider);
+
+      ref.invalidate(socialInteractonVideoControllerProvider);
+      ref.invalidate(navbarControllerProvider);
+      ref.invalidate(navigationStateProvider);
+
+      // Logout user
+      await authController.logout();
+      ref.read(tiktokVideoControllerProvider.notifier).refresh();
+      ref.read(videoPageControllerProvider.notifier).resetPage();
+
+      ref.read(socialPostoneControllerProvider.notifier).refresh();
+
+      // Update status
+      final uid = LocalStorageUtils().getKey('uid') ?? '';
+      ref.read(userStatusControllerProvider.notifier).setUserOffline(uid);
+
+      ref.read(logoutControllerProvider.notifier).logout();
+      ref.read(appLoadingStateProvider.notifier).setState(false);
+      _playsoundLogout.play();
+      Fluttertoast.showToast(
+        msg: 'See you soon khmerster 😔 !!!',
+        toastLength: Toast.LENGTH_SHORT,
+        timeInSecForIosWeb: 3,
+      );
+    } catch (e) {
       ref.read(appLoadingStateProvider.notifier).setState(false);
     }
   }
 
   void binding() async {
     await _playsoundLogout.setAsset(Assets.audio.bye);
-    _playsoundLogout.setVolume(0.8);
+    _playsoundLogout.setVolume(0.5);
   }
 
   void bindingUser() {
